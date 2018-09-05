@@ -1,8 +1,10 @@
+/*
+    Copyright(C) 2018 liuwenjun.All rights reserved.
+*/
 #include <Eigen/Core>
 #include <iostream>
 
-using namespace Eigen;
-
 int main() {
-	return 0;
+    Eigen::MatrixXd test;
+    return 0;
 }
