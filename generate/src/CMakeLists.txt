@@ -8,5 +8,6 @@ if(PASSOA_COMPILER_MSVC)
 include_directories(${PROJECT_SOURCE_DIR}/3rd/eigen)
 ADD_EXECUTABLE(cactus
 				${PROJECT_SOURCE_DIR}/src/index.cpp
+				${PROJECT_SOURCE_DIR}/src/tensor.cpp
 				)
 endif()

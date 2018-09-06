@@ -9,7 +9,7 @@ namespace cactus {
 
 class oparetor {
 public:
-    virtual void compute(std::vector<std::shared_ptr<cactus::tensor>>& ) = 0;
+    virtual void compute() = 0;
 };
 }
 
