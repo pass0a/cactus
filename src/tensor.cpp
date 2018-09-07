@@ -1,45 +1,42 @@
-// The macro CASES() expands to a switch statement conditioned on
-// TYPE_ENUM. Each case expands the STMTS after a typedef for T.
-#define SINGLE_ARG(...) __VA_ARGS__
-#define CASE(TYPE, STMTS)             \
-  case DataTypeToEnum<TYPE>::value: { \
-    typedef TYPE T;                   \
-    STMTS;                            \
-    break;                            \
-  }
-#define CASES_WITH_DEFAULT(TYPE_ENUM, STMTS, INVALID, DEFAULT) \
-  switch (TYPE_ENUM) {                                         \
-    CASE(float, SINGLE_ARG(STMTS))                             \
-    CASE(double, SINGLE_ARG(STMTS))                            \
-    CASE(int32, SINGLE_ARG(STMTS))                             \
-    CASE(uint8, SINGLE_ARG(STMTS))                             \
-    CASE(uint16, SINGLE_ARG(STMTS))                            \
-    CASE(uint32, SINGLE_ARG(STMTS))                            \
-    CASE(uint64, SINGLE_ARG(STMTS))                            \
-    CASE(int16, SINGLE_ARG(STMTS))                             \
-    CASE(int8, SINGLE_ARG(STMTS))                              \
-    CASE(string, SINGLE_ARG(STMTS))                            \
-    CASE(complex64, SINGLE_ARG(STMTS))                         \
-    CASE(complex128, SINGLE_ARG(STMTS))                        \
-    CASE(int64, SINGLE_ARG(STMTS))                             \
-    CASE(bool, SINGLE_ARG(STMTS))                              \
-    CASE(qint32, SINGLE_ARG(STMTS))                            \
-    CASE(quint8, SINGLE_ARG(STMTS))                            \
-    CASE(qint8, SINGLE_ARG(STMTS))                             \
-    CASE(quint16, SINGLE_ARG(STMTS))                           \
-    CASE(qint16, SINGLE_ARG(STMTS))                            \
-    CASE(bfloat16, SINGLE_ARG(STMTS))                          \
-    CASE(Eigen::half, SINGLE_ARG(STMTS))                       \
-    CASE(ResourceHandle, SINGLE_ARG(STMTS))                    \
-    CASE(Variant, SINGLE_ARG(STMTS))                           \
-    case DT_INVALID:                                           \
-      INVALID;                                                 \
-      break;                                                   \
-    default:                                                   \
-      DEFAULT;                                                 \
-      break;                                                   \
-  }
+#include "tensor.hpp"
 
-#define CASES(TYPE_ENUM, STMTS)                                      \
-  CASES_WITH_DEFAULT(TYPE_ENUM, STMTS, LOG(FATAL) << "Type not set"; \
-                     , LOG(FATAL) << "Unexpected type: " << TYPE_ENUM;)
+
+namespace cactus {
+uint32_t type_size(DataType type){
+    switch (type) {
+    case kFloat: {return sizeof(EnumToDataType<kFloat>::Type); }
+    case kDouble: {return sizeof(EnumToDataType<kDouble>::Type); }
+    case kInt8: {return sizeof(EnumToDataType<kInt8>::Type); }
+    case kInt16: {return sizeof(EnumToDataType<kInt16>::Type); }
+    case kInt32: {return sizeof(EnumToDataType<kInt32>::Type); }
+    case kInt64: {return sizeof(EnumToDataType<kInt64>::Type); }
+    case kUint8: {return sizeof(EnumToDataType<kUint8>::Type); }
+    default: {}
+    }
+    return 0;
+}
+Tensor::Tensor(){
+    
+}
+Tensor::Tensor(DataType type, Shape s) {
+    uint32_t size = type_size(type);
+    shape_ = s;
+    dtype_ = type;
+    buf_.resize(size*s.rows*s.cols);
+}
+uint32_t Tensor::TotalBytes()
+{
+    return buf_.size();
+}
+void * Tensor::data()
+{
+    return buf_.data();
+}
+DataType Tensor::dtype() const {
+    return dtype_;
+}
+const Shape & Tensor::shape() const
+{
+    return shape_;
+}
+}

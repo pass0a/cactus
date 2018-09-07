@@ -6,22 +6,27 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 #define SRC_TENSOR_HPP_
 
 #include "buffer.hpp"
+#include "types.h"
 
-enum class DataType {
-    kFloat = 0,
-    kDouble = 1,
-    kHalf = 2,
-    kInt8 = 3,
-};
 
 namespace cactus{
+struct Shape {
+    uint32_t rows;
+    uint32_t cols;
+};
+
 class Tensor {
 public:
-    Tensor(DataType type,int row=1,int col=1){
-        //buf_.resize();
-    }
+    Tensor();
+    Tensor(DataType type, Shape s);
+    uint32_t TotalBytes();
+    void* data();
+    DataType dtype() const;
+    const Shape& shape() const;
 private:
     Buffer buf_;
+    DataType dtype_;
+    Shape shape_;
 };
 }
 
