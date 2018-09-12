@@ -10,7 +10,9 @@ include_directories(${PROJECT_SOURCE_DIR}/3rd/eigen)
 ADD_EXECUTABLE(cpptest
 				${PROJECT_SOURCE_DIR}/test/index.cpp
 				${PROJECT_SOURCE_DIR}/test/variables.cpp
+				${PROJECT_SOURCE_DIR}/test/perceptron.cpp
 				${PROJECT_SOURCE_DIR}/src/tensor.cpp
+				${PROJECT_SOURCE_DIR}/src/matrix.cpp
 				)
 target_link_libraries(cpptest
 				debug gtestd

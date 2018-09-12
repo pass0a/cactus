@@ -19,16 +19,14 @@ Tensor::Tensor(){
     
 }
 Tensor::Tensor(DataType type, Shape s) {
-    uint32_t size = type_size(type);
-    shape_ = s;
-    dtype_ = type;
-    buf_.resize(size*s.rows*s.cols);
+    init(type,s);
 }
+
 uint32_t Tensor::TotalBytes()
 {
     return buf_.size();
 }
-void * Tensor::data()
+void* Tensor::data()
 {
     return buf_.data();
 }
@@ -38,5 +36,11 @@ DataType Tensor::dtype() const {
 const Shape & Tensor::shape() const
 {
     return shape_;
+}
+void Tensor::init(const DataType& type,const Shape& s) {
+    uint32_t size = type_size(type);
+    shape_ = s;
+    dtype_ = type;
+    buf_.resize(size*s.rows*s.cols);
 }
 }

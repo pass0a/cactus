@@ -19,10 +19,17 @@ class Tensor {
 public:
     Tensor();
     Tensor(DataType type, Shape s);
+    template<typename T>
+    Tensor(T scalar) {
+        init(DataTypeToEnum<T>::value, {1,1});
+        *(T*)data() = scalar;
+    }
     uint32_t TotalBytes();
     void* data();
     DataType dtype() const;
     const Shape& shape() const;
+private:
+    void init(const DataType& type,const Shape& s);
 private:
     Buffer buf_;
     DataType dtype_;

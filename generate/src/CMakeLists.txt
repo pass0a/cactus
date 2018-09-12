@@ -9,5 +9,6 @@ include_directories(${PROJECT_SOURCE_DIR}/3rd/eigen)
 ADD_EXECUTABLE(cactus
 				${PROJECT_SOURCE_DIR}/src/index.cpp
 				${PROJECT_SOURCE_DIR}/src/tensor.cpp
+				${PROJECT_SOURCE_DIR}/src/matrix.cpp
 				)
 endif()

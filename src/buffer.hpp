@@ -6,9 +6,9 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 #ifndef SRC_BUFFER_HPP_
 #define SRC_BUFFER_HPP_
 
-#include <cstdlib>
 #include <cassert>
 #include <stdint.h>
+#include <memory>
 
 namespace cactus {
 
@@ -20,9 +20,7 @@ class Buffer {
         resize(size);
     }
     ~Buffer() {
-        if (buf_) {
-            std::free(buf_);
-        }
+        
     }
 
  public:
@@ -30,20 +28,20 @@ class Buffer {
         return size_;
     }
     int resize(uint32_t size) {
-        if (buf_) {
-            buf_ = std::realloc(buf_, size);
+        if (buf_.get()) {
+            buf_.reset(std::realloc(buf_.get(), size),std::free);
         } else {
-            buf_ = std::malloc(size);
+            buf_.reset(std::malloc(size), std::free);
         }
         size_ = size;
-        assert(buf_ != NULL);
+        assert(buf_.get() != NULL);
         return 0;
     }
     void* data() const {
-        return buf_;
+        return buf_.get();
     }
  private:
-    void* buf_;
+    std::shared_ptr<void> buf_;
     uint32_t size_;
 };
 }  // namespace cactus

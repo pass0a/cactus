@@ -6,7 +6,8 @@
 namespace cactus {
 
 enum DataType {
-    kFloat = 0,
+    kInvalid = 0,
+    kFloat,
     kDouble,
     kInt8,
     kInt16,
@@ -61,6 +62,33 @@ MATCH_TYPE_AND_ENUM(uint32_t, kUint32);
 MATCH_TYPE_AND_ENUM(uint64_t, kUint64);
 
 #undef MATCH_TYPE_AND_ENUM
+
+#define SINGLE_ARG(...) __VA_ARGS__
+#define CASE(TYPE, STMTS)             \
+  case DataTypeToEnum<TYPE>::value: { \
+    typedef TYPE T;                   \
+    STMTS;                            \
+    break;                            \
+  }
+#define CASES(TYPE_ENUM, STMTS) \
+  switch (TYPE_ENUM) {                                         \
+    CASE(float_t, SINGLE_ARG(STMTS))                             \
+    CASE(double_t, SINGLE_ARG(STMTS))                            \
+    CASE(int8_t, SINGLE_ARG(STMTS))                             \
+    CASE(int16_t, SINGLE_ARG(STMTS))                            \
+    CASE(int32_t, SINGLE_ARG(STMTS))                             \
+    CASE(int64_t, SINGLE_ARG(STMTS))                            \
+    CASE(uint8_t, SINGLE_ARG(STMTS))                             \
+    CASE(uint16_t, SINGLE_ARG(STMTS))                            \
+    CASE(uint32_t, SINGLE_ARG(STMTS))                             \
+    CASE(uint64_t, SINGLE_ARG(STMTS))                            \
+    case kInvalid:                                           \
+      assert(0);                                                 \
+      break;                                                   \
+    default:                                                   \
+      assert(0);                                                 \
+      break;                                                   \
+  }
 
 }
 

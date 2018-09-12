@@ -7,9 +7,10 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 
 namespace cactus {
 
-class oparetor {
+class operation {
 public:
-    virtual void compute() = 0;
+    virtual void input(std::vector<Tensor>) = 0;
+    virtual Tensor compute() = 0;
 };
 }
 
