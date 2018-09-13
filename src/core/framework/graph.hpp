@@ -11,17 +11,17 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 
 #include "variables.hpp"
 #include "tensor.hpp"
+#include "operation.hpp"
 
 namespace cactus {
 
     class graph {
     public:
-        /*template<typename T>
-        tensor& variables(T ) {
-            return 
-        }*/
+        Tensor insert(const Tensor& v) {
+            return v;
+        }
     private:
-        //std::vector<tensor> list;
+        std::vector<operation> list;
     };
 }
 

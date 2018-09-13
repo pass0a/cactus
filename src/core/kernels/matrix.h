@@ -5,7 +5,7 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 #ifndef SRC_MATRIX_HPP_
 #define SRC_MATRIX_HPP_
 
-#include "tensor.hpp"
+#include "../framework/tensor.hpp"
 #include <Eigen/Dense>
 #include <vector>
 

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "../src/tensor.hpp"
-#include "../src/operation.hpp"
+#include "framework/tensor.hpp"
+#include "framework/operation.hpp"
 
 class perceptron {
 public:

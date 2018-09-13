@@ -5,8 +5,8 @@
 #ifndef SRC_OPS_HPP_
 #define SRC_OPS_HPP_
 
-#include "tensor.hpp"
-
+#include "../framework/tensor.hpp"
+#include "../framework/graph.hpp"
 namespace cactus {
 struct Initalizer {
     template<typename T>
@@ -32,19 +32,12 @@ struct Initalizer {
     }
     Tensor tensor;
 };
-/*class Input {
-public:
-        
-};
-class InputList {
-public:
-    InputList(const std::initializer_list<Input>& v) :l(v.begin(), v.end()) {
-    }
-private:
-    std::vector<Input> l;
-};*/
-const Tensor& Const(const Initalizer& v) {
+
+const Tensor& Const(graph& g,const Initalizer& v) {
     return v.tensor;
+}
+const Tensor Placeholder(graph& g, DataType type, Shape s = {1,1}) {
+    return Tensor(type, s);
 }
 }  // namespace cactus
 

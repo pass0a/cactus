@@ -4,11 +4,9 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-if(PASSOA_COMPILER_MSVC)
 include_directories(${PROJECT_SOURCE_DIR}/3rd/eigen)
 ADD_EXECUTABLE(cactus
 				${PROJECT_SOURCE_DIR}/src/index.cpp
-				${PROJECT_SOURCE_DIR}/src/tensor.cpp
-				${PROJECT_SOURCE_DIR}/src/matrix.cpp
+				${PROJECT_SOURCE_DIR}/src/core/framework/tensor.cpp
+				${PROJECT_SOURCE_DIR}/src/core/kernels/matrix.cpp
 				)
-endif()

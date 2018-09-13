@@ -13,6 +13,12 @@ namespace cactus{
 struct Shape {
     uint32_t rows;
     uint32_t cols;
+    int operator==(const Shape& v) const {
+        if ((rows == v.rows) && (cols == v.cols)) {
+            return 1;
+        }
+        return 0;
+    }
 };
 
 class Tensor {
