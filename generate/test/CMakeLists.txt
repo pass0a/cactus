@@ -14,7 +14,7 @@ ADD_EXECUTABLE(cpptest
 				${PROJECT_SOURCE_DIR}/test/variables.cpp
 				${PROJECT_SOURCE_DIR}/test/perceptron.cpp
 				${PROJECT_SOURCE_DIR}/src/core/framework/tensor.cpp
-				${PROJECT_SOURCE_DIR}/src/core/kernels/matrix.cpp
+				${PROJECT_SOURCE_DIR}/src/core/kernels/math.cpp
 				${PROJECT_SOURCE_DIR}/3rd/googletest/googletest/src/gtest-all.cc
 				)
 #target_link_libraries(cpptest

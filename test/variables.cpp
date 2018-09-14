@@ -13,8 +13,9 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 #include "framework/operation.hpp"
 #include "framework/session.hpp"
 #include "framework/graph.hpp"
+#include "framework/node.hpp"
 #include "kernels/ops.hpp"
-#include "kernels/matrix.h"
+#include "kernels/math.h"
 
 TEST(core, buffer) {
     cactus::Buffer x;
@@ -66,11 +67,22 @@ TEST(core, tensor) {
 //    //z = cactus::scalar_mul(2,x);
 //}
 TEST(core, placeholder) {
-    cactus::scope g;
-    cactus::Tensor x = cactus::Placeholder(g, cactus::kInt16, { 2,2 });
-    cactus::Tensor y = cactus::Placeholder(g, cactus::kInt16);
-    cactus::Tensor z = cactus::matmul(x,y);
-    g.run({x,y});
+    /*cactus::scope g;
+    auto z = cactus::add(g,1,2);
+    g.run(z);*/
+}
+TEST(core, node) {
+    //std::shared_ptr<cactus::Node> z = std::shared_ptr<cactus::Node>(new cactus::Tensor());
+    
+}
+TEST(core, input) {
+    cactus::Input x({ 10,2,3 });
+    cactus::Tensor t=x.tensor();
+    std::cout << *(int*)t.data() << std::endl;
+}
+TEST(core, operation) {
+    cactus::Operation x;
+    //x.put(3);
 }
 TEST(core, graph) {
     /*cactus::graph g;

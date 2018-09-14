@@ -15,14 +15,14 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 
 namespace cactus {
 
-    class graph {
+    /*class graph {
     public:
         Tensor insert(const Tensor& v) {
             return v;
         }
     private:
         std::vector<operation> list;
-    };
+    };*/
 }
 
 #endif  // SRC_GRAPH_HPP_

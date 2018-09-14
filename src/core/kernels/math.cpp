@@ -1,6 +1,7 @@
-#include "matrix.h"
-#include "operation.hpp"
+#include "math.h"
+#include "../framework/operation.hpp"
 #include <cassert>
+
 namespace cactus {
     template<typename T>
     class base_matmul:public operation {
@@ -33,9 +34,10 @@ namespace cactus {
     };
 
     Tensor matmul(Tensor a, Tensor b) {
-        std::shared_ptr<operation> f;
+        /*std::shared_ptr<operation> f;
         CASES(a.dtype(), f = std::shared_ptr<operation>(new base_matmul<T>()));
         f->input({ a,b });
-        return f->compute();
+        return f->compute();*/
+        return Tensor();
     }
 }

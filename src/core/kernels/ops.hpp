@@ -7,6 +7,8 @@
 
 #include "../framework/tensor.hpp"
 #include "../framework/graph.hpp"
+#include "../framework/operation.hpp"
+
 namespace cactus {
 struct Initalizer {
     template<typename T>
@@ -32,11 +34,22 @@ struct Initalizer {
     }
     Tensor tensor;
 };
-
-const Tensor& Const(graph& g,const Initalizer& v) {
+//class Operation {
+//public:
+//    void input(std::vector<Tensor>) = 0;
+//    Node* compute() = 0;
+//};
+//class Output {
+//public:
+//    Output():op(0) {}
+//    Output(Node* ) {}
+//private:
+//    Operation op;
+//};
+const Tensor& Const(const Initalizer& v) {
     return v.tensor;
 }
-const Tensor Placeholder(graph& g, DataType type, Shape s = {1,1}) {
+const Tensor Placeholder( DataType type, Shape s = {1,1}) {
     return Tensor(type, s);
 }
 }  // namespace cactus
