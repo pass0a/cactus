@@ -1,5 +1,5 @@
 #include "tensor.hpp"
-
+#include <cstring>
 namespace cactus {
 
 enum NodeType {

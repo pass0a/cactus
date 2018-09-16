@@ -17,7 +17,7 @@ ADD_EXECUTABLE(cpptest
 				${PROJECT_SOURCE_DIR}/src/core/kernels/math.cpp
 				${PROJECT_SOURCE_DIR}/3rd/googletest/googletest/src/gtest-all.cc
 				)
-#target_link_libraries(cpptest
-				#debug gtestd
-				#optimized gtest
-				#gtest)
+if(MSVC)
+else()
+target_link_libraries(cpptest pthread)
+endif()

@@ -24,15 +24,13 @@
 *.ts
 *.h264
 \#*
-output/*
+output/
 build/*
 !build/*.bat
+!build/*.sh
 binary/*/
 binary/*
 !.gitignore
 !.travis.yml
 !*.sh
 *node_modules*
-GTAGS
-GPATH
-GRTAGS
