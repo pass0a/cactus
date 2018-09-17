@@ -34,6 +34,10 @@ public:
     void* data();
     DataType dtype() const;
     const Shape& shape() const;
+    template<typename T>
+    T get(int pos) {
+        return ((T*)data())[pos];
+    }
 private:
     void init(const DataType& type,const Shape& s);
 private:

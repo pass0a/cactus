@@ -40,4 +40,29 @@ namespace cactus {
         return f->compute();*/
         return Tensor();
     }
+    class AddOp :public Operation {
+    public:
+        AddOp(Input& x,Input& y) {
+            inputs = {x,y};
+        }
+        void compute() {
+            /*Node* x = inputs[0].node();
+            Node* y = inputs[0].node();*/
+            Node* tmp;
+            Operation* opt;
+            for (auto v:inputs)
+            {
+                tmp = v.node();
+                if (tmp->type() == NtOperation) {
+                    opt = (Operation*)tmp;
+                    opt->compute();
+                }
+            }
+        }
+    };
+    const Output & Add(Graph & g, Input x, Input b)
+    {
+        // TODO: 在此处插入 return 语句
+        return g.insert(std::make_shared<AddOp>(x,b));
+    }
 }

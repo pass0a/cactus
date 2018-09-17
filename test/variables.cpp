@@ -29,10 +29,13 @@ TEST(core, tensor) {
     // cactus::Tensor y(12.0215);
     // EXPECT_EQ(*(double_t*)y.data(), 12.0215);
 }
-// TEST(core, constant) {
-//    cactus::Tensor x = cactus::Const({ { 1, 2, 3 }, { 3, 5, 9 } });
-//    int iw[6];
-//    memcpy(iw, x.data(), x.TotalBytes());
+TEST(core, constant) {
+    cactus::Graph g;
+    auto x = cactus::Const(g, { { 1,3 },{ 2,4 } });
+    auto y = cactus::Const(g, { { 1,3 },{ 2,4 } });
+    auto a = cactus::Const(g, 2);
+    auto z = cactus::Add(g,x,y);
+    g.run(z);
 //    EXPECT_EQ(x.shape().rows, 2);
 //    EXPECT_EQ(x.shape().cols, 3);
 //    EXPECT_EQ(x.TotalBytes(), 24);
@@ -52,7 +55,7 @@ TEST(core, tensor) {
 //    EXPECT_EQ(dw[0], 1.0);
 //    EXPECT_EQ(dw[1], 2.0);
 //    EXPECT_EQ(dw[2], 12.9485);
-//}
+}
 // TEST(core,matmul) {
 //    cactus::Tensor x = cactus::Const({ { 1, 2},{ 3, 5} });
 //    cactus::Tensor y = cactus::Const({ { 1, 2 },{ 3, 5 } });
@@ -76,30 +79,20 @@ TEST(core, node) {
     // cactus::Tensor());
 }
 TEST(core, input) {
-    cactus::Input x({10, 2, 3});
+    /*cactus::Input x({10, 2, 3});
     cactus::Tensor t = x.tensor();
-    std::cout << *(int *)t.data() << std::endl;
+    EXPECT_EQ(t.get<int>(0), 10);
+    EXPECT_EQ(t.get<int>(1), 2);
+    EXPECT_EQ(t.get<int>(2), 3);*/
 }
 TEST(core, operation) {
-    cactus::Operation x;
-    // x.put(3);
+    /*cactus::Operation x;
+    x.put(3);
+    x.put(4);
+    auto z=x.compute();*/
+
 }
 TEST(core, graph) {
-    /*cactus::graph g;
-      cactus::Tensor p = cactus::Placeholder(g.named("p"),
-      cactus::DataType::kInt32,
-      {2,2});
-      cactus::Tensor x = cactus::Const(g,{ { 1, 2 },{ 3, 5 } });
-      cactus::Tensor y = cactus::Const(g,{ { 1, 2 },{ 3, 5 } });
-      cactus::Tensor z = cactus::matmul(g,x, y);
-      cactus::matmul(g,z, x);
-      g.run({"z"});
-      EXPECT_EQ(x.TotalBytes(), 16);
-      int iw[4];
-      memcpy(iw, z.data(), x.TotalBytes());
-      EXPECT_EQ(iw[0], 7);
-      EXPECT_EQ(iw[1], 12);
-      EXPECT_EQ(iw[2], 18);
-      EXPECT_EQ(iw[3], 31);*/
-    // z = cactus::scalar_mul(2,x);
+    cactus::Graph g;
+    cactus::Const(g, { 1 });
 }
