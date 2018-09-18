@@ -3,32 +3,55 @@
 #define SRC_NODE_HPP_
 
 #include "tensor.hpp"
+#include <vector>
 #include <cstring>
 #include <iostream>
+//#include <vector>
 
 namespace cactus {
 
 class Operation;
 enum NodeType {
     NtPlaceholder,
-    NtVariables,
+    NtVariable,
     NtConst,
     NtScalar,
     NtOperation
 };
+enum ComputeStatus {
+    CtNoCompute,
+    CtComputed,
+    CtQueuing
+};
 class Node {
 public:
-    Node() {}
-    /*std::size_t num_inputs() {
-        return inputs.size();
+    Node():cstatus_(CtNoCompute) {}
+    virtual std::size_t num_inputs() {
+        return 0;
     }
-    std::size_t num_outputs() {
-        return outputs.size();
-    }*/
+    virtual Node* input(std::size_t ) {
+        return NULL;
+    }
+    ComputeStatus status() {
+        return cstatus_;
+    };
+    void status(ComputeStatus cs) {
+        cstatus_= cs;
+    };
     virtual NodeType type() = 0;
-private:
-    /*std::vector<std::shared_ptr<Node>> inputs;
-    std::vector<std::shared_ptr<Node>> outputs;*/
+    const Tensor& tensor() {
+        return t;
+    }
+    std::string name() {
+        return name_;
+    }
+    void name(std::string v) {
+        name_ = v;
+    }
+protected:
+    Tensor t;
+    std::string name_;
+    ComputeStatus cstatus_;
 };
 
 class NodePlaceholder:public Node {
@@ -36,28 +59,21 @@ public:
     NodeType type() {
         return NtPlaceholder;
     }
-private:
-
 };
-class NodeVariables :public Node {
+class NodeVariable :public Node {
 public:
     NodeType type() {
-        return NtVariables;
+        return NtVariable;
     }
-private:
-    Tensor t;
 };
 class NodeConst :public Node {
 public:
-    NodeConst(const Tensor& v):t(v) {}
+    NodeConst(const Tensor& v){
+        t = v;
+    }
     NodeType type() {
         return NtConst;
     }
-    const Tensor& tensor() {
-        return t;
-    }
-private:
-    Tensor t;
 };
 
 class Output {
@@ -96,7 +112,8 @@ public:
             tensor = Tensor(first.tensor.dtype(),s);
 
             for (auto n:v){
-                std::memcpy(tensor.data(),n.tensor.data(),n.tensor.TotalBytes());
+                std::memcpy((char*)tensor.data()+offset,n.tensor.data(),n.tensor.TotalBytes());
+                offset += n.tensor.TotalBytes();
             }
         }
         Tensor tensor;
@@ -117,21 +134,30 @@ private:
     //Tensor tensor_;
 };
 
-class Operation :public Node{
+class Operation :public Node {
 public:
-    void put(Input v) {
+    void input(Node* v) {
         inputs.push_back(v);
     }
-    Output get(uint32_t idx) {
-        return outputs[idx];
+    Node* input(std::size_t idx) {
+        if (idx < inputs.size()) {
+            return inputs.at(idx);
+        }
+        return NULL;
     }
+    std::size_t num_inputs() {
+        return inputs.size();
+    }
+    /*Output output(uint32_t idx) {
+        return Output(this);
+    }*/
+
     NodeType type() {
         return NtOperation;
     }
     virtual void compute() = 0;
 protected:
-    std::vector<Input> inputs;
-    std::vector<Output> outputs;
+    std::vector<Node*> inputs;
 };
 }
 

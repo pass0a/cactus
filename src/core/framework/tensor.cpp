@@ -22,11 +22,11 @@ Tensor::Tensor(DataType type, Shape s) {
     init(type,s);
 }
 
-uint32_t Tensor::TotalBytes()
+uint32_t Tensor::TotalBytes() const
 {
     return buf_.size();
 }
-void* Tensor::data()
+void* Tensor::data() const
 {
     return buf_.data();
 }

@@ -11,14 +11,14 @@
 
 namespace cactus {
 
-const Output& Const(Graph& g,const Input::Initializer& v) {
+Output Const(Graph& g,const Input::Initializer& v) {
     return g.insert(std::make_shared<NodeConst>(v.tensor));
 }
-const Output& Variable(Graph& g, const Input::Initializer& v) {
-    return g.insert(std::make_shared<NodeConst>(v.tensor));
+Output Variable(Graph& g, const Input::Initializer& v) {
+    return g.insert(std::make_shared<NodeVariable>());
 }
-const Tensor Placeholder( DataType type, Shape s = {1,1}) {
-    return Tensor(type, s);
+Output Placeholder(Graph& g, DataType type, Shape s = {1,1}) {
+    return g.insert(std::make_shared<NodePlaceholder>());
 }
 
 }  // namespace cactus

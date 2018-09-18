@@ -14,7 +14,7 @@ namespace cactus {
 
 class Buffer {
  public:
-    Buffer():buf_(0) {
+    Buffer():buf_(0),size_(0) {
     }
     explicit Buffer(uint32_t size):buf_(0) {
         resize(size);
@@ -24,7 +24,7 @@ class Buffer {
     }
 
  public:
-    uint32_t size() {
+    uint32_t size() const {
         return size_;
     }
     int resize(uint32_t size) {

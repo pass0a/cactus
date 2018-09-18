@@ -11,8 +11,8 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 
 namespace cactus{
 struct Shape {
-    uint32_t rows;
-    uint32_t cols;
+    std::size_t rows;
+    std::size_t cols;
     int operator==(const Shape& v) const {
         if ((rows == v.rows) && (cols == v.cols)) {
             return 1;
@@ -30,12 +30,12 @@ public:
         init(DataTypeToEnum<T>::value, {1,1});
         *(T*)data() = scalar;
     }
-    uint32_t TotalBytes();
-    void* data();
+    uint32_t TotalBytes() const ;
+    void* data() const ;
     DataType dtype() const;
     const Shape& shape() const;
     template<typename T>
-    T get(int pos) {
+    T get(int pos) const {
         return ((T*)data())[pos];
     }
 private:
