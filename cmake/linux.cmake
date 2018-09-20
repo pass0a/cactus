@@ -1,20 +1,5 @@
 
 SET(PASSOA_COMPILER_GCC TRUE)
 add_definitions(-DPLAT_GCC)
-set(BOOST_ROOT /usr/)
-find_package(Boost REQUIRED)
 
-if(Boost_FOUND)
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS} )
-LINK_DIRECTORIES(${Boost_LIBRARY_DIRS} )
-endif()
-
-set(Boost_LIBs 
-    boost_system
-    boost_filesystem
-    boost_thread
-    boost_chrono
-    pthread
-    dl
-    )
-
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lstdc++")

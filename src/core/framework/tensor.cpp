@@ -22,7 +22,7 @@ Tensor::Tensor(DataType type, Shape s) {
     init(type,s);
 }
 
-uint32_t Tensor::TotalBytes() const
+uint32_t Tensor::totalBytes() const
 {
     return buf_.size();
 }

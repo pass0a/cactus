@@ -7,12 +7,15 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 
 #include "buffer.hpp"
 #include "types.h"
-
+#include <cstring>
 
 namespace cactus{
 struct Shape {
     std::size_t rows;
     std::size_t cols;
+    Shape():rows(0), cols(0) {}
+    Shape(std::size_t r,std::size_t c):rows(r),cols(c) {
+    }
     int operator==(const Shape& v) const {
         if ((rows == v.rows) && (cols == v.cols)) {
             return 1;
@@ -30,13 +33,21 @@ public:
         init(DataTypeToEnum<T>::value, {1,1});
         *(T*)data() = scalar;
     }
-    uint32_t TotalBytes() const ;
+    uint32_t totalBytes() const ;
     void* data() const ;
     DataType dtype() const;
     const Shape& shape() const;
     template<typename T>
     T get(int pos) const {
         return ((T*)data())[pos];
+    }
+    template<typename T>
+    void set(int pos,T val) const {
+        ((T*)data())[pos]=val;
+    }
+    void assgin(void* src,std::size_t len) {
+        if (len > totalBytes())len = totalBytes();
+        std::memcpy((char*)data(),src,len);
     }
 private:
     void init(const DataType& type,const Shape& s);

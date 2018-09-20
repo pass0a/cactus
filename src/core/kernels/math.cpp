@@ -12,13 +12,13 @@ namespace cactus {
         }
         template<typename T>
         void compute(Tensor& a, Tensor& b) {
-            Map<T>::type xt((T*)a.data(), a.shape().rows, a.shape().cols);
-            Map<T>::type yt((T*)b.data(), b.shape().rows, b.shape().cols);
-            Matrix<T>::type z = xt * yt;
+            auto xt = Map<T>::mapping(a);
+            auto yt = Map<T>::mapping(b);
+            typename Matrix<T>::type z = xt * yt;
 
             Shape s = { (std::size_t)z.rows(),(std::size_t)z.cols() };
             t = Tensor(DataTypeToEnum<T>::value, s);
-            std::memcpy(t.data(), z.data(), t.TotalBytes());
+            t.assgin(z.data(), z.size() * sizeof(T));
         }
         void compute() {
             auto x = inputs[0]->tensor();
@@ -34,13 +34,13 @@ namespace cactus {
         }
         template<typename T>
         void compute(Tensor& a,Tensor& b) {
-            Map<T>::type xt((T*)a.data(), a.shape().rows, a.shape().cols);
-            Map<T>::type yt((T*)b.data(), b.shape().rows, b.shape().cols);
-            Matrix<T>::type z = xt+yt;
+            auto xt = Map<T>::mapping(a);
+            auto yt = Map<T>::mapping(b);
+            typename Matrix<T>::type z = xt+yt;
             
             Shape s = { (std::size_t)z.rows(),(std::size_t)z.cols() };
             t= Tensor(DataTypeToEnum<T>::value, s);
-            std::memcpy(t.data(), z.data(), t.TotalBytes());
+            t.assgin(z.data(), z.size() * sizeof(T));
         }
         void compute() {
             auto x = inputs[0]->tensor();
@@ -49,12 +49,12 @@ namespace cactus {
             CASES(x.dtype(),compute<T>(x,y) );
         }
     };
-    Output matmul(Graph & g, Input x, Input b)
+    Output matmul(Graph & g, Input x, Input y)
     {
-        return g.insert(std::make_shared<MatMulOp>(x, b));
+        return g.insert(std::make_shared<MatMulOp>(x, y));
     }
-    Output Add(Graph & g, Input x, Input b)
+    Output Add(Graph & g, Input x, Input y)
     {
-        return g.insert(std::make_shared<AddOp>(x,b));
+        return g.insert(std::make_shared<AddOp>(x,y));
     }
 }

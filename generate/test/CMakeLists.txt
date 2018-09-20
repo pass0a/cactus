@@ -15,6 +15,7 @@ ADD_EXECUTABLE(cpptest
 				${PROJECT_SOURCE_DIR}/test/perceptron.cpp
 				${PROJECT_SOURCE_DIR}/src/core/framework/tensor.cpp
 				${PROJECT_SOURCE_DIR}/src/core/kernels/math.cpp
+				${PROJECT_SOURCE_DIR}/src/core/kernels/ops.cpp
 				${PROJECT_SOURCE_DIR}/3rd/googletest/googletest/src/gtest-all.cc
 				)
 if(MSVC)

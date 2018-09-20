@@ -25,7 +25,7 @@ TEST(core, buffer) {
 }
 TEST(core, tensor) {
      cactus::Tensor x(cactus::kFloat, { 3, 2 });
-     EXPECT_EQ(6*sizeof(float_t), x.TotalBytes());
+     EXPECT_EQ(6*sizeof(float_t), x.totalBytes());
      cactus::Tensor y(12.0215);
      EXPECT_EQ(*(double_t*)y.data(), 12.0215);
 }
@@ -63,9 +63,9 @@ TEST(core,matmul) {
     auto y = cactus::Const(g, { { 1, 2 },{ 3, 5 } });
     auto z = cactus::matmul(g, x, y);
     g.run(z);
-    EXPECT_EQ(x.node()->tensor().TotalBytes(), 16);
+    EXPECT_EQ(x.node()->tensor().totalBytes(), 16);
     int iw[4];
-    memcpy(iw, z.node()->tensor().data(), z.node()->tensor().TotalBytes());
+    memcpy(iw, z.node()->tensor().data(), z.node()->tensor().totalBytes());
     EXPECT_EQ(iw[0], 7);
     EXPECT_EQ(iw[1], 12);
     EXPECT_EQ(iw[2], 18);
@@ -107,7 +107,7 @@ TEST(graph, multiConst) {
     auto z1 = cactus::Add(g.opName("z1"), z, y);
     g.run(z1);
     int iw[4];
-    memcpy(iw, z1.node()->tensor().data(), z1.node()->tensor().TotalBytes());
+    memcpy(iw, z1.node()->tensor().data(), z1.node()->tensor().totalBytes());
     EXPECT_EQ(3, iw[0]);
     EXPECT_EQ(6, iw[1]);
     EXPECT_EQ(9, iw[2]);

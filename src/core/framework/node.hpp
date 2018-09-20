@@ -62,6 +62,9 @@ public:
 };
 class NodeVariable :public Node {
 public:
+    NodeVariable(Shape s,DataType dt) {
+        t = Tensor(dt,s);
+    }
     NodeType type() {
         return NtVariable;
     }
@@ -95,7 +98,7 @@ public:
             tensor = Tensor(DataTypeToEnum<T>::value, s);
             std::memcpy(tensor.data(),
                 &v,
-                tensor.TotalBytes());
+                tensor.totalBytes());
         }
         template<typename T>
         Initializer(const std::initializer_list<T>& v) {
@@ -103,7 +106,7 @@ public:
             tensor = Tensor(DataTypeToEnum<T>::value, s);
             std::memcpy(tensor.data(),
                 v.begin(),
-                tensor.TotalBytes());
+                tensor.totalBytes());
         }
         Initializer(const std::initializer_list<Initializer>& v) {
             uint32_t offset = 0;
@@ -112,8 +115,8 @@ public:
             tensor = Tensor(first.tensor.dtype(),s);
 
             for (auto n:v){
-                std::memcpy((char*)tensor.data()+offset,n.tensor.data(),n.tensor.TotalBytes());
-                offset += n.tensor.TotalBytes();
+                std::memcpy((char*)tensor.data()+offset,n.tensor.data(),n.tensor.totalBytes());
+                offset += n.tensor.totalBytes();
             }
         }
         Tensor tensor;
