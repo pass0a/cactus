@@ -33,7 +33,8 @@ TEST(exsample, perceptron) {
     //perceptron p(std::shared_ptr<cactus::operation>(new factive()));
     cactus::Graph g;
     
-    auto inputs = cactus::Variable(g, {1,1});
+    auto weight = cactus::Variable(g, { 1,1 }, cactus::DataType::kInt32);
+    auto weight = cactus::Variable(g, { 1,1 }, cactus::DataType::kInt32);
     g.run(result);
     EXPECT_EQ(0, result.node()->tensor().get<int>(0));
 }
