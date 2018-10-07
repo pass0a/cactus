@@ -1,6 +1,5 @@
 #include "tensor.hpp"
 
-
 namespace cactus {
 uint32_t type_size(DataType type){
     switch (type) {

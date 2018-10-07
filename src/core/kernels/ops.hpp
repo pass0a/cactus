@@ -12,7 +12,7 @@
 namespace cactus {
 
     Output Const(Graph& g, const Input::Initializer& v);
-    Output Variable(Graph& g, const Shape v, DataType dt);
+    Output Variable(Graph& g, const Input::Initializer& v);
     Output Placeholder(Graph& g, DataType type, Shape s = { 1,1 });
 }  // namespace cactus
 

@@ -24,43 +24,15 @@ TEST(core, buffer) {
     EXPECT_STREQ("12345", (char *)x.data());
 }
 TEST(core, tensor) {
-     cactus::Tensor x(cactus::kFloat, { 3, 2 });
-     EXPECT_EQ(6*sizeof(float_t), x.totalBytes());
-     cactus::Tensor y(12.0215);
-     EXPECT_EQ(*(double_t*)y.data(), 12.0215);
+    cactus::Tensor x(cactus::kFloat, {3, 2});
+    EXPECT_EQ(6 * sizeof(float_t), x.totalBytes());
+    cactus::Tensor y(12.0215);
+    EXPECT_EQ(*(double_t *)y.data(), 12.0215);
 }
-TEST(core, constant) {
-    /*cactus::Graph g;
-    auto x = cactus::Const(g, { { 1,3 },{ 2,4 } });
-    auto y = cactus::Const(g, { { 1,3 },{ 2,4 } });
-    auto a = cactus::Const(g, 2);
-    auto z = cactus::Add(g,x,y);
-    g.run(z);
-    EXPECT_EQ(x.node()->tensor().shape().rows, 2);
-    EXPECT_EQ(x.node()->tensor().shape().cols, 2);
-    EXPECT_EQ(x.node()->tensor().TotalBytes(), 16);
-    EXPECT_EQ(z.node()->tensor().get<int>(0),2);*/
-////    EXPECT_EQ(iw[0], 1);
-////    EXPECT_EQ(iw[1], 2);
-////    EXPECT_EQ(iw[2], 3);
-////    EXPECT_EQ(iw[3], 3);
-////    EXPECT_EQ(iw[4], 5);
-////    EXPECT_EQ(iw[5], 9);
-////
-////    x = cactus::Const({ { 1.0, 2.0, 12.9485 } });
-////    EXPECT_EQ(x.shape().rows, 1);
-////    EXPECT_EQ(x.shape().cols, 3);
-////    EXPECT_EQ(x.TotalBytes(), 24);
-////    double_t dw[3];
-////    memcpy(dw, x.data(), x.TotalBytes());
-////    EXPECT_EQ(dw[0], 1.0);
-////    EXPECT_EQ(dw[1], 2.0);
-////    EXPECT_EQ(dw[2], 12.9485);
-}
-TEST(core,matmul) {
+TEST(core, matmul) {
     cactus::Graph g;
-    auto x = cactus::Const(g, { { 1, 2 },{ 3, 5 } });
-    auto y = cactus::Const(g, { { 1, 2 },{ 3, 5 } });
+    auto x = cactus::Const(g, {{1, 2}, {3, 5}});
+    auto y = cactus::Const(g, {{1, 2}, {3, 5}});
     auto z = cactus::matmul(g, x, y);
     g.run(z);
     EXPECT_EQ(x.node()->tensor().totalBytes(), 16);
@@ -70,21 +42,38 @@ TEST(core,matmul) {
     EXPECT_EQ(iw[1], 12);
     EXPECT_EQ(iw[2], 18);
     EXPECT_EQ(iw[3], 31);
-    //z = cactus::scalar_mul(2,x);
+    // z = cactus::scalar_mul(2,x);
 }
-//TEST(core, placeholder) {
+// TEST(core, placeholder) {
 //    /*cactus::scope g;
 //      auto z = cactus::add(g,1,2);
 //      g.run(z);*/
 //}
-TEST(core, input) {
-    /*cactus::Graph g;
-    auto s=cactus::Const(g, { 10, 2, 3 });
-    cactus::Input x(s);
-    cactus::Tensor t = x.node()->tensor();
-    EXPECT_EQ(t.get<int>(0), 10);
-    EXPECT_EQ(t.get<int>(1), 2);
-    EXPECT_EQ(t.get<int>(2), 3);*/
+TEST(core, variable1) {
+    cactus::Graph g;
+    auto x = cactus::Variable(g, {10, 2, 3});
+    auto y = cactus::Variable(g, {12, 5, 3});
+    auto new_x = cactus::Add(g, x, y);
+    auto z=cactus::assign(g,x,new_x)
+    auto init = g.initAllVariable();
+    g.run(init);
+    for(int i=0;i<3;i++){
+      g.run(z);
+    }
+}
+TEST(core, variable) {
+    cactus::Graph g;
+    auto x = cactus::Variable(g, {10, 2, 3});
+    auto y = cactus::Variable(g, {12, 5, 3});
+    // auto z=cactus::Add(g,x,y);
+    auto init = g.initAllVariable();
+    g.run(init);
+    EXPECT_EQ(x.node()->tensor().get<int>(0), 10);
+    EXPECT_EQ(x.node()->tensor().get<int>(1), 2);
+    EXPECT_EQ(x.node()->tensor().get<int>(2), 3);
+    EXPECT_EQ(y.node()->tensor().get<int>(0), 12);
+    EXPECT_EQ(y.node()->tensor().get<int>(1), 5);
+    EXPECT_EQ(y.node()->tensor().get<int>(2), 3);
 }
 TEST(graph, scalarConst) {
     cactus::Graph g;
@@ -100,8 +89,8 @@ TEST(graph, scalarConst) {
 }
 TEST(graph, multiConst) {
     cactus::Graph g;
-    auto x = cactus::Const(g.opName("x"), { { 1,2 },{3,4} });
-    auto y = cactus::Const(g.opName("y"), { { 1,2 },{ 3,4 } }); 
+    auto x = cactus::Const(g.opName("x"), {{1, 2}, {3, 4}});
+    auto y = cactus::Const(g.opName("y"), {{1, 2}, {3, 4}});
     auto a = cactus::Const(g.opName("a"), 3);
     auto z = cactus::Add(g.opName("z"), x, y);
     auto z1 = cactus::Add(g.opName("z1"), z, y);

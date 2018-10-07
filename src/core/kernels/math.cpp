@@ -8,7 +8,7 @@ namespace cactus {
     class MatMulOp :public Operation {
     public:
         MatMulOp(Input& x, Input& y) {
-            inputs = { x.node(),y.node() };
+          inputs = { x.node(),y.node() };
         }
         template<typename T>
         void compute(Tensor& a, Tensor& b) {
@@ -45,6 +45,8 @@ namespace cactus {
         void compute() {
             auto x = inputs[0]->tensor();
             auto y = inputs[1]->tensor();
+            std::cout<<x.dtype()<<":"<<y.dtype()<<std::endl;
+            std::cout<<x.shape().rows<<":"<<y.shape().rows<<std::endl;
             assert((x.shape() == y.shape()) && (x.dtype() == y.dtype()));
             CASES(x.dtype(),compute<T>(x,y) );
         }

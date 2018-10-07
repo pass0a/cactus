@@ -30,7 +30,8 @@ public:
     Tensor(DataType type, Shape s);
     template<typename T>
     Tensor(T scalar) {
-        init(DataTypeToEnum<T>::value, {1,1});
+      DataType dt=DataTypeToEnum<T>::value;
+      init(dt, {1,1});
         *(T*)data() = scalar;
     }
     uint32_t totalBytes() const ;
@@ -39,7 +40,10 @@ public:
     const Shape& shape() const;
     template<typename T>
     T get(int pos) const {
+      if(buf_.size()>pos){
         return ((T*)data())[pos];
+      }
+      return T(0);
     }
     template<typename T>
     void set(int pos,T val) const {

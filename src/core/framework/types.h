@@ -83,10 +83,10 @@ MATCH_TYPE_AND_ENUM(uint64_t, kUint64);
     CASE(uint32_t, SINGLE_ARG(STMTS))                             \
     CASE(uint64_t, SINGLE_ARG(STMTS))                            \
     case kInvalid:                                           \
-      assert(0);                                                 \
+      assert(0 && "tensor was Invaild!!!");                                                 \
       break;                                                   \
     default:                                                   \
-      assert(0);                                                 \
+      assert(0 && "tensor not supported this Type!!!");                                                 \
       break;                                                   \
   }
 
