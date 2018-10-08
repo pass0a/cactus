@@ -11,7 +11,8 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 
 namespace cactus {
     Output matmul(Graph& g, Input x, Input b);
-    Output Add(Graph& g, Input x, Input b);
+    Output add(Graph& g, Input x, Input b);
+    Output assign(Graph & g, Input x, Input y);
 }
 
 #endif  // SRC_MATRIX_HPP_
