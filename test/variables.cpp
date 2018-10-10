@@ -16,6 +16,7 @@
 #include "framework/variables.hpp"
 #include "kernels/math.h"
 #include "kernels/ops.hpp"
+#include <vector>
 
 TEST(core, buffer) {
     cactus::Buffer x;
@@ -44,27 +45,44 @@ TEST(core, matmul) {
     EXPECT_EQ(iw[3], 31);
     // z = cactus::scalar_mul(2,x);
 }
-// TEST(core, placeholder) {
-//    /*cactus::scope g;
-//      auto z = cactus::add(g,1,2);
-//      g.run(z);*/
-//}
+TEST(core, placeholder) {
+    cactus::Graph g;
+    auto a = cactus::Placeholder(g.opName("x"), cactus::DataType::kDouble, { 2,2 });
+    auto b = cactus::Const(g, { {1,2},{3,4} });
+    auto z = cactus::add(g,a,b);
+    g.run(z, { { "x",{{1,2},{3,3}} }, {"y",a} });
+    EXPECT_EQ(z.node()->tensor().get<int>(0), 2);
+    EXPECT_EQ(z.node()->tensor().get<int>(1), 4);
+    EXPECT_EQ(z.node()->tensor().get<int>(2), 6);
+    EXPECT_EQ(z.node()->tensor().get<int>(3), 7);
+}
 TEST(core, variable1) {
     cactus::Graph g;
+    
     auto x = cactus::Variable(g, {10, 2, 3});
     auto y = cactus::Variable(g, {12, 5, 3});
     auto new_x = cactus::add(g, x, y);
     auto z=cactus::assign(g,x,new_x);
+    auto new_y = cactus::add(g, z, y);
+    z = cactus::assign(g,x,new_y);
+
     auto init = g.initAllVariable();
     g.run(init);
     g.run(z);
-    EXPECT_EQ(z.node()->tensor().get<int>(0), 22);
-    EXPECT_EQ(z.node()->tensor().get<int>(1), 7);
-    EXPECT_EQ(z.node()->tensor().get<int>(2), 6);
-    g.run(z);
+    EXPECT_EQ(x.node()->tensor().data(), z.node()->tensor().data());
+    EXPECT_EQ(z.node()->tensor().get<int>(0), 34);
     EXPECT_EQ(x.node()->tensor().get<int>(0), 34);
-    EXPECT_EQ(x.node()->tensor().get<int>(1), 12);
-    EXPECT_EQ(x.node()->tensor().get<int>(2), 9);
+    EXPECT_EQ(z.node()->tensor().get<int>(1), 12);
+    EXPECT_EQ(z.node()->tensor().get<int>(2), 9);
+    g.run(z);
+    EXPECT_EQ(x.node()->tensor().data(), z.node()->tensor().data());
+    EXPECT_EQ(z.node()->tensor().get<int>(0), 58);
+    EXPECT_EQ(x.node()->tensor().get<int>(0), 58);
+    EXPECT_EQ(x.node()->tensor().get<int>(1), 22);
+    EXPECT_EQ(x.node()->tensor().get<int>(2), 15);
+    EXPECT_EQ(y.node()->tensor().get<int>(0), 12);
+    EXPECT_EQ(y.node()->tensor().get<int>(1), 5);
+    EXPECT_EQ(y.node()->tensor().get<int>(2), 3);
 }
 TEST(core, variable) {
     cactus::Graph g;

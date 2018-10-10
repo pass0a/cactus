@@ -18,7 +18,7 @@ namespace cactus {
 
             Shape s = { (std::size_t)z.rows(),(std::size_t)z.cols() };
             t = Tensor(DataTypeToEnum<T>::value, s);
-            t.assgin(z.data(), z.size() * sizeof(T));
+            t.assign(z.data(), z.size() * sizeof(T));
         }
         void compute() {
             auto x = inputs[0]->tensor();
@@ -40,7 +40,7 @@ namespace cactus {
             
             Shape s = { (std::size_t)z.rows(),(std::size_t)z.cols() };
             t= Tensor(DataTypeToEnum<T>::value, s);
-            t.assgin(z.data(), z.size() * sizeof(T));
+            t.assign(z.data(), z.size() * sizeof(T));
         }
         void compute() {
             auto x = inputs[0]->tensor();
@@ -57,10 +57,10 @@ namespace cactus {
             inputs = { x.node(),y.node() };
         }
         void compute() {
-            auto x = inputs[0]->tensor();
-            auto y = inputs[1]->tensor();
+            auto& x = inputs[0]->tensor();
+            auto& y = inputs[1]->tensor();
             assert((x.shape() == y.shape()) && (x.dtype() == y.dtype()));
-            x.assgin(y.data(),y.totalBytes());
+            x.assign(y);
             t = x;
         }
     };

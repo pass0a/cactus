@@ -22,12 +22,16 @@ class Graph {
         for (auto v : needcompute) {
             switch (v->type()) {
             case NtOperation:
-                ((Operation *)v)->compute();
+                ((Operation *)v)->run();
                 break;
             default:
                 break;
             }
         }
+        for (auto v : needcompute) {
+            v->status(CtNoCompute);
+        }
+        needcompute.clear();
     }
     void computeQueue(Output &out) {
         Node *root = out.node();
@@ -60,6 +64,18 @@ class Graph {
         return *this;
     }
     void run(Output &out) {
+        computeQueue(out);
+        compute();
+        return;
+    }
+    void run(Output &out, const std::initializer_list<std::pair<std::string,Input::Initializer>> &v) {
+        std::map<std::string, Node *>::iterator it;
+        for (auto n : v) {
+            it=named.find(n.first);
+            if (it != named.end()) {
+                it->second->tensor().assign(n.second.tensor);
+            }
+        }
         computeQueue(out);
         compute();
         return;

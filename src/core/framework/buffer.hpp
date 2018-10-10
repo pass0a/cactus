@@ -28,11 +28,7 @@ class Buffer {
         return size_;
     }
     int resize(uint32_t size) {
-        if (buf_.get()) {
-            buf_.reset(std::realloc(buf_.get(), size),std::free);
-        } else {
-            buf_.reset(std::malloc(size), std::free);
-        }
+        buf_.reset(std::malloc(size), std::free);
         size_ = size;
         assert(buf_.get() != NULL);
         return 0;

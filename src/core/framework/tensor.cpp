@@ -36,6 +36,17 @@ const Shape & Tensor::shape() const
 {
     return shape_;
 }
+void Tensor::assign(void * src, std::size_t len)
+{
+    if (len > totalBytes())len = totalBytes();
+    std::memcpy((char*)data(), src, len);
+}
+void Tensor::assign(const Tensor & t)
+{
+    //assert(t.dtype()== dtype_,t.shape() == shape_);
+    init(t.dtype(),t.shape());
+    std::memcpy(data(), t.data(), t.totalBytes());
+}
 void Tensor::init(const DataType& type,const Shape& s) {
     uint32_t size = type_size(type);
     shape_ = s;

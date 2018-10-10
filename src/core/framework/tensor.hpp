@@ -39,7 +39,7 @@ public:
     DataType dtype() const;
     const Shape& shape() const;
     template<typename T>
-    T get(int pos) const {
+    T get(uint32_t pos) const {
       if(buf_.size()>pos){
         return ((T*)data())[pos];
       }
@@ -49,10 +49,8 @@ public:
     void set(int pos,T val) const {
         ((T*)data())[pos]=val;
     }
-    void assgin(void* src,std::size_t len) {
-        if (len > totalBytes())len = totalBytes();
-        std::memcpy((char*)data(),src,len);
-    }
+    void assign(void* src, std::size_t len);
+    void assign(const Tensor& t);
 private:
     void init(const DataType& type,const Shape& s);
 private:

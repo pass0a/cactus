@@ -21,8 +21,12 @@ class Node {
     ComputeStatus status() { return cstatus_; };
     void status(ComputeStatus cs) { cstatus_ = cs; };
     virtual NodeType type() = 0;
-  virtual void compute() {std::cout<< "Node:" <<type() <<std::endl;}
-    const Tensor &tensor() { return t; }
+    void run() {
+        compute();
+        status(CtComputed);
+    }
+    virtual void compute() {std::cout<< "Node:" <<type() <<std::endl;}
+    Tensor &tensor() { return t; }
     std::string name() { return name_; }
     void name(std::string v) { name_ = v; }
 
@@ -76,6 +80,9 @@ class Input {
             Shape s = {1, v.size()};
             tensor = Tensor(DataTypeToEnum<T>::value, s);
             std::memcpy(tensor.data(), v.begin(), tensor.totalBytes());
+        }
+        Initializer(const Output& v) {
+            tensor.assign(v.node()->tensor());
         }
         Initializer(const std::initializer_list<Initializer> &v) {
             uint32_t offset = 0;
