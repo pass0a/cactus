@@ -19,6 +19,8 @@ ADD_EXECUTABLE(cpptest
 				${PROJECT_SOURCE_DIR}/src/core/kernels/ops_graph.cpp
 				${PROJECT_SOURCE_DIR}/3rd/googletest/googletest/src/gtest-all.cc
 				)
+ADD_EXECUTABLE(adtest
+				${PROJECT_SOURCE_DIR}/test/ad.cpp)
 if(MSVC)
 else()
 target_link_libraries(cpptest pthread)

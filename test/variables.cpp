@@ -125,3 +125,9 @@ TEST(graph, multiConst) {
     EXPECT_EQ(9, iw[2]);
     EXPECT_EQ(12, iw[3]);
 }
+TEST(core,qiudao) {
+    cactus::Graph g;
+    auto x = cactus::Const(g.opName("x"), { { 1, 2 },{ 3, 4 } });
+    //auto y = cactus::grad(g,x);
+    //EXPECT_EQ(0, y.node()->tensor().get<int>(0));
+}
