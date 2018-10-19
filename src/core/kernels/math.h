@@ -13,6 +13,7 @@ namespace cactus {
     Output matmul(Graph& g, Input x, Input b);
     Output add(Graph& g, Input x, Input b);
     Output assign(Graph & g, Input x, Input y);
+    Output backward(Graph& g,Input x);
 }
 
 #endif  // SRC_MATRIX_HPP_

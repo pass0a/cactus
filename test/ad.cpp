@@ -63,9 +63,7 @@ namespace SAD  // Simple Automatic Differentiation
     }
 }
 
-
-int main()
-{
+void test() {
     using namespace SAD;
     using namespace std;
 
@@ -89,4 +87,11 @@ int main()
     cout << "x = [" << x[0].val << ", " << x[1].val << ", " << x[2].val << "]" << endl;
     cout << "z = [" << z1.val << ", " << z2.val << "]" << endl;
     cout << "[dz1/dx0, dz2/dx0] = [" << z1.dval << "," << z2.dval << "]" << endl;
+}
+int main()
+{
+    using namespace SAD;
+    using namespace std;
+    ADV y1 = 1;
+    cout << y1.dval << endl;
 }

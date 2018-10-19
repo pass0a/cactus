@@ -75,4 +75,8 @@ namespace cactus {
     Output assign(Graph & g, Input x, Input y) {
         return g.insert(std::make_shared<AssignOp>(x, y));
     }
+    Output backward(Graph & g, Input x)
+    {
+        return Output();
+    }
 }
