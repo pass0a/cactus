@@ -45,6 +45,45 @@ TEST(core, matmul) {
     EXPECT_EQ(iw[3], 31);
     // z = cactus::scalar_mul(2,x);
 }
+TEST(math, pow) {
+    cactus::Graph g;
+    auto x = cactus::Const(g, { { 1, 2 },{ 3, 4 } });
+    auto y = cactus::Const(g, { { 1, 2 },{ 3, 4 } });
+    auto z = cactus::pow(g, x, y);
+    g.run(z);
+    EXPECT_EQ(x.node()->tensor().totalBytes(), 16);
+    int iw[4];
+    memcpy(iw, z.node()->tensor().data(), z.node()->tensor().totalBytes());
+    EXPECT_EQ(iw[0], 1);
+    EXPECT_EQ(iw[1], 4);
+    EXPECT_EQ(iw[2], 27);
+    EXPECT_EQ(iw[3], 256);
+    // z = cactus::scalar_mul(2,x);
+}
+TEST(math, pow1) {
+    cactus::Graph g;
+    auto x = cactus::Const(g, 3);
+    auto y = cactus::Const(g, 5);
+    auto z = cactus::pow(g, x, y);
+    g.run(z);
+    EXPECT_EQ(x.node()->tensor().totalBytes(), 4);
+    EXPECT_EQ(z.node()->tensor().get<int>(0), 243);
+    // z = cactus::scalar_mul(2,x);
+}
+TEST(math, pow2) {
+    cactus::Graph g;
+    auto x = cactus::Variable(g.opName("x"), { { 1, 2 },{ 3, 4 } });
+    auto y = cactus::Const(g, 3);
+    auto z = cactus::pow(g, x, y);
+    g.run(g.initAllVariable());
+    g.run(z);
+    EXPECT_EQ(x.node()->tensor().totalBytes(), 16);
+    EXPECT_EQ(z.node()->tensor().get<int>(0), 1);
+    EXPECT_EQ(z.node()->tensor().get<int>(1), 8);
+    EXPECT_EQ(z.node()->tensor().get<int>(2), 27);
+    EXPECT_EQ(z.node()->tensor().get<int>(3), 64);
+    // z = cactus::scalar_mul(2,x);
+}
 TEST(core, placeholder) {
     cactus::Graph g;
     auto a = cactus::Placeholder(g.opName("x"), cactus::DataType::kDouble, { 2,2 });
@@ -126,8 +165,14 @@ TEST(graph, multiConst) {
     EXPECT_EQ(12, iw[3]);
 }
 TEST(core,qiudao) {
-    cactus::Graph g;
-    auto x = cactus::Const(g.opName("x"), { { 1, 2 },{ 3, 4 } });
-    auto y = cactus::grad(g,x);
-    //EXPECT_EQ(0, y.node()->tensor().get<int>(0));
+    /*cactus::Graph g;
+    auto x = cactus::Variable(g, { { 1, 2 },{ 3, 4 } });
+    auto a = cactus::Const(g.opName("a"), 3);
+    auto y = cactus::pow(g.opName("y"), x,a);
+    auto z = cactus::backward(g,y);
+    g.run(z);
+    EXPECT_EQ(3, z.node()->tensor().get<int>(0));
+    EXPECT_EQ(12, z.node()->tensor().get<int>(1));
+    EXPECT_EQ(27, z.node()->tensor().get<int>(2));
+    EXPECT_EQ(48, z.node()->tensor().get<int>(3));*/
 }

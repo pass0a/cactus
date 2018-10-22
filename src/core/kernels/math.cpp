@@ -51,6 +51,35 @@ namespace cactus {
             CASES(x.dtype(),compute<T>(x,y) );
         }
     };
+    class PowOp :public Operation {
+    public:
+        PowOp(Input& x, Input& y) {
+            inputs = { x.node(),y.node() };
+        }
+        template<typename T>
+        void compute(Tensor& a, Tensor& b) {
+            auto xt = Map<T>::mapping(a);
+            auto yt = Map<T>::mapping(b);
+            typename Matrix<T>::type z;
+            if (a.shape().total == 1 && b.shape().total()==1) {
+                z = Eigen::pow(xt.array(), yt.array());
+            }
+            
+            
+            Shape s = { (std::size_t)z.rows(),(std::size_t)z.cols() };
+            t = Tensor(DataTypeToEnum<T>::value, s);
+            t.assign(z.data(), z.size() * sizeof(T));
+        }
+        void compute() {
+            auto x = inputs[0]->tensor();
+            auto y = inputs[1]->tensor();
+            
+            std::cout<<x.dtype()<<":"<<y.dtype()<<std::endl;
+            
+            assert(/*(x.shape() == y.shape()) &&*/ (x.dtype() == y.dtype()));
+            CASES(x.dtype(), compute<T>(x, y));
+        }
+    };
     class AssignOp :public Operation {
     public:
         AssignOp(Input& x, Input& y) {
@@ -64,6 +93,16 @@ namespace cactus {
             t = x;
         }
     };
+    class BackwardOp :public Operation {
+    public:
+        BackwardOp(Input& x) {
+            inputs = { x.node()};
+        }
+        void compute() {
+            auto& x = inputs[0];
+            t = x->tensor();
+        }
+    };
     Output matmul(Graph & g, Input x, Input y)
     {
         return g.insert(std::make_shared<MatMulOp>(x, y));
@@ -72,11 +111,15 @@ namespace cactus {
     {
         return g.insert(std::make_shared<AddOp>(x,y));
     }
+    Output pow(Graph & g, Input x, Input y)
+    {
+        return g.insert(std::make_shared<PowOp>(x, y));
+    }
     Output assign(Graph & g, Input x, Input y) {
         return g.insert(std::make_shared<AssignOp>(x, y));
     }
     Output backward(Graph & g, Input x)
     {
-        return Output();
+        return g.insert(std::make_shared<BackwardOp>(x));
     }
 }

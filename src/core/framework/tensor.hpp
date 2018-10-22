@@ -22,6 +22,9 @@ struct Shape {
         }
         return 0;
     }
+    int total() {
+        return rows*cols;
+    }
 };
 
 class Tensor {
@@ -29,7 +32,7 @@ public:
     Tensor();
     Tensor(DataType type, Shape s);
     template<typename T>
-    Tensor(T scalar) {
+    Tensor(T scalar) :dtype_(kInvalid) {
       DataType dt=DataTypeToEnum<T>::value;
       init(dt, {1,1});
         *(T*)data() = scalar;

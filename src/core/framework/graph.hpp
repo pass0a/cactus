@@ -16,93 +16,115 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 
 namespace cactus {
 
-class Graph {
-  private:
-    void compute() {
-        for (auto v : needcompute) {
-            switch (v->type()) {
-            case NtOperation:
-                ((Operation *)v)->run();
-                break;
-            default:
-                break;
-            }
-        }
-        for (auto v : needcompute) {
-            v->status(CtNoCompute);
-        }
-        needcompute.clear();
-    }
-    void computeQueue(Output &out) {
-        Node *root = out.node();
-        std::size_t nums = 0;
-        std::deque<std::pair<Node *, std::size_t>> tmp;
-        tmp.push_back(std::make_pair(root, 0));
-        while (!tmp.empty()) {
-            root = tmp.back().first;
-            nums = root->num_inputs();
-            if (root == NULL)
-                continue;
-            if (!tmp.back().second) {
-                tmp.back().second = 1;
-                for (size_t i = 0; i < nums; i++) {
-                    tmp.push_back(std::make_pair(root->input(nums - i - 1), 0));
+    class Graph {
+    private:
+        void compute() {
+            for (auto v : needcompute) {
+                switch (v->type()) {
+                case NtOperation:
+                case NtInitOp:
+                    ((Operation *)v)->run();
+                    break;
+                default:
+                    break;
                 }
-            } else {
-              if (root->status() == CtNoCompute && (root->type()==NtOperation)) {
-                    root->status(CtQueuing);
-                    needcompute.push_back(root);
+            }
+            for (auto v : needcompute) {
+                v->status(CtNoCompute);
+            }
+        }
+        void computeQueue(Output &out) {
+            Node *root = out.node();
+            std::size_t nums = 0;
+            std::deque<std::pair<Node *, std::size_t>> tmp;
+
+            if (root == NULL) {
+                return;
+            }
+
+            tmp.push_back(std::make_pair(root, 0));
+            while (!tmp.empty()) {
+                root = tmp.back().first;
+                if (root == NULL)
+                    continue;
+                nums = root->num_inputs();
+                if (!tmp.back().second) {
+                    tmp.back().second = 1;
+                    for (size_t i = 0; i < nums; i++) {
+                        tmp.push_back(std::make_pair(root->input(nums - i - 1), 0));
+                    }
                 }
-                tmp.pop_back();
+                else {
+                    if ((root->type() == NtVariable) || (root->type() == NtPlaceholder)) {
+                        if (root->status() != CtComputed) {
+                            std::cout << "[Error] Variabley '" << root->name() << "' is not init!!!" << std::endl;
+                            needcompute.clear();
+                            return;
+                        }
+                    }else if ((root->status() == CtNoCompute) && (root->type() == NtOperation)) {
+                        root->status(CtQueuing);
+                        needcompute.push_back(root);
+                    }
+                    tmp.pop_back();
+                }
             }
         }
-    }
 
-  public:
-    Graph &opName(std::string name) {
-        op_named = name;
-        return *this;
-    }
-    void run(Output &out) {
-        computeQueue(out);
-        compute();
-        return;
-    }
-    void run(Output &out, const std::initializer_list<std::pair<std::string,Input::Initializer>> &v) {
-        std::map<std::string, Node *>::iterator it;
-        for (auto n : v) {
-            it=named.find(n.first);
-            if (it != named.end()) {
-                it->second->tensor().assign(n.second.tensor);
+    public:
+        Graph &opName(std::string name) {
+            op_named = name;
+            return *this;
+        }
+        void computeQueue2(Output &out) {
+            Node* root = out.node();
+            needcompute.clear();
+            if (root->type() == NtInitOp) {
+                needcompute.push_back(root); 
+            }
+            else {
+                computeQueue(out);
             }
         }
-        computeQueue(out);
-        compute();
-        return;
-    }
-    Output insert(const std::shared_ptr<Node> nptr) {
-        all.push_back(nptr);
-        if (op_named.size()) {
-            nptr->name(op_named);
-            named.insert(std::pair<std::string, Node *>(op_named, nptr.get()));
-            op_named = "";
+        void run(Output &out) {
+            computeQueue2(out);
+            compute();
+            return;
         }
-        if (nptr->type() == NtVariable) {
-          variables.push_back(nptr.get());
+        void run(Output &out, const std::initializer_list<std::pair<std::string, Input::Initializer>> &v) {
+            std::map<std::string, Node *>::iterator it;
+            for (auto n : v) {
+                it = named.find(n.first);
+                if ((it != named.end()) && (it->second->type()==NtPlaceholder) ) {
+                    ((NodePlaceholder*)(it->second))->assign(n.second.tensor);
+                }
+            }
+            computeQueue2(out);
+            compute();
+            return;
         }
-        return Output(nptr.get());
-    }
-    Output initAllVariable() {
-        return insert(std::make_shared<InitVariable>(variables));
-    }
+        Output insert(const std::shared_ptr<Node> nptr) {
+            all.push_back(nptr);
+            if (op_named.size()) {
+                nptr->name(op_named);
+                named.insert(std::pair<std::string, Node *>(op_named, nptr.get()));
+                op_named = "";
+            }
+            if (nptr->type() == NtVariable) {
+                variables.push_back(nptr.get());
+            }
+            return Output(nptr.get());
+        }
+        Output initAllVariable() {
+            return insert(std::make_shared<InitVariable>(variables));
+        }
 
-  private:
-    std::map<std::string, Node *> named;
-    std::vector<std::shared_ptr<Node>> all;
-    std::deque<Node *> needcompute;
-    std::vector<Node *> variables;
-    std::string op_named;
-};
+    private:
+        std::map<std::string, Node *> named;
+        std::vector<std::shared_ptr<Node>> all;
+        std::deque<Node *> needcompute;
+        std::vector<Node *> variables;
+        std::string op_named;
+    };
 } // namespace cactus
 
 #endif // SRC_GRAPH_HPP_

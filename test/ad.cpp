@@ -2,6 +2,8 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
+#include <Eigen/Dense>
+
 namespace SAD  // Simple Automatic Differentiation
 {
     class ADV
@@ -90,8 +92,8 @@ void test() {
 }
 int main()
 {
-    using namespace SAD;
-    using namespace std;
-    ADV y1 = 1;
-    cout << y1.dval << endl;
+    using namespace Eigen;
+    Array4i x(1,2,3,4);
+    auto z=pow(3, 5);
+    std::cout << z << std::endl;
 }

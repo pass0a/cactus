@@ -12,6 +12,7 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 namespace cactus {
     Output matmul(Graph& g, Input x, Input b);
     Output add(Graph& g, Input x, Input b);
+    Output pow(Graph& g, Input x, Input b);
     Output assign(Graph & g, Input x, Input y);
     Output backward(Graph& g,Input x);
 }

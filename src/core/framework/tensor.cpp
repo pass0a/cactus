@@ -14,10 +14,10 @@ uint32_t type_size(DataType type){
     }
     return 0;
 }
-Tensor::Tensor(){
+Tensor::Tensor() :dtype_(kInvalid) {
     
 }
-Tensor::Tensor(DataType type, Shape s) {
+Tensor::Tensor(DataType type, Shape s) :dtype_(kInvalid) {
     init(type,s);
 }
 

@@ -21,7 +21,9 @@ enum DataType {
 
 // Validates type T for whether it is a supported DataType.
 template <class T>
-struct IsValidDataType;
+struct IsValidDataType {
+    static constexpr bool value = false;
+};
 
 // DataTypeToEnum<T>::v() and DataTypeToEnum<T>::value are the DataType
 // constants for T, e.g. DataTypeToEnum<float>::v() is DT_FLOAT.

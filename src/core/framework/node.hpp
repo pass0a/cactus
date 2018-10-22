@@ -11,7 +11,7 @@
 namespace cactus {
 
 class Operation;
-enum NodeType { NtPlaceholder, NtVariable, NtConst, NtScalar, NtOperation };
+enum NodeType { NtPlaceholder, NtVariable, NtConst, NtInitOp, NtOperation };
 enum ComputeStatus { CtNoCompute, CtComputed, CtQueuing };
 class Node {
   public:
@@ -40,6 +40,10 @@ class NodePlaceholder : public Node {
   public:
     NodePlaceholder(Shape s, DataType dt) {}
     NodeType type() { return NtPlaceholder; }
+    void assign(const Tensor& v) {
+        t = v;
+        status(CtComputed);
+    }
 };
 class NodeVariable : public Node {
   public:
@@ -47,13 +51,14 @@ class NodeVariable : public Node {
     NodeType type() { return NtVariable; }
   virtual void compute(){
     t=init_val;
+    status(CtComputed);
   }
   private:
     Tensor init_val;
 };
 class NodeConst : public Node {
   public:
-    NodeConst(const Tensor &v) { t = v; }
+    NodeConst(const Tensor &v) { cstatus_=(CtNoCompute); t = v; }
     NodeType type() { return NtConst; }
 };
 
@@ -62,7 +67,10 @@ class Output {
     Output() : node_(NULL) {}
     Output(const Output &o) { node_ = o.node(); }
     Output(Node *n) : node_(n) {}
-    Node *node() const { return node_; }
+    Node *node() const { 
+        assert(node_ != NULL);
+        return node_; 
+    }
 
   private:
     Node *node_;
