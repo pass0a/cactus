@@ -72,28 +72,18 @@ void test() {
     static const double PI = 3.1415926;
     vector<ADV> x;
 
-    x.emplace_back(PI, 1);  // x = [PI, 2, 1]
-    x.emplace_back(2, 0);
-    x.emplace_back(1, 0);
+    x.emplace_back(3, 0);
+    x.emplace_back(4, 1);
 
-    ADV y1 = cos(x[0]);
-    ADV y2 = sin(x[0]);
-    ADV y3 = x[1] * y1;
-    ADV y4 = x[2] * y2;
-    ADV y5 = x[1] * y2;
-    ADV y6 = x[2] * y1;
+    ADV y1 = x[0]*x[0];
+    ADV y2 = x[1] + 2;
+    ADV z1 = y1*x[1] + y2;
 
-    ADV z1 = y3 + y4;
-    ADV z2 = y6 - y5;
-
-    cout << "x = [" << x[0].val << ", " << x[1].val << ", " << x[2].val << "]" << endl;
-    cout << "z = [" << z1.val << ", " << z2.val << "]" << endl;
-    cout << "[dz1/dx0, dz2/dx0] = [" << z1.dval << "," << z2.dval << "]" << endl;
+    cout << "x = [" << x[0].val << ", " << x[1].val << "]" << endl;
+    cout << "z = [" << z1.val << ", " << y2.val << "]" << endl;
+    cout << "[dz1/dx0, dz2/dx0] = [" << z1.dval << "," << y2.dval << "]" << endl;
 }
 int main()
 {
-    using namespace Eigen;
-    Array4i x(1,2,3,4);
-    auto z=pow(3, 5);
-    std::cout << z << std::endl;
+    test();
 }

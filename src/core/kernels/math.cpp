@@ -61,11 +61,17 @@ namespace cactus {
             auto xt = Map<T>::mapping(a);
             auto yt = Map<T>::mapping(b);
             typename Matrix<T>::type z;
-            if (a.shape().total == 1 && b.shape().total()==1) {
+            
+            if (a.shape().total() == 1 && b.shape().total() != 1) {
+                z = Eigen::pow(a.get<T>(0), yt.array());
+            }
+            else if (a.shape().total() != 1 && b.shape().total() == 1) {
+                z = Eigen::pow(xt.array(), b.get<T>(0));
+            }
+            else {
                 z = Eigen::pow(xt.array(), yt.array());
             }
-            
-            
+             
             Shape s = { (std::size_t)z.rows(),(std::size_t)z.cols() };
             t = Tensor(DataTypeToEnum<T>::value, s);
             t.assign(z.data(), z.size() * sizeof(T));
@@ -74,9 +80,7 @@ namespace cactus {
             auto x = inputs[0]->tensor();
             auto y = inputs[1]->tensor();
             
-            std::cout<<x.dtype()<<":"<<y.dtype()<<std::endl;
-            
-            assert(/*(x.shape() == y.shape()) &&*/ (x.dtype() == y.dtype()));
+            assert((x.shape() == y.shape() || x.shape().total()==1 || y.shape().total()==1) && (x.dtype() == y.dtype()));
             CASES(x.dtype(), compute<T>(x, y));
         }
     };
@@ -93,16 +97,7 @@ namespace cactus {
             t = x;
         }
     };
-    class BackwardOp :public Operation {
-    public:
-        BackwardOp(Input& x) {
-            inputs = { x.node()};
-        }
-        void compute() {
-            auto& x = inputs[0];
-            t = x->tensor();
-        }
-    };
+    
     Output matmul(Graph & g, Input x, Input y)
     {
         return g.insert(std::make_shared<MatMulOp>(x, y));
@@ -118,8 +113,5 @@ namespace cactus {
     Output assign(Graph & g, Input x, Input y) {
         return g.insert(std::make_shared<AssignOp>(x, y));
     }
-    Output backward(Graph & g, Input x)
-    {
-        return g.insert(std::make_shared<BackwardOp>(x));
-    }
+    
 }

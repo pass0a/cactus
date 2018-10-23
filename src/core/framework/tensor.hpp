@@ -22,7 +22,7 @@ struct Shape {
         }
         return 0;
     }
-    int total() {
+    int total() const {
         return rows*cols;
     }
 };

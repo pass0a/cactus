@@ -165,14 +165,16 @@ TEST(graph, multiConst) {
     EXPECT_EQ(12, iw[3]);
 }
 TEST(core,qiudao) {
-    /*cactus::Graph g;
-    auto x = cactus::Variable(g, { { 1, 2 },{ 3, 4 } });
+    cactus::Graph g;
+    auto x = cactus::Variable(g.opName("x"), { { 1, 2 },{ 3, 4 } });
     auto a = cactus::Const(g.opName("a"), 3);
     auto y = cactus::pow(g.opName("y"), x,a);
     auto z = cactus::backward(g,y);
+    auto init = g.initAllVariable();
+    g.run(init);
     g.run(z);
-    EXPECT_EQ(3, z.node()->tensor().get<int>(0));
-    EXPECT_EQ(12, z.node()->tensor().get<int>(1));
+    EXPECT_EQ(3, x.grad().get<int>(0));
+    /*EXPECT_EQ(12, z.node()->tensor().get<int>(1));
     EXPECT_EQ(27, z.node()->tensor().get<int>(2));
     EXPECT_EQ(48, z.node()->tensor().get<int>(3));*/
 }
