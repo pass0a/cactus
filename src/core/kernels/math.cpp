@@ -1,8 +1,9 @@
 #include "math.h"
-#include "eigenwrapper.h"
 #include "../framework/operation.hpp"
+#include "compute.h"
 #include <cassert>
 #include <vector>
+
 
 namespace cactus {
     class MatMulOp :public Operation {
@@ -32,23 +33,8 @@ namespace cactus {
         AddOp(Input& x,Input& y) {
             inputs = {x.node(),y.node()};
         }
-        template<typename T>
-        void compute(Tensor& a,Tensor& b) {
-            auto xt = Map<T>::mapping(a);
-            auto yt = Map<T>::mapping(b);
-            typename Matrix<T>::type z = xt+yt;
-            
-            Shape s = { (std::size_t)z.rows(),(std::size_t)z.cols() };
-            t= Tensor(DataTypeToEnum<T>::value, s);
-            t.assign(z.data(), z.size() * sizeof(T));
-        }
         void compute() {
-            auto x = inputs[0]->tensor();
-            auto y = inputs[1]->tensor();
-            /*std::cout<<x.dtype()<<":"<<y.dtype()<<std::endl;
-            std::cout<<x.shape().rows<<":"<<y.shape().rows<<std::endl;*/
-            assert((x.shape() == y.shape()) && (x.dtype() == y.dtype()));
-            CASES(x.dtype(),compute<T>(x,y) );
+            t=add(inputs[0]->tensor(), inputs[1]->tensor());
         }
     };
     class PowOp :public Operation {
@@ -58,20 +44,27 @@ namespace cactus {
         }
         template<typename T>
         void compute(Tensor& a, Tensor& b) {
-            auto xt = Map<T>::mapping(a);
-            auto yt = Map<T>::mapping(b);
+            
             typename Matrix<T>::type z;
             
-            if (a.shape().total() == 1 && b.shape().total() != 1) {
-                z = Eigen::pow(a.get<T>(0), yt.array());
-            }
-            else if (a.shape().total() != 1 && b.shape().total() == 1) {
-                z = Eigen::pow(xt.array(), b.get<T>(0));
+            if (a.shape() != b.shape()) {
+                if (x.shape().total() == 1) {
+                    auto yt = Map<T>::mapping(b);
+                    z = Eigen::pow(a.get<T>(0), yt);
+                }
+                else if (y.shape().total() == 1) {
+                    auto xt = Map<T>::mapping(a);
+                    z = Eigen::pow(xt, b.get<T>());
+                }
+                else {
+                    assert(a.shape()==b.shape());
+                }
             }
             else {
-                z = Eigen::pow(xt.array(), yt.array());
+                auto xt = Map<T>::mapping(a);
+                auto yt = Map<T>::mapping(b);
+                z = Eigen::pow(xt,yt);
             }
-             
             Shape s = { (std::size_t)z.rows(),(std::size_t)z.cols() };
             t = Tensor(DataTypeToEnum<T>::value, s);
             t.assign(z.data(), z.size() * sizeof(T));
@@ -80,18 +73,18 @@ namespace cactus {
             auto x = inputs[0]->tensor();
             auto y = inputs[1]->tensor();
             
-            assert((x.shape() == y.shape() || x.shape().total()==1 || y.shape().total()==1) && (x.dtype() == y.dtype()));
             CASES(x.dtype(), compute<T>(x, y));
         }
         template<typename T>
-        void grad(Tensor& a, Tensor& b) {
+        void grad(xgrads& list,Tensor& a, Tensor& b) {
+            
             auto xt = Map<T>::mapping(a);
             auto yt = Map<T>::mapping(b);
             typename Matrix<T>::type z;
 
-            yt -= 1;
+            yt.array() -= 1;
             if (a.shape().total() == 1 && b.shape().total() != 1) {
-                z = Eigen::pow(a.get<T>(0), yt.array());
+                z = Eigen::pow(a.get<T>(0), yt.array())*yt.array();
             }
             else if (a.shape().total() != 1 && b.shape().total() == 1) {
                 z = Eigen::pow(xt.array(), b.get<T>(0));
@@ -99,17 +92,21 @@ namespace cactus {
             else {
                 z = Eigen::pow(xt.array(), yt.array());
             }
-
             Shape s = { (std::size_t)z.rows(),(std::size_t)z.cols() };
-            t = Tensor(DataTypeToEnum<T>::value, s);
-            t.assign(z.data(), z.size() * sizeof(T));
+            Tensor dval = Tensor(DataTypeToEnum<T>::value, s);
+            dval.assign(z.data(), z.size() * sizeof(T));
+            std::cout << z << std::endl;
+            std::cout << yt << std::endl;
+            list.push_back(std::make_pair(inputs[0],dval));
         }
-        void grad() {
+        xgrads grad(Tensor& dval) {
+            xgrads list;
             auto x = inputs[0]->tensor();
             auto y = inputs[1]->tensor();
 
             assert((x.shape() == y.shape() || x.shape().total() == 1 || y.shape().total() == 1) && (x.dtype() == y.dtype()));
-            CASES(x.dtype(), grad<T>(x, y));
+            CASES(x.dtype(), grad<T>(list,x, y));
+            return list;
         }
     };
     class AssignOp :public Operation {

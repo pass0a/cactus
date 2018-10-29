@@ -22,6 +22,12 @@ struct Shape {
         }
         return 0;
     }
+    int operator!=(const Shape& v) const {
+        if ((rows != v.rows) || (cols != v.cols)) {
+            return 1;
+        }
+        return 0;
+    }
     int total() const {
         return rows*cols;
     }
@@ -51,6 +57,10 @@ public:
     template<typename T>
     void set(int pos,T val) const {
         ((T*)data())[pos]=val;
+    }
+    template<typename T>
+    void full(T val) {
+        
     }
     void assign(void* src, std::size_t len);
     void assign(const Tensor& t);

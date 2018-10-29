@@ -23,6 +23,7 @@ namespace cactus {
                 switch (v->type()) {
                 case NtOperation:
                 case NtInitOp:
+                case NtGradOp:
                     ((Operation *)v)->run();
                     break;
                 default:
@@ -55,15 +56,24 @@ namespace cactus {
                     }
                 }
                 else {
-                    if ((root->type() == NtVariable) || (root->type() == NtPlaceholder)) {
+                    switch (root->type()) {
+                    case NtVariable:
+                    case NtPlaceholder:
                         if (root->status() != CtComputed) {
                             std::cout << "[Error] Variabley '" << root->name() << "' is not init!!!" << std::endl;
                             needcompute.clear();
                             return;
                         }
-                    }else if ((root->status() == CtNoCompute) && (root->type() == NtOperation)) {
-                        root->status(CtQueuing);
-                        needcompute.push_back(root);
+                        break;
+                    case NtOperation:
+                    case NtGradOp:
+                        if ((root->status() == CtNoCompute)) {
+                            root->status(CtQueuing);
+                            needcompute.push_back(root);
+                        }
+                        break;
+                    default:
+                        break;
                     }
                     tmp.pop_back();
                 }

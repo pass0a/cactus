@@ -14,7 +14,6 @@ namespace cactus {
     Output add(Graph& g, Input x, Input b);
     Output pow(Graph& g, Input x, Input b);
     Output assign(Graph & g, Input x, Input y);
-    Output backward(Graph& g,Input x);
 }
 
 #endif  // SRC_MATRIX_HPP_

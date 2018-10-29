@@ -85,5 +85,10 @@ void test() {
 }
 int main()
 {
-    test();
+    Eigen::ArrayXi x(1);
+    Eigen::MatrixXi y(1,1);
+    y << 2;
+    x << 2;
+    auto z=Eigen::pow(y.array(), x);
+    std::cout << z << std::endl;
 }

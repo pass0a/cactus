@@ -9,9 +9,10 @@
 //#include <vector>
 
 namespace cactus {
-
     class Operation;
-    enum NodeType { NtPlaceholder, NtVariable, NtConst, NtInitOp, NtOperation };
+    class Node;
+    typedef std::vector<std::pair<Node*, Tensor>> xgrads;
+    enum NodeType { NtPlaceholder, NtVariable, NtConst, NtInitOp, NtGradOp, NtOperation };
     enum ComputeStatus { CtNoCompute, CtComputed, CtQueuing };
     class Node {
     public:
@@ -26,6 +27,9 @@ namespace cactus {
             status(CtComputed);
         }
         virtual void compute() { std::cout << "Node:" << type() << std::endl; }
+        virtual xgrads grad(Tensor&) {
+            return xgrads();
+        }
         Tensor &tensor() { return t; }
         std::string name() { return name_; }
         void name(std::string v) { name_ = v; }
@@ -71,10 +75,8 @@ namespace cactus {
             assert(node_ != NULL);
             return node_;
         }
-        Tensor& grad() {
-            return node_->tensor();
-        }
         Tensor& tensor() {
+            assert(node_ != NULL);
             return node_->tensor();
         }
     private:

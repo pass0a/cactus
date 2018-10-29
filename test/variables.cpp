@@ -16,6 +16,7 @@
 #include "framework/variables.hpp"
 #include "kernels/math.h"
 #include "kernels/ops.hpp"
+#include "kernels/backward.h"
 #include <vector>
 
 TEST(core, buffer) {
@@ -170,11 +171,11 @@ TEST(core,qiudao) {
     auto a = cactus::Const(g.opName("a"), 3);
     auto y = cactus::pow(g.opName("y"), x,a);
     auto dy = cactus::backward(g,y);
-    //auto dydx = cactus::grad(dy,x);
+    auto dydx = cactus::grad(g,dy,x);
     auto init = g.initAllVariable();
     g.run(init);
-    g.run(dy);
-    //EXPECT_EQ(3, dydx.tensor().get<int>(0));
+    g.run(dydx);
+    EXPECT_EQ(3, dydx.tensor().get<int>(0));
     /*EXPECT_EQ(12, z.node()->tensor().get<int>(1));
     EXPECT_EQ(27, z.node()->tensor().get<int>(2));
     EXPECT_EQ(48, z.node()->tensor().get<int>(3));*/
