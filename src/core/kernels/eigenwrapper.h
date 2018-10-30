@@ -14,8 +14,18 @@ struct Map
         return type((T*)x.data(), x.shape().rows, x.shape().cols);
     }
 };
+
 //template<typename T>
-//Map<T>::type mapTensor(Tensor x) {
-//    return Map<T>::type((T*)x.data(), x.shape().rows, x.shape().cols);
+//Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> wrap_log(Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> val) {
+//    return Eigen::log(val);
 //}
+template<typename T>
+T wrap_log(T val) {
+    return log(val);
+}
+template<typename T>
+auto wrap_log(Eigen::ArrayWrapper<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>> val) {
+    return Eigen::log(val);
+}
+
 }

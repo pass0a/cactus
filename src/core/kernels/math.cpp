@@ -52,8 +52,8 @@ namespace cactus {
             Tensor dval = Tensor(DataTypeToEnum<T>::value, s);
             dval.assign(z.data(), z.size() * sizeof(T));
             list.push_back(std::make_pair(inputs[0],dval));
-            
-            z = Eigen::pow(a, b)*a;
+
+            z = Eigen::pow(a, b)*wrap_log(a);
             s = { (std::size_t)z.rows(),(std::size_t)z.cols() };
             dval=Tensor(DataTypeToEnum<T>::value, s);
             dval.assign(z.data(), z.size() * sizeof(T));
