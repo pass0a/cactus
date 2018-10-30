@@ -92,7 +92,7 @@ namespace cactus {
                 std::memcpy(tensor.data(), &v, tensor.totalBytes());
             }
             template <typename T> Initializer(const std::initializer_list<T> &v) {
-                Shape s = { 1, v.size() };
+                Shape s = { 1,v.size() };
                 tensor = Tensor(DataTypeToEnum<T>::value, s);
                 std::memcpy(tensor.data(), v.begin(), tensor.totalBytes());
             }
@@ -102,7 +102,7 @@ namespace cactus {
             Initializer(const std::initializer_list<Initializer> &v) {
                 uint32_t offset = 0;
                 auto const &first = *v.begin();
-                Shape s = { first.tensor.shape().cols, v.size() };
+                Shape s = { v.size(),first.tensor.shape().cols  };
                 tensor = Tensor(first.tensor.dtype(), s);
 
                 for (auto n : v) {

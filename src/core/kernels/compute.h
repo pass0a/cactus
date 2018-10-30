@@ -7,7 +7,8 @@
 #include "eigenwrapper.h"
 
 namespace cactus {
-    Tensor add(Tensor& x, Tensor& y);
+    Tensor add_impl(Tensor& x, Tensor& y);
+    Tensor pow_impl(Tensor& x, Tensor& y);
 }
 
 #endif  // SRC_OP_ADD_HPP_

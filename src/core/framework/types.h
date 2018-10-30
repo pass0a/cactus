@@ -85,13 +85,37 @@ MATCH_TYPE_AND_ENUM(uint64_t, kUint64);
     CASE(uint32_t, SINGLE_ARG(STMTS))                             \
     CASE(uint64_t, SINGLE_ARG(STMTS))                            \
     case kInvalid:                                           \
-      assert(0 && "tensor was Invaild!!!");                                                 \
+      assert(0 && "tensor was Invaild!!!");                   \
       break;                                                   \
     default:                                                   \
-      assert(0 && "tensor not supported this Type!!!");                                                 \
+      assert(0 && "tensor not supported this Type!!!");      \
       break;                                                   \
   }
 
+#define ArrayCase(L1,L2, STMTS) \
+  assert(L1.dtype()==L2.dtype());\
+  if(L1.shape()!=L2.shape()){\
+    if(L1.shape().total()==1){\
+        CASES(L1.dtype(),T a=L1.get<T>(0);auto b = Map<T>::mapping(L2).array();STMTS)\
+    }else if(L2.shape().total()==1){\
+        CASES(L1.dtype(),auto a=Map<T>::mapping(L1).array();T b = L2.get<T>(0);STMTS)\
+    }else {assert(0);}\
+  }else{\
+    CASES(L1.dtype(),auto a=Map<T>::mapping(L1).array();auto b = Map<T>::mapping(L2).array();STMTS)\
+  }
+#define TensorCase(L1,L2, STMTS) \
+  assert(L1.dtype()==L2.dtype());\
+  if(L1.shape()!=L2.shape()){\
+    if(L1.shape().total()==1){\
+        CASES(L1.dtype(),T a=L1.get<T>(0);auto b = Map<T>::mapping(L2);STMTS)\
+    }else if(L2.shape().total()==1){\
+        CASES(L1.dtype(),auto a=Map<T>::mapping(L1);T b = L2.get<T>(0);STMTS)\
+    }else {assert(0);}\
+  }else{\
+    CASES(L1.dtype(),auto a=Map<T>::mapping(L1);auto b = Map<T>::mapping(L2);STMTS)\
+  }
 }
+
+
 
 #endif  // SRC_TYPES_H_

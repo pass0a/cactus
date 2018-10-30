@@ -167,7 +167,7 @@ TEST(graph, multiConst) {
 }
 TEST(core,qiudao) {
     cactus::Graph g;
-    auto x = cactus::Variable(g.opName("x"), { { 1, 2 },{ 3, 4 } });
+    auto x = cactus::Variable(g.opName("x"), { { 1, 2,2 },{ 3, 4,5 } });
     auto a = cactus::Const(g.opName("a"), 3);
     auto y = cactus::pow(g.opName("y"), x,a);
     auto dy = cactus::backward(g,y);

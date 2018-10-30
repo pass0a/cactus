@@ -8,7 +8,7 @@ namespace cactus {
         }
         void grad(Node* np, Tensor val) {
             if (ptr) {
-                t = add(t, val);
+                t = add_impl(t, val);
             }
             else {
                 ptr = np;
@@ -67,7 +67,7 @@ namespace cactus {
         }
         void compute() {
             if (inputs[0]->type() == NtGradOp) {
-                ((BackwardOp*)inputs[0])->pick(inputs[1]);
+                t=((BackwardOp*)inputs[0])->pick(inputs[1]).tensor();
             }
         }
     };
