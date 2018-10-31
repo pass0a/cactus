@@ -88,14 +88,7 @@ template<typename T>
 T wrap_log(T val) {
     return log(val);
 }
-template<typename T>
-Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> wrap_log(Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> val) {
-    return Eigen::log(val);
-}
-template<typename T>
-auto wrap_log(Eigen::ArrayWrapper<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>> val) {
-    return val.log();
-}
+
 int main()
 {
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x(2,2);
@@ -103,8 +96,5 @@ int main()
     x << 1, 2, 3, 4;
     y << 2, 3, 4, 5, 6;
     
-    std::cout << wrap_log(x.array()) << std::endl;
-    std::cout << wrap_log(y) << std::endl;
-    std::cout << wrap_log(65) << std::endl;
-    std::cout << wrap_log(89.02) << std::endl;
+    
 }

@@ -95,12 +95,12 @@ namespace cactus {
                 computeQueue(out);
             }
         }
-        void run(Output &out) {
+        void run(Output out) {
             computeQueue2(out);
             compute();
             return;
         }
-        void run(Output &out, const std::initializer_list<std::pair<std::string, Input::Initializer>> &v) {
+        void run(Output out, const std::initializer_list<std::pair<std::string, Input::Initializer>> &v) {
             std::map<std::string, Node *>::iterator it;
             for (auto n : v) {
                 it = named.find(n.first);

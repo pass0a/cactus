@@ -7,6 +7,7 @@ namespace cactus {
     void add(Tensor& t, Tensor& a, Tensor& b) {
         auto xt = Map<T>::mapping(a);
         auto yt = Map<T>::mapping(b);
+        
         typename Matrix<T>::type z = xt + yt;
 
         Shape s = { (std::size_t)z.rows(),(std::size_t)z.cols() };
@@ -21,7 +22,6 @@ namespace cactus {
     }
     template<typename T, typename T1, typename T2>
     void pow(Tensor& t,T1& a,T2& b) {
-
         typename Matrix<T>::type z = Eigen::pow(a, b);
 
         Shape s = { (std::size_t)z.rows(),(std::size_t)z.cols() };

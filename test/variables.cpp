@@ -88,15 +88,15 @@ TEST(math, pow2) {
 TEST(core, placeholder) {
     cactus::Graph g;
     auto a = cactus::Placeholder(g.opName("x"), cactus::DataType::kDouble, { 2,2 });
-    auto b = cactus::Const(g, { {1,2},{3,4} });
+    auto b = cactus::Const(g, { {1,2,},{3,4,} });
     auto z = cactus::add(g,a,b);
-    g.run(z, { { "x",{{1,2},{3,3}} }, {"y",a} });
+    g.run(z, { { "x",{{1,2,},{3,3,}} }, {"y",a} });
     EXPECT_EQ(z.node()->tensor().get<int>(0), 2);
     EXPECT_EQ(z.node()->tensor().get<int>(1), 4);
     EXPECT_EQ(z.node()->tensor().get<int>(2), 6);
     EXPECT_EQ(z.node()->tensor().get<int>(3), 7);
 }
-TEST(core, variable1) {
+TEST(core, add) {
     cactus::Graph g;
     
     auto x = cactus::Variable(g, {10, 2, 3});
@@ -138,6 +138,18 @@ TEST(core, variable) {
     EXPECT_EQ(y.node()->tensor().get<int>(1), 5);
     EXPECT_EQ(y.node()->tensor().get<int>(2), 3);
 }
+TEST(matrix, variable) {
+    cactus::Graph g;
+    auto x = cactus::Variable(g, { {1,2} , {3,4} });
+    auto y = cactus::Variable(g, { {12, 5},{ 3,9} });
+    // auto z=cactus::Add(g,x,y);
+    auto init = g.initAllVariable();
+    g.run(init);
+    EXPECT_EQ(x.node()->tensor().get<int>(0), 1);
+    EXPECT_EQ(x.node()->tensor().get<int>(1), 2);
+    EXPECT_EQ(x.node()->tensor().get<int>(2), 3);
+    EXPECT_EQ(x.node()->tensor().get<int>(3), 4);
+}
 TEST(graph, scalarConst) {
     cactus::Graph g;
     auto x = cactus::Const(g.opName("x"), 1);
@@ -167,15 +179,18 @@ TEST(graph, multiConst) {
 }
 TEST(core,qiudao) {
     cactus::Graph g;
-    auto x = cactus::Variable(g.opName("x"), { { 1, 2,2 },{ 3, 4,5 } });
-    auto a = cactus::Const(g.opName("a"), 3);
+    auto x = cactus::Variable(g.opName("x"), { { 1.0, 2.0 },{ 3.0, 4.0 } });
+    auto a = cactus::Const(g.opName("a"), 3.0);
     auto y = cactus::pow(g.opName("y"), x,a);
     auto dy = cactus::backward(g,y);
-    auto dydx = cactus::grad(g,dy,x);
+    auto dydx = cactus::grad(g,dy,a);
     auto init = g.initAllVariable();
     g.run(init);
     g.run(dydx);
-    EXPECT_EQ(3, dydx.tensor().get<int>(0));
+    EXPECT_EQ(3, dydx.tensor().get<double>(0));
+    EXPECT_EQ(12, dydx.tensor().get<double>(1));
+    EXPECT_EQ(27, dydx.tensor().get<double>(2));
+    EXPECT_EQ(48, dydx.tensor().get<double>(3));
     /*EXPECT_EQ(12, z.node()->tensor().get<int>(1));
     EXPECT_EQ(27, z.node()->tensor().get<int>(2));
     EXPECT_EQ(48, z.node()->tensor().get<int>(3));*/

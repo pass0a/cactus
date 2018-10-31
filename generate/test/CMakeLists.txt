@@ -22,8 +22,10 @@ ADD_EXECUTABLE(cpptest
 				${PROJECT_SOURCE_DIR}/src/core/kernels/backward.cpp
 				${PROJECT_SOURCE_DIR}/3rd/googletest/googletest/src/gtest-all.cc
 				)
-ADD_EXECUTABLE(adtest
-				${PROJECT_SOURCE_DIR}/test/ad.cpp)
+ADD_EXECUTABLE(mnist
+				${PROJECT_SOURCE_DIR}/example/mnist/index.cpp)
+ADD_EXECUTABLE(nn
+				${PROJECT_SOURCE_DIR}/example/nn/index.cpp)
 if(MSVC)
 else()
 target_link_libraries(cpptest pthread)
