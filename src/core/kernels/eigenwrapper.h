@@ -1,5 +1,5 @@
 #include <Eigen/Dense>
-#include <framework/tensor.hpp>
+#include "../framework/tensor.hpp"
 namespace cactus {
 template<class T>
 struct Matrix
