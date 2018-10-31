@@ -20,14 +20,14 @@ struct Map
 //    return Eigen::log(val);
 //}
 #define TypeMatrix Eigen::ArrayWrapper<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic,Eigen::RowMajor>>> 
-#define TypeRet Eigen::CwiseUnaryOpImpl<Eigen::internal::scalar_log_op<T>, Eigen::ArrayWrapper<Eigen::Map<Eigen::Matrix<T, -1, -1, 1, -1, -1>, 0, Eigen::Stride<0, 0> > > const, Eigen::Dense>
 
 template<typename T>
 T wrap_log(T val) {
     return static_cast<T>(log(val));
 }
 template<typename T>
-TypeRet wrap_log(TypeMatrix val){
+auto wrap_log(TypeMatrix val)
+    ->decltype(Eigen::log(val)){
     return Eigen::log(val);
 }
 
