@@ -19,12 +19,14 @@ struct Map
 //Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> wrap_log(Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> val) {
 //    return Eigen::log(val);
 //}
+
 template<typename T>
 T wrap_log(T val) {
     return log(val);
 }
 template<typename T>
-auto wrap_log(Eigen::ArrayWrapper<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>> val) {
+auto wrap_log(Eigen::ArrayWrapper<Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>> val)
+    -> decltype(Eigen::log(val)) {
     return Eigen::log(val);
 }
 
