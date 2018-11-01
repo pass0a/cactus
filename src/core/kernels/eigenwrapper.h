@@ -11,7 +11,7 @@ struct Map
 {
     typedef Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> type;
     static type mapping(Tensor x) {
-        return type((T*)x.data(), x.shape().rows, x.shape().cols);
+        return type((T*)x.data(), x.shape().rows, x.shape().cols );
     }
 };
 

@@ -3,24 +3,37 @@
 #include "framework/node.hpp"
 #include "kernels/ops.hpp"
 #include "kernels/eigenwrapper.h"
-class active :public cactus::Operation {
-public:
-    active(cactus::Input x) {
-        inputs = { x.node() };
-    }
-private:
-    void compute() {
-        auto x = inputs[0]->tensor();
-        if (x.shape() == cactus::Shape({ 1,1 })) {
-            if (x.get<int>(0)) {
-                //auto xt = cactus::Map<int>::mapping(x);
-                t = cactus::Tensor(cactus::DataTypeToEnum<int>::value, {1,1});
-                t.set<int>(0,0);
-                //xt(0, 0) = 1;
-            }
+namespace cactus {
+    typedef int(*sigmal)(double_t);
+
+    template<typename T, uint16_t num>
+    class Perceptron {
+    public:
+        Perceptron(sigmal activator) :weights(num) {
+            this->activator = activator;
+            weights.setOnes();
+            bias = 0;
         }
-    }
-};
+        int predict(Eigen::ArrayXd input_vec) {
+            assert(input_vec.size() == num);
+            return activator((weights*input_vec).sum() + bias);
+        }
+        friend std::ostream& operator <<(std::ostream& os, Perceptron& p) {
+            os << p.weights;
+            return os;
+        }
+    private:
+        int updateWeights(Eigen::ArrayXd input_vec, double_t output, double_t label, double_t rate) {
+            double_t delta = label - output;
+
+        }
+
+    private:
+        sigmal activator;
+        Eigen::ArrayXd weights;
+        double_t bias;
+    };
+}
 
 TEST(exsample, perceptron) {
     //perceptron p(std::shared_ptr<cactus::operation>(new factive()));

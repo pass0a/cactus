@@ -79,6 +79,22 @@ namespace cactus {
             assert(node_ != NULL);
             return node_->tensor();
         }
+        template<typename T>
+        static void dump(std::ostream &out,Tensor& c) {
+            auto s = c.shape();
+            for (size_t i = 0; i < s.rows; i++)
+            {
+                for (size_t j = 0; j < s.cols; j++)
+                {
+                    out << c.get<T>(i*s.rows+j);
+                }
+            }
+            out << std::endl;
+        }
+        friend std::ostream& operator<<(std::ostream &out, Output &c) {
+            CASES(c.tensor().dtype(), dump<T>(out,c.tensor()));
+            return out;
+        }
     private:
         Node *node_;
     };
