@@ -20,6 +20,8 @@ ADD_EXECUTABLE(mnist
 ADD_EXECUTABLE(nn
 				${PROJECT_SOURCE_DIR}/example/nn/index.cpp)
 if(MSVC)
+target_link_libraries(cpptest cactus)
+target_link_libraries(mnist cactus)
 target_link_libraries(nn cactus)
 else()
 target_link_libraries(cpptest pthread)
