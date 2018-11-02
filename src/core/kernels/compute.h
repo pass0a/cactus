@@ -8,15 +8,15 @@
 
 namespace cactus {
     template<typename T, typename T1, typename T2>
-    void dot(Tensor& t, T1& a, T2& b) {
+    void product(Tensor& t, T1& a, T2& b) {
         typename Matrix<T>::type z = a * b;
         Shape s = { (std::size_t)z.rows(),(std::size_t)z.cols() };
         t = Tensor(DataTypeToEnum<T>::value, s);
         t.assign(z.data(), z.size() * sizeof(T));
     }
-    Tensor dot_impl(Tensor& x, Tensor& y) {
+    Tensor product_impl(Tensor& x, Tensor& y) {
         Tensor t;
-        TensorCase(x, y, dot<T>(t, a, b));
+        TensorCase(x, y, product<T>(t, a, b));
         return t;
     }
     template<typename T, typename T1, typename T2>
