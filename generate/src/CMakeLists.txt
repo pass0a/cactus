@@ -5,7 +5,14 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 include_directories(${PROJECT_SOURCE_DIR}/3rd/eigen)
-
-ADD_EXECUTABLE(cactus
-				${PROJECT_SOURCE_DIR}/src/console.cpp
+add_definitions(-DCxAPI_EXPORTS)
+add_library(cactus SHARED
+				${PROJECT_SOURCE_DIR}/src/core/framework/tensor.cpp
+				${PROJECT_SOURCE_DIR}/src/core/framework/buffer.cpp
+				${PROJECT_SOURCE_DIR}/src/core/framework/node.cpp
+				${PROJECT_SOURCE_DIR}/src/core/framework/graph.cpp
+				${PROJECT_SOURCE_DIR}/src/core/kernels/backward.cpp
+				${PROJECT_SOURCE_DIR}/src/core/kernels/compute.cpp
+				${PROJECT_SOURCE_DIR}/src/core/kernels/operator.cpp
+				${PROJECT_SOURCE_DIR}/src/core/kernels/ops.cpp
 				)

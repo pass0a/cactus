@@ -17,6 +17,8 @@ int main() {
     auto bias_assgin = cactus::add(g,rate,delta);
     g.run(g.initAllVariable());
     g.run(delta_assgin, { {"input",{1,1}},{"label",2} });
-    std::cout << delta << std::endl;
+    activator.dump();
+    label.dump();
+    delta.dump();
     return 0;
 }

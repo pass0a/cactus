@@ -1,14 +1,7 @@
-/*
-Copyright(C) 2018 liuwenjun.All rights reserved.
-*/
-
-#ifndef SRC_MATRIX_HPP_
-#define SRC_MATRIX_HPP_
-
-#include "../framework/tensor.hpp"
-#include "../framework/node.hpp"
-#include "../framework/graph.hpp"
+#include "operator.h"
 #include "compute.h"
+#include "eigenwrapper.h"
+
 namespace cactus {
     class ProductOp :public Operation {
     public:
@@ -18,8 +11,8 @@ namespace cactus {
         void compute() {
             auto x = inputs[0]->tensor();
             auto y = inputs[1]->tensor();
-            t= product_impl(x,y);
-            
+            t = product_impl(x, y);
+
         }
     };
     class DotOp :public Operation {
@@ -64,7 +57,7 @@ namespace cactus {
         }
         void compute() {
             t = add_impl(inputs[0]->tensor(), inputs[1]->tensor());
-            
+
         }
     };
     class SubOp :public Operation {
@@ -132,7 +125,6 @@ namespace cactus {
             t = x;
         }
     };
-
     Output matmul(Graph & g, Input x, Input y)
     {
         return g.insert(std::make_shared<MatMulOp>(x, y));
@@ -165,5 +157,3 @@ namespace cactus {
         return g.insert(std::make_shared<AssignOp>(x, y));
     }
 }
-
-#endif  // SRC_MATRIX_HPP_

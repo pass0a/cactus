@@ -5,20 +5,12 @@
 #ifndef SRC_OPS_HPP_
 #define SRC_OPS_HPP_
 
-#include "../framework/node.hpp"
 #include "../framework/graph.hpp"
 
-
 namespace cactus {
-    Output Const(Graph& g, const Input::Initializer& v) {
-        return g.insert(std::make_shared<NodeConst>(v.tensor));
-    }
-    Output Variable(Graph& g, const Input::Initializer& v) {
-        return g.insert(std::make_shared<NodeVariable>(v.tensor));
-    }
-    Output Placeholder(Graph& g, DataType dt, Shape s = { 1,1 }) {
-        return g.insert(std::make_shared<NodePlaceholder>(s, dt));
-    }
+    Output Cx_EXPORTS Const(Graph& g, const Input::Initializer& v);
+    Output Cx_EXPORTS Variable(Graph& g, const Input::Initializer& v);
+    Output Cx_EXPORTS Placeholder(Graph& g, DataType dt, Shape s = { 1,1 });
 }  // namespace cactus
 
 #endif  // SRC_OPS_HPP_

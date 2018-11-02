@@ -2,6 +2,10 @@
 #include <fstream>
 #include <string>
 #include <vector>
+
+
+#include "core/kernels/compute.h"
+
 using namespace std;
 
 int ReverseInt(int i)
