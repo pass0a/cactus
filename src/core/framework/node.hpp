@@ -68,7 +68,7 @@ namespace cactus {
 
     class Cx_EXPORTS Input {
     public:
-        struct Initializer {
+        struct Cx_EXPORTS Initializer {
             template <typename T> Initializer(const T &v) {
                 Shape s = { 1, 1 };
                 tensor = Tensor(DataTypeToEnum<T>::value, s);
