@@ -25,16 +25,16 @@ namespace cactus {
 
 enum DataType {
     kInvalid = 0,
-    kFloat,
-    kDouble,
+    kUint8,
+    kUint16,
+    kUint32,
+    kUint64,
     kInt8,
     kInt16,
     kInt32,
     kInt64,
-    kUint8,
-    kUint16,
-    kUint32,
-    kUint64
+    kFloat,
+    kDouble
 };
 
 // Validates type T for whether it is a supported DataType.
@@ -92,16 +92,16 @@ MATCH_TYPE_AND_ENUM(uint64_t, kUint64);
   }
 #define CASES(TYPE_ENUM, STMTS) \
   switch (TYPE_ENUM) {                                         \
-    CASE(float_t, SINGLE_ARG(STMTS))                             \
-    CASE(double_t, SINGLE_ARG(STMTS))                            \
-    CASE(int8_t, SINGLE_ARG(STMTS))                             \
-    CASE(int16_t, SINGLE_ARG(STMTS))                            \
-    CASE(int32_t, SINGLE_ARG(STMTS))                             \
-    CASE(int64_t, SINGLE_ARG(STMTS))                            \
     CASE(uint8_t, SINGLE_ARG(STMTS))                             \
     CASE(uint16_t, SINGLE_ARG(STMTS))                            \
     CASE(uint32_t, SINGLE_ARG(STMTS))                             \
     CASE(uint64_t, SINGLE_ARG(STMTS))                            \
+    CASE(int8_t, SINGLE_ARG(STMTS))                             \
+    CASE(int16_t, SINGLE_ARG(STMTS))                            \
+    CASE(int32_t, SINGLE_ARG(STMTS))                             \
+    CASE(int64_t, SINGLE_ARG(STMTS))                            \
+    CASE(float_t, SINGLE_ARG(STMTS))                            \
+    CASE(double_t, SINGLE_ARG(STMTS))                             \
     case kInvalid:                                           \
       assert(0 && "tensor was Invaild!!!");                   \
       break;                                                   \

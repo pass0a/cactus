@@ -4,7 +4,8 @@
 #include <vector>
 
 
-#include "core/kernels/compute.h"
+#include "cactus.hpp"
+#include <Eigen/Dense>
 
 using namespace std;
 
@@ -85,10 +86,31 @@ void read_Mnist_Images(string filename, vector<vector<double>>&images)
     }
 }
 
+template<int i>
+struct Type {
+    
+};
+template<>
+struct Type<1> {
+    int get() {
+        return 1;
+    }
+};
+template<>
+struct Type<2> {
+    double get() {
+        return 1.0;
+    }
+};
+using namespace cactus;
+void type() {
+    int x;
+    Type<x> p;
+}
 int main()
 {
-    
-    vector<double>labels;
+    type();
+    /*vector<double>labels;
     read_Mnist_Label("train-labels.idx1-ubyte", labels);
     vector<vector<double>>images;
     read_Mnist_Images("train-images.idx3-ubyte", images);
@@ -98,6 +120,10 @@ int main()
         {
             cout << images[i][j] << " ";
         }
-    }
+    }*/
+    /*Eigen::Array2d x(1.2,0.5);
+    Eigen::Array2i y(1, 6);
+    auto z=x + 4;
+    std::cout << z << std::endl;*/
     return 0;
 }
