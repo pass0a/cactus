@@ -86,30 +86,40 @@ void read_Mnist_Images(string filename, vector<vector<double>>&images)
     }
 }
 
-template<int i>
-struct Type {
-    
-};
-template<>
-struct Type<1> {
+using namespace cactus;
+template<typename LT>
+class Type{
+public:
+	Type(Tensor x,Tensor y):x_(x),y_(y) {}
+	template<typename RT>
     int get() {
+		std::cout << x_.get<LT>(0) << y_.get<RT>(0) << std::endl;
         return 1;
     }
+	void run() {
+		CASES(y_.dtype(), get<T>());
+	}
+private:
+	Tensor x_;
+	Tensor y_;
 };
-template<>
-struct Type<2> {
-    double get() {
-        return 1.0;
-    }
-};
-using namespace cactus;
-void type() {
-    int x;
-    Type<x> p;
+template<typename LT,typename RT>
+void rexp(Tensor x,Tensor y) {
+	std::cout << x.get<LT>(0) << y.get<RT>(0) << std::endl;
 }
+template<typename LT>
+void lexp(Tensor x, Tensor y) {
+	CASES(y.dtype(),(rexp<LT,T>(x,y)));
+}
+void exp(Tensor x,Tensor y){
+	CASES(x.dtype(), (lexp<T>(x,y)));
+}
+
 int main()
 {
-    type();
+	Tensor x(5),y(0.265);
+	exp(x, y);
+
     /*vector<double>labels;
     read_Mnist_Label("train-labels.idx1-ubyte", labels);
     vector<vector<double>>images;
