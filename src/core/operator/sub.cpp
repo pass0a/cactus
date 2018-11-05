@@ -13,7 +13,7 @@ namespace cactus {
 
         template<typename ZT>
         void compute(Tensor& x, Tensor& y) {
-            Matrix<ZT>::type ret, a, b;
+            typename Matrix<ZT>::type ret, a, b;
             CASES(x.dtype(), a = Map<T>::mapping(x).cast<ZT>());
             CASES(y.dtype(), b = Map<T>::mapping(y).cast<ZT>());
             if (x.shape() != y.shape()) {
