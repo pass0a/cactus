@@ -10,7 +10,7 @@ namespace cactus {
         void compute() {
             auto& x = inputs[0]->tensor();
             auto& y = inputs[1]->tensor();
-            assert((x.shape() == y.shape()) && (x.dtype() == y.dtype()));
+            //assert((x.shape() == y.shape()) && (x.dtype() == y.dtype()));
             x.assign(y);
             t = x;
         }

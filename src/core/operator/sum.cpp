@@ -12,7 +12,7 @@ namespace cactus {
 
         template<typename T>
         void compute(Tensor& x) {
-            Matrix<T>::type ret = Map<T>::mapping(x);
+            typename Matrix<T>::type ret = Map<T>::mapping(x);
             t = Tensor(ret.sum());
         }
         void compute() {
