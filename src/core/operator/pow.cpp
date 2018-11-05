@@ -63,18 +63,18 @@ namespace cactus {
             if (x.shape() != y.shape()) {
                 if (x.shape().total() == 1)
                 {
-                    grad<ZT>(list,a(0, 0), (Array<ZT>::type)b.array());
+                    grad<ZT>(list,a(0, 0), (typename Array<ZT>::type)b.array());
                 }
                 else if (y.shape().total() == 1) {
 
-                    grad<ZT>(list, (Array<ZT>::type)a.array(), b(0, 0));
+                    grad<ZT>(list, (typename Array<ZT>::type)a.array(), b(0, 0));
                 }
                 else {
                     assert(0);
                 }
             }
             else {
-                grad<ZT>(list, (Array<ZT>::type)a.array(), (Array<ZT>::type)b.array());
+                grad<ZT>(list, (typename Array<ZT>::type)a.array(), (typename Array<ZT>::type)b.array());
             }
         }
         xgrads grad(Tensor& dval) {
