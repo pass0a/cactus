@@ -107,7 +107,8 @@ namespace cactus {
         /*Output output(uint32_t idx) {
             return Output(this);
         }*/
-
+        template<typename LT,typename RT>
+        void compute() {}
         NodeType type();
 
     protected:

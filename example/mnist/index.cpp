@@ -4,7 +4,6 @@
 #include <vector>
 
 
-#include "cactus.hpp"
 #include <Eigen/Dense>
 
 using namespace std;
@@ -86,41 +85,12 @@ void read_Mnist_Images(string filename, vector<vector<double>>&images)
     }
 }
 
-using namespace cactus;
-template<typename LT>
-class Type{
-public:
-	Type(Tensor x,Tensor y):x_(x),y_(y) {}
-	template<typename RT>
-    int get() {
-		std::cout << x_.get<LT>(0) << y_.get<RT>(0) << std::endl;
-        return 1;
-    }
-	void run() {
-		CASES(y_.dtype(), get<T>());
-	}
-private:
-	Tensor x_;
-	Tensor y_;
-};
-template<typename LT,typename RT>
-void rexp(Tensor x,Tensor y) {
-	std::cout << x.get<LT>(0) << y.get<RT>(0) << std::endl;
-}
-template<typename LT>
-void lexp(Tensor x, Tensor y) {
-	CASES(y.dtype(),(rexp<LT,T>(x,y)));
-}
-void exp(Tensor x,Tensor y){
-	CASES(x.dtype(), (lexp<T>(x,y)));
-}
+
 
 int main()
 {
-	Tensor x(5),y(0.265);
-	exp(x, y);
-
-    /*vector<double>labels;
+   
+    vector<double>labels;
     read_Mnist_Label("train-labels.idx1-ubyte", labels);
     vector<vector<double>>images;
     read_Mnist_Images("train-images.idx3-ubyte", images);
@@ -130,7 +100,7 @@ int main()
         {
             cout << images[i][j] << " ";
         }
-    }*/
+    }
     /*Eigen::Array2d x(1.2,0.5);
     Eigen::Array2i y(1, 6);
     auto z=x + 4;

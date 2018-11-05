@@ -19,6 +19,16 @@ ADD_EXECUTABLE(mnist
 				${PROJECT_SOURCE_DIR}/example/mnist/index.cpp)
 ADD_EXECUTABLE(nn
 				${PROJECT_SOURCE_DIR}/example/nn/index.cpp)
+ADD_EXECUTABLE(idea
+				${PROJECT_SOURCE_DIR}/test/idea.cpp
+				${PROJECT_SOURCE_DIR}/src/core/framework/tensor.cpp
+				${PROJECT_SOURCE_DIR}/src/core/framework/buffer.cpp
+				${PROJECT_SOURCE_DIR}/src/core/framework/node.cpp
+				${PROJECT_SOURCE_DIR}/src/core/framework/graph.cpp
+				${PROJECT_SOURCE_DIR}/src/core/kernels/backward.cpp
+				${PROJECT_SOURCE_DIR}/src/core/kernels/compute.cpp
+				${PROJECT_SOURCE_DIR}/src/core/kernels/operator.cpp
+				${PROJECT_SOURCE_DIR}/src/core/kernels/ops.cpp)
 if(MSVC)
 target_link_libraries(cpptest cactus)
 target_link_libraries(mnist cactus)
