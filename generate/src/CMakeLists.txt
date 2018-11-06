@@ -22,4 +22,6 @@ add_library(cactus SHARED
 				${PROJECT_SOURCE_DIR}/src/core/operator/sum.cpp
 				${PROJECT_SOURCE_DIR}/src/core/operator/matmul.cpp
 				${PROJECT_SOURCE_DIR}/src/core/operator/assign.cpp
+				${PROJECT_SOURCE_DIR}/src/core/operator/flow.cpp
+				${PROJECT_SOURCE_DIR}/src/core/operator/logic.cpp
 				)

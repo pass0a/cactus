@@ -46,22 +46,28 @@ namespace cactus {
     }
     
     template<typename T>
-    void dumplog(Tensor& c) {
+    void dumplog(std::ostream & os,Tensor& c) {
         auto s = c.shape();
-        for (size_t i = 0; i < s.rows; i++)
-        {
-            for (size_t j = 0; j < s.cols; j++)
-            {
-                std::cout << c.get<T>(i*s.rows + j);
-            }
+        if (c.shape().total() == 1) {
+            os << c.get<T>(0)<<" ";
         }
-        std::cout << std::endl;
+        else {
+            os << "[";
+            for (size_t i = 0; i < s.rows; i++)
+            {
+                for (size_t j = 0; j < s.cols; j++)
+                {
+                    os << c.get<T>(i*s.rows + j);
+                    if (s.cols > (j + 1)) {
+                        os << ",";
+                    }
+                }
+            }
+            os << "] ";
+
+        }
     }
-    void Output::dump()
-    {
-        Tensor x = tensor();
-        CASES(x.dtype(), dumplog<T>(x));
-    }
+    
 
     Input::Initializer::Initializer(const Output& v) {
         tensor.assign(v.node()->tensor());
@@ -91,4 +97,11 @@ namespace cactus {
     }
     std::size_t Operation::num_inputs() { return inputs.size(); }
     NodeType Operation::type() { return NtOperation; }
+    std::ostream & operator<<(std::ostream & os, Output & stu)
+    {
+        // TODO: 在此处插入 return 语句
+        Tensor x = stu.tensor();
+        CASES(x.dtype(), dumplog<T>(os,x));
+        return os;
+    }
 } // namespace cactus

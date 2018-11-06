@@ -53,7 +53,8 @@ namespace cactus {
         NodeConst(const Tensor &v);
         NodeType type();
     };
-    
+    class Output;
+    Cx_EXPORTS std::ostream& operator<<(std::ostream &os, Output& stu);
     class Cx_EXPORTS Output {
     public:
         Output();
@@ -61,11 +62,11 @@ namespace cactus {
         Output(Node *n);
         Node *node() const;
         Tensor& tensor();
-        void dump();
+        friend std::ostream& operator<<(std::ostream &os, Output& stu);
     private:
         Node *node_;
     };
-
+    
     class Cx_EXPORTS Input {
     public:
         struct Cx_EXPORTS Initializer {

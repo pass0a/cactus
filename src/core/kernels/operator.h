@@ -16,6 +16,14 @@ namespace cactus {
     Output Cx_EXPORTS product(Graph & g, Input x, Input y);
     Output Cx_EXPORTS pow(Graph & g, Input x, Input y);
     Output Cx_EXPORTS assign(Graph & g, Input x, Input y);
+
+    Output Cx_EXPORTS cond(Graph & g, Input cond, Input x, Input y);
+    Output Cx_EXPORTS lt(Graph & g, Input x, Input y);
+    Output Cx_EXPORTS gt(Graph & g, Input x, Input y);
+    Output Cx_EXPORTS ltoe(Graph & g, Input x, Input y);
+    Output Cx_EXPORTS gtoe(Graph & g, Input x, Input y);
+    Output Cx_EXPORTS eq(Graph & g, Input x, Input y);
+    Output Cx_EXPORTS neq(Graph & g, Input x, Input y);
 }
 
 #endif  // SRC_MATRIX_HPP_

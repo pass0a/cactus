@@ -90,7 +90,7 @@ void read_Mnist_Images(string filename, vector<vector<double>>&images)
 int main()
 {
    
-    vector<double>labels;
+    /*vector<double>labels;
     read_Mnist_Label("train-labels.idx1-ubyte", labels);
     vector<vector<double>>images;
     read_Mnist_Images("train-images.idx3-ubyte", images);
@@ -100,10 +100,13 @@ int main()
         {
             cout << images[i][j] << " ";
         }
-    }
-    /*Eigen::Array2d x(1.2,0.5);
+    }*/
+    Eigen::Matrix2d x;
     Eigen::Array2i y(1, 6);
-    auto z=x + 4;
-    std::cout << z << std::endl;*/
+    Eigen::Matrix2d z;
+    x << 1.2, 0.5, 1, 5;
+    auto r=x.array() < 4.0;
+    z = r.cast<double>();
+    std::cout << z << std::endl;
     return 0;
 }
