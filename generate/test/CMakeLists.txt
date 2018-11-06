@@ -17,13 +17,16 @@ ADD_EXECUTABLE(cpptest
 				)
 ADD_EXECUTABLE(mnist
 				${PROJECT_SOURCE_DIR}/example/mnist/index.cpp)
-ADD_EXECUTABLE(nn
-				${PROJECT_SOURCE_DIR}/example/nn/index.cpp)
+ADD_EXECUTABLE(perceptron
+				${PROJECT_SOURCE_DIR}/example/line/perceptron.cpp)
+ADD_EXECUTABLE(linear-regression
+				${PROJECT_SOURCE_DIR}/example/line/linear-regression.cpp)
 
 if(MSVC)
 target_link_libraries(cpptest cactus)
 target_link_libraries(mnist cactus)
-target_link_libraries(nn cactus)
+target_link_libraries(linear-regression cactus)
+target_link_libraries(perceptron cactus)
 else()
 target_link_libraries(cpptest pthread cactus)
 target_link_libraries(mnist pthread cactus)
