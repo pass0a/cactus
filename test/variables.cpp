@@ -123,6 +123,8 @@ TEST(core, variable) {
     // auto z=cactus::Add(g,x,y);
     auto init = g.initAllVariable();
     g.run(init);
+    EXPECT_EQ(x.tensor().shape().cols, 3);
+    EXPECT_EQ(x.tensor().shape().rows, 1);
     EXPECT_EQ(x.tensor().get<int>(0), 10);
     EXPECT_EQ(x.tensor().get<int>(1), 2);
     EXPECT_EQ(x.tensor().get<int>(2), 3);
@@ -154,20 +156,27 @@ TEST(graph, scalarConst) {
     EXPECT_EQ(3, z.tensor().get<int>(0));
     EXPECT_EQ(1, x.tensor().get<int>(0));
 }
+TEST(graph, lineConst) {
+    cactus::Graph g;
+    auto x = cactus::Const(g.opName("x"), { 1, 2,3 } );
+    g.run(x);
+    EXPECT_EQ(x.tensor().shape().cols, 3);
+    EXPECT_EQ(x.tensor().shape().rows, 1);
+}
 TEST(graph, multiConst) {
     cactus::Graph g;
-    auto x = cactus::Const(g.opName("x"), { {1, 2}, {3, 4} });
-    auto y = cactus::Const(g.opName("y"), { {1, 2}, {3, 4} });
+    auto x = cactus::Const(g.opName("x"), { {1, 2,3}, { 4,5,6} });
+    auto y = cactus::Const(g.opName("y"), { {1, 2,3}, { 4,5,6} });
     auto a = cactus::Const(g.opName("a"), 3);
     auto z = cactus::add(g.opName("z"), x, y);
     auto z1 = cactus::add(g.opName("z1"), z, y);
     g.run(z1);
-    int iw[4];
-    memcpy(iw, z1.tensor().data(), z1.tensor().totalBytes());
-    EXPECT_EQ(3, iw[0]);
-    EXPECT_EQ(6, iw[1]);
-    EXPECT_EQ(9, iw[2]);
-    EXPECT_EQ(12, iw[3]);
+    EXPECT_EQ(x.tensor().shape().cols, 3);
+    EXPECT_EQ(x.tensor().shape().rows, 2);
+    EXPECT_EQ(3, z1.tensor().get<int>(0));
+    EXPECT_EQ(6, z1.tensor().get<int>(1));
+    EXPECT_EQ(9, z1.tensor().get<int>(2));
+    EXPECT_EQ(12, z1.tensor().get<int>(3));
 }
 TEST(core, qiudao) {
     cactus::Graph g;

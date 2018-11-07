@@ -11,6 +11,11 @@
 namespace cactus {
     class Operation;
     class Node;
+    class Graph;
+    class Input;
+    class Output;
+    struct Initializer;
+
     typedef std::vector<std::pair<Node*, Tensor>> xgrads;
     enum NodeType { NtPlaceholder, NtVariable, NtConst, NtInitOp, NtGradOp, NtOperation };
     enum ComputeStatus { CtNoCompute, CtComputed, CtQueuing };
@@ -53,38 +58,42 @@ namespace cactus {
         NodeConst(const Tensor &v);
         NodeType type();
     };
-    class Output;
+    
+    
     Cx_EXPORTS std::ostream& operator<<(std::ostream &os, Output& stu);
     class Cx_EXPORTS Output {
+    public:
+        Output operator+(Initializer rhs);
     public:
         Output();
         Output(const Output &o);
         Output(Node *n);
+        Output(Graph* g,Node *n);
         Node *node() const;
         Tensor& tensor();
         friend std::ostream& operator<<(std::ostream &os, Output& stu);
     private:
         Node *node_;
+        Graph* g_;
     };
-    
+    struct Cx_EXPORTS Initializer {
+        template <typename T> Initializer(const T &v) {
+            Shape s = { 1, 1 };
+            tensor = Tensor(DataTypeToEnum<T>::value, s);
+            std::memcpy(tensor.data(), &v, tensor.totalBytes());
+            err = 1;
+        }
+        template <typename T> Initializer(const std::initializer_list<T> &v) {
+            Shape s = { 1,v.size() };
+            tensor = Tensor(DataTypeToEnum<T>::value, s);
+            std::memcpy(tensor.data(), v.begin(), tensor.totalBytes());
+        }
+        Initializer(const Output& v);
+        Initializer(const std::initializer_list<Initializer> &v);
+        Tensor tensor;
+        int err=0;
+    };
     class Cx_EXPORTS Input {
-    public:
-        struct Cx_EXPORTS Initializer {
-            template <typename T> Initializer(const T &v) {
-                Shape s = { 1, 1 };
-                tensor = Tensor(DataTypeToEnum<T>::value, s);
-                std::memcpy(tensor.data(), &v, tensor.totalBytes());
-            }
-            template <typename T> Initializer(const std::initializer_list<T> &v) {
-                Shape s = { 1,v.size() };
-                tensor = Tensor(DataTypeToEnum<T>::value, s);
-                std::memcpy(tensor.data(), v.begin(), tensor.totalBytes());
-            }
-            Initializer(const Output& v);
-            Initializer(const std::initializer_list<Initializer> &v);
-            Tensor tensor;
-        };
-
     public:
         Input(Output out);
         Node *node() const;

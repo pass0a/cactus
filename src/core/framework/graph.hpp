@@ -14,7 +14,7 @@ namespace cactus {
     public:
         Graph &opName(std::string name);
         void run(Output out);
-        void run(Output out, const std::initializer_list<std::pair<std::string, Input::Initializer>> &v);
+        void run(Output out, const std::initializer_list<std::pair<std::string, Initializer>> &v);
         Output insert(const std::shared_ptr<Node> nptr);
         Output initAllVariable();
         Graph();

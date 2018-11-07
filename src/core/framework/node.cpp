@@ -1,4 +1,6 @@
 #include "node.hpp"
+#include "../kernels/ops.hpp"
+#include "../kernels/operator.h"
 
 namespace cactus {
     Node::Node() : cstatus_(CtNoCompute) {}
@@ -33,9 +35,20 @@ namespace cactus {
     NodeConst::NodeConst(const Tensor &v) { cstatus_ = (CtNoCompute); t = v; }
     NodeType NodeConst::type() { return NtConst; }
 
-    Output::Output() : node_(NULL) {}
+    Output Output::operator+(Initializer rhs)
+    {
+        assert(g_ != 0);
+        auto tmp=Const(*g_, rhs);
+        std::cout << tmp << std::endl;
+        return add(*g_,*this, tmp);
+    }
+
+    Output::Output() : node_(NULL),g_(0) {}
     Output::Output(const Output &o) { node_ = o.node(); }
-    Output::Output(Node *n) : node_(n) {}
+    Output::Output(Node *n) : node_(n),g_(0) {}
+    Output::Output(Graph * g, Node * n):node_(n),g_(g)
+    {
+    }
     Node *Output::node() const {
         assert(node_ != NULL);
         return node_;
@@ -69,12 +82,13 @@ namespace cactus {
     }
     
 
-    Input::Initializer::Initializer(const Output& v) {
+    Initializer::Initializer(const Output& v) {
         tensor.assign(v.node()->tensor());
     }
-    Input::Initializer::Initializer(const std::initializer_list<Initializer> &v) {
+    Initializer::Initializer(const std::initializer_list<Initializer> &v) {
         uint32_t offset = 0;
         auto const &first = *v.begin();
+        assert(!first.err);
         Shape s = { v.size(),first.tensor.shape().cols };
         tensor = Tensor(first.tensor.dtype(), s);
 

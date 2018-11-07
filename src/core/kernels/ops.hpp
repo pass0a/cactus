@@ -8,8 +8,8 @@
 #include "../framework/graph.hpp"
 
 namespace cactus {
-    Output Cx_EXPORTS Const(Graph& g, const Input::Initializer& v);
-    Output Cx_EXPORTS Variable(Graph& g, const Input::Initializer& v);
+    Output Cx_EXPORTS Const(Graph& g, const Initializer& v);
+    Output Cx_EXPORTS Variable(Graph& g, const Initializer& v);
     Output Cx_EXPORTS Placeholder(Graph& g, DataType dt, Shape s = { 1,1 });
     Output Cx_EXPORTS Random(Graph& g, DataType dt, Shape s = { 1,1 });
 }  // namespace cactus

@@ -108,7 +108,7 @@ namespace cactus {
             compute();
             return;
         }
-        void run(Output out, const std::initializer_list<std::pair<std::string, Input::Initializer>> &v) {
+        void run(Output out, const std::initializer_list<std::pair<std::string, Initializer>> &v) {
             std::map<std::string, Node *>::iterator it;
             for (auto n : v) {
                 it = named.find(n.first);
@@ -120,7 +120,7 @@ namespace cactus {
             compute();
             return;
         }
-        Output insert(const std::shared_ptr<Node> nptr) {
+        Output insert(Graph *g,const std::shared_ptr<Node> nptr) {
             all.push_back(nptr);
             if (op_named.size()) {
                 nptr->name(op_named);
@@ -130,10 +130,10 @@ namespace cactus {
             if (nptr->type() == NtVariable) {
                 variables.push_back(nptr.get());
             }
-            return Output(nptr.get());
+            return Output(g,nptr.get());
         }
-        Output initAllVariable() {
-            return insert(std::make_shared<InitVariable>(variables));
+        Output initAllVariable(Graph *g) {
+            return insert(g,std::make_shared<InitVariable>(variables));
         }
 
     private:
@@ -151,13 +151,13 @@ namespace cactus {
     void Graph::run(Output out) {
         impl->run(out);
     }
-    void Graph::run(Output out, const std::initializer_list<std::pair<std::string, Input::Initializer>> &v) {
+    void Graph::run(Output out, const std::initializer_list<std::pair<std::string, Initializer>> &v) {
         impl->run(out,v);
     }
     Output Graph::insert(const std::shared_ptr<Node> nptr) {
-        return impl->insert(nptr);
+        return impl->insert(this,nptr);
     }
     Output Graph::initAllVariable() {
-        return impl->initAllVariable();
+        return impl->initAllVariable(this);
     }
 } // namespace cactus

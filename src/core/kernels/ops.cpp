@@ -20,10 +20,10 @@ namespace cactus {
             CASES(dt,compute<T>());
         }
     };
-    Output Const(Graph& g, const Input::Initializer& v) {
+    Output Const(Graph& g, const Initializer& v) {
         return g.insert(std::make_shared<NodeConst>(v.tensor));
     }
-    Output Variable(Graph& g, const Input::Initializer& v) {
+    Output Variable(Graph& g, const Initializer& v) {
         return g.insert(std::make_shared<NodeVariable>(v.tensor));
     }
     Output Placeholder(Graph& g, DataType dt, Shape s) {
