@@ -15,6 +15,11 @@ ADD_EXECUTABLE(cpptest
 				${PROJECT_SOURCE_DIR}/test/variables.cpp
 				${PROJECT_SOURCE_DIR}/3rd/googletest/googletest/src/gtest-all.cc
 				)
+ADD_EXECUTABLE(hpptest
+				${PROJECT_SOURCE_DIR}/test/index.cpp
+				${PROJECT_SOURCE_DIR}/test/cactus.cpp
+				${PROJECT_SOURCE_DIR}/3rd/googletest/googletest/src/gtest-all.cc
+				)
 ADD_EXECUTABLE(mnist
 				${PROJECT_SOURCE_DIR}/example/mnist/index.cpp)
 ADD_EXECUTABLE(perceptron

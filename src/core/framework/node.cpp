@@ -35,13 +35,13 @@ namespace cactus {
     NodeConst::NodeConst(const Tensor &v) { cstatus_ = (CtNoCompute); t = v; }
     NodeType NodeConst::type() { return NtConst; }
 
-    Output Output::operator+(Initializer rhs)
+    /*Output Output::operator+(Initializer rhs)
     {
         assert(g_ != 0);
         auto tmp=Const(*g_, rhs);
         std::cout << tmp << std::endl;
         return add(*g_,*this, tmp);
-    }
+    }*/
 
     Output::Output() : node_(NULL),g_(0) {}
     Output::Output(const Output &o) { node_ = o.node(); }

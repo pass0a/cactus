@@ -11,7 +11,7 @@ Copyright(C) 2018 liuwenjun.All rights reserved.
 namespace cactus {
 
     class BufferImpl;
-    class Cx_EXPORTS Buffer {
+    class Buffer {
     public:
         Buffer();
         explicit Buffer(uint32_t size);

@@ -63,8 +63,6 @@ namespace cactus {
     Cx_EXPORTS std::ostream& operator<<(std::ostream &os, Output& stu);
     class Cx_EXPORTS Output {
     public:
-        Output operator+(Initializer rhs);
-    public:
         Output();
         Output(const Output &o);
         Output(Node *n);
