@@ -1,0 +1,2 @@
+#include "xstorage.hpp"
+template<>

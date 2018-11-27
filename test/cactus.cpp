@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
-#include "../hpp/xtensor/xtensor.hpp"
+#include "../cactus/xtensor/xtensor.hpp"
+#include "../cactus/layers/input_layer.hpp"
 #include <complex>
 
 TEST(core, xstorage) {
@@ -26,4 +27,7 @@ TEST(core, xtensor2) {
     EXPECT_EQ(x.shape()[2], 2);
     /*EXPECT_EQ(x[0][0][1], 2);
     EXPECT_EQ(x[0][0][2], 2);*/
+}
+TEST(core, layers) {
+    
 }

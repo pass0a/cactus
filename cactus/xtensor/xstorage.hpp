@@ -10,7 +10,7 @@ namespace xt {
         uvector() noexcept
             : _buf(0),_size(0)
         {
-            assert(std::is_pod<T>::value);
+            //assert(std::is_pod<T>::value);
         }
         uvector(T* buf,size_t sh) noexcept
             : _buf(0), _size(0)
@@ -28,6 +28,7 @@ namespace xt {
                 }
             }
         }
+        T* data() { return _buf; }
         ~uvector() { delete _buf; }
         size_t size() const noexcept {
             return _size;

@@ -22,7 +22,9 @@ namespace xt {
         const size_t dim() const { return shape_.size(); }
         const size_t size() const { return storage_.size(); }
         xtensor operator [](size_t index) {
-            
+            T* p=storage_.data();
+            size_t pos=index*storage_.size() / shape_[0];
+            return xtensor();
         }
     private:
         Storage storage_;
