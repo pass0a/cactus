@@ -17,16 +17,7 @@ namespace xt {
         {
             //_size=std::accumulate(sh.begin(), sh.end(), (size_t)1, std::multiplies<size_t>());
             //assert(std::is_pod<T>::value);
-            _size = sh;
-            _buf = new T[_size];
-            if (std::is_pod<T>::value) {
-                memcpy(_buf, buf, _size);
-            }
-            else {
-                for (size_t i = 0; i < sh;i++) {
-                    _buf[i] = buf[i];
-                }
-            }
+            
         }
         T* data() { return _buf; }
         ~uvector() { delete _buf; }
@@ -34,8 +25,7 @@ namespace xt {
             return _size;
         }
     private:
-        T* _buf;
-        size_t _size;
+        std::vector<T> buf_;
     };
 }
 
