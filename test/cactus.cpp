@@ -3,18 +3,11 @@
 #include "../cactus/layers/input_layer.hpp"
 #include <complex>
 
-TEST(core, xstorage) {
-    /*int buf[3 * 3] = {1,2,3,4,5,6,7,8,9};
-    xt::uvector<int> m(buf,9);
-    EXPECT_EQ(m.size(),9);
-    std::vector<double> tmp = {1,2.4,15,3.,55,659};
-    xt::uvector<double> n(tmp.data(),tmp.size());
-    EXPECT_EQ(n.size(), 8);*/
-}
+using namespace cactus;
 
-TEST(core, xtensor2) {
-    std::vector<int> buf = { 1,2,3,4,5,6,7,8,9,10,11,12};
-    cactus::Tensor<int> x(buf,{2,2,3});
+TEST(core, xtensor) {
+    Tensor<int>::container_type buf = { 1,2,3,4,5,6,7,8,9,10,11,12};
+    Tensor<int> x(buf,{2,2,3});
     int* p = x[1].data();
     EXPECT_EQ(x.size(), 12);
     EXPECT_EQ(x.dim(), 3);
@@ -41,4 +34,10 @@ TEST(core, complex) {
     cactus::Tensor<std::complex<int>> out(m, { 2,2 });
     EXPECT_EQ(out.size(), 2);
     EXPECT_EQ(m.size(), 0);*/
+}
+TEST(layer, input) {
+    int vals[2] = {0,0};
+    input_layer<int> in({2});
+    in.inputs(vals,2);
+    in.outputs();
 }
