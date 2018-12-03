@@ -18,7 +18,8 @@ namespace xt {
         using view_type = typename xview<xarray>;
         using reference = typename Container::reference;
         using pointer = typename Container::pointer;
-
+        xarray()
+            :shape_({ 0 }), data_(0), view(*this, 0, {0}) {}
         xarray(shape_type sp)
             :shape_(sp), data_(product(sp)), view(*this,0, sp){
         }
@@ -40,11 +41,6 @@ namespace xt {
         }
         view_type operator [](size_t index) {
             return view[index];
-            /*shape_type tmp=shape_;
-            size_type len = size() / shape_[0];
-            size_type start = index*len;
-            tmp.erase(tmp.begin());
-            return view_type(*this,start,tmp);*/
         }
         reference ref(shape_type sp) {
             return view.ref(std::move(sp));

@@ -6,7 +6,11 @@
 namespace cactus {
     template<typename T,typename Container = Tensor<T>>
     class layer {
-        using shape_type = Container::shape_type;
+    public:
+        using shape_type =typename Container::shape_type;
+    public:
+        layer(shape_type inshape,shape_type outshape) 
+            :in_shape_(inshape),out_shape_(outshape){}
     protected:
         Container weights_;
         Container bias_;

@@ -7,8 +7,11 @@ namespace cactus {
     class input_layer :public layer<T> {
     public:
         input_layer(shape_type ins)
-            :in_shape_(std::move(ins)) {
-
+            :layer(ins,ins) {
+          
+        }
+        void forward(Tensor<T> inputs,Tensor<T> outputs) {
+            
         }
         
     };

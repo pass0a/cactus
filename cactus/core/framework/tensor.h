@@ -5,17 +5,17 @@
 
 namespace cactus {
     template <typename T = float_t>
-    class Tensor
+    class tensor
         :public xt::xarray<T> {
     public:
-        Tensor() {
+        tensor() {
 
         }
-        Tensor(shape_type sp)
+        tensor(shape_type sp)
             :xt::xarray<T>(sp) {
 
         }
-        Tensor(container_type& buf,shape_type sp)
+        tensor(container_type buf,shape_type sp)
             :xt::xarray<T>(buf,sp) {
             
         }
