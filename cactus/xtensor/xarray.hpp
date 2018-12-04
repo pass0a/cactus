@@ -19,12 +19,12 @@ namespace xt {
         using reference = typename Container::reference;
         using pointer = typename Container::pointer;
         xarray()
-            :shape_({ 0 }), data_(0), view(*this, 0, {0}) {}
+            :shape_({ 0 }), data_(0), view_(*this, 0, {0}) {}
         xarray(shape_type sp)
-            :shape_(sp), data_(product(sp)), view(*this,0, sp){
+            :shape_(sp), data_(product(sp)), view_(*this,0, sp){
         }
         xarray(container_type& rhs,shape_type sp)
-            :shape_(sp),view(*this,0,sp) {
+            :shape_(sp), view_(*this,0,sp) {
             data_ = std::move(rhs);
         }
         container_type& data() {
@@ -40,10 +40,16 @@ namespace xt {
             return shape_;
         }
         view_type operator [](size_t index) {
-            return view[index];
+            return view_[index];
+        }
+        xarray& operator =(xarray rhs) {
+            data_ = rhs.data_;
+            shape_ = rhs.shape_;
+            view_.reshape(shape_);
+            return *this;
         }
         reference ref(shape_type sp) {
-            return view.ref(std::move(sp));
+            return view_.ref(std::move(sp));
             
         }
     private:
@@ -54,10 +60,10 @@ namespace xt {
             }
             return val;
         }
-    private:
+    protected:
         container_type data_;
         shape_type shape_;
-        view_type view;
+        view_type view_;
     };
 }
 

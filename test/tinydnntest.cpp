@@ -19,3 +19,12 @@ TEST(core, xtensor) {
         EXPECT_FLOAT_EQ(out_expected[i], out[i]);
     }
 }
+TEST(core, xtensor2) {
+    using namespace tiny_dnn::activation;
+    using namespace tiny_dnn::layers;
+ 
+    network<sequential> net;
+    net << fc(32 * 32, 300) << sigmoid() << fc(300, 10);
+    net.save("test");
+
+}

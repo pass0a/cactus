@@ -10,8 +10,8 @@ namespace cactus {
             :layer(inshape, outshape) {
 
         }
-        void forward(Tensor<T> inputs, Tensor<T> outputs) {
-
+        void forward(tensor<T> inputs, tensor<T> outputs) {
+            layer_matmul(inputs,this->weights_);
         }
 
     };

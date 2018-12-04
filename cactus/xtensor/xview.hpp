@@ -35,6 +35,9 @@ namespace xt {
         const size_type dim() const {
             return shape_.size();
         }
+        void reshape(shape_type rhs) {
+            shape_ = rhs;
+        }
         const shape_type shape() const {
             return shape_;
         }

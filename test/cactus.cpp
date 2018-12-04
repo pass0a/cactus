@@ -40,21 +40,23 @@ TEST(layer, input) {
     tensor<int> in_data({1,2,3,4},{ 4 }), out_data({ 4 });
     input_layer<int> il({2});
     il.forward(in_data,out_data);
-    std::cout << in_data.ref({2}) << std::endl;
+    EXPECT_EQ(in_data.ref({ 0 }), 1);
+    EXPECT_EQ(in_data.ref({ 1 }), 2);
+    EXPECT_EQ(in_data.ref({ 2 }), 3);
+    EXPECT_EQ(in_data.ref({ 3 }), 4);
 }
-TEST(core, xtensor) {
-    fully_connected_layer<> l(4, 2);
+TEST(layer, fully) {
+    fully_connected_layer<> l({ 4 }, { 2 });
     
-    l.weight_init(weight_init::constant(1.0));
-    l.bias_init(weight_init::constant(0.5));
+    /*l.weight_init(weight_init::constant(1.0));
+    l.bias_init(weight_init::constant(0.5));*/
 
-    vec_t in = { 0, 1, 2, 3 };
-    std::vector<const tensor_t *> o;
-    l.forward({ { in } }, o);
-    vec_t out = (*o[0])[0];
-    vec_t out_expected = { 6.5, 6.5 };  // 0+1+2+3+0.5
+    tensor<> in({ 0, 1, 2, 3 }, {4});
+    tensor<> out;
+    l.forward(in, out);
 
-    for (size_t i = 0; i < out_expected.size(); i++) {
-        EXPECT_FLOAT_EQ(out_expected[i], out[i]);
+    for (size_t i = 0; i < out.size(); i++) {
+        std::cout << out.data()[i] << std::endl;
+        /*EXPECT_FLOAT_EQ(out_expected[i], out[i]);*/
     }
 }
