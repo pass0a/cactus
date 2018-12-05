@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 #include "../cactus/core/framework/tensor.h"
+#include "../cactus/util/bk_eigen.hpp"
+#include "../cactus/network.hpp"
 #include "../cactus/layers/input_layer.hpp"
 #include "../cactus/layers/fully_connected_layer.hpp"
 #include <complex>
@@ -19,7 +21,7 @@ TEST(core, xtensor) {
     EXPECT_EQ(x.ref({1,1,2}), 12);
 }
 TEST(core, xview) {
-    xt::xarray<int>::container_type buf = {1,2,3,4,5,6,7,8,9};
+    xt::xarray<int>::container_type buf = {1,2,3,4,4,6,7,8,9};
     xt::xarray<int> x(buf,{2,2,2});
     
     xt::xview<xt::xarray<int>> y(x, 0, {2,2});
@@ -37,23 +39,25 @@ TEST(core, complex) {
     EXPECT_EQ(m.size(), 0);*/
 }
 TEST(layer, input) {
+    bk_eigen bk;
     tensor<int> in_data({1,2,3,4},{ 4 }), out_data({ 4 });
     input_layer<int> il({2});
-    il.forward(in_data,out_data);
+    il.forward(in_data,out_data,bk);
     EXPECT_EQ(in_data.ref({ 0 }), 1);
     EXPECT_EQ(in_data.ref({ 1 }), 2);
     EXPECT_EQ(in_data.ref({ 2 }), 3);
     EXPECT_EQ(in_data.ref({ 3 }), 4);
 }
 TEST(layer, fully) {
+    bk_eigen bk;
     fully_connected_layer<> l({ 4 }, { 2 });
     
-    /*l.weight_init(weight_init::constant(1.0));
-    l.bias_init(weight_init::constant(0.5));*/
+    l.weight_init(tensor<>({ 1,1,1,1 }, {2,2}));
+    /*l.bias_init(weight_init::constant(0.5));*/
 
-    tensor<> in({ 0, 1, 2, 3 }, {4});
+    tensor<> in({ 0, 1, 2, 3 }, {2,2});
     tensor<> out;
-    l.forward(in, out);
+    l.forward(in, out,bk);
 
     for (size_t i = 0; i < out.size(); i++) {
         std::cout << out.data()[i] << std::endl;

@@ -19,38 +19,43 @@ namespace xt {
         using reference = typename Container::reference;
         using pointer = typename Container::pointer;
         xarray()
-            :shape_({ 0 }), data_(0), view_(*this, 0, {0}) {}
+            :data_(0), view_(*this, 0, {0}) {}
         xarray(shape_type sp)
-            :shape_(sp), data_(product(sp)), view_(*this,0, sp){
+            :data_(product(sp)), view_(*this,0, sp){
         }
         xarray(container_type& rhs,shape_type sp)
-            :shape_(sp), view_(*this,0,sp) {
+            :view_(*this,0,sp) {
             data_ = std::move(rhs);
         }
-        container_type& data() {
-            return data_;
+        pointer data() {
+            return data_.data();
         }
         const size_type size() const {
             return data_.size();
         }
         const size_type dim() const {
-            return shape_.size();
+            return view_.dim();
         }
         const shape_type shape() const {
-            return shape_;
+            return view_.shape();
         }
         view_type operator [](size_t index) {
             return view_[index];
         }
         xarray& operator =(xarray rhs) {
             data_ = rhs.data_;
-            shape_ = rhs.shape_;
-            view_.reshape(shape_);
+            view_.reshape(rhs.shape());
             return *this;
         }
         reference ref(shape_type sp) {
             return view_.ref(std::move(sp));
             
+        }
+        iterator begin() {
+            return data_.begin();
+        }
+        iterator end() {
+            return data_.begin();
         }
     private:
         size_t product(shape_type& tmp) {
@@ -62,7 +67,6 @@ namespace xt {
         }
     protected:
         container_type data_;
-        shape_type shape_;
         view_type view_;
     };
 }

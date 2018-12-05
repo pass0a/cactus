@@ -21,13 +21,13 @@ namespace xt {
             }
         }
         iterator begin() {
-            return storage_.data().begin() + start_;
+            return storage_.begin() + start_;
         }
         iterator end() {
-            return storage_.data().begin() + start_+len_;
+            return storage_.begin() + start_+len_;
         }
         pointer data() {
-            return storage_.data().data()+start_;
+            return storage_.data()+start_;
         }
         const size_type size() const {
             return len_;
