@@ -2,17 +2,16 @@
 #define CACTUS_LAYER_FULL_CONNECTED_HPP
 #include "layer.hpp"
 namespace cactus {
-    template<typename T = float>
-    class fully_connected_layer :public layer<T> {
+    template<typename Backend,typename T = float>
+    class fully_connected_layer :public layer<T,Backend> {
     public:
         
-        fully_connected_layer(shape_type inshape,shape_type outshape)
-            :layer(inshape, outshape) {
-
+        fully_connected_layer(size_t inshape,size_t outshape)
+            :layer({ inshape }, { outshape }) {
+            
         }
-        template<typename Backend>
-        void forward(tensor<T> inputs, tensor<T> outputs, Backend& bk) {
-            bk.matmul(inputs, weights_);
+        void forward(tensor<T> inputs, tensor<T>& outputs) {
+            bk_.full_connect(inputs, weights_,outputs);
         }
 
     };

@@ -20,12 +20,24 @@ namespace xt {
         using pointer = typename Container::pointer;
         xarray()
             :data_(0), view_(*this, 0, {0}) {}
-        xarray(shape_type sp)
-            :data_(product(sp)), view_(*this,0, sp){
+        xarray(std::initializer_list<value_type>& rhs)
+            :view_(*this, 0, { rhs.size() }) {
+            data_.resize(rhs.size());
+            std::copy(rhs.begin(), rhs.end(), data_.begin());
+            /*for ( auto v:rhs)
+            {
+                data_.push_back(v);
+            }*/
+            //data_=(std::move(rhs));
         }
         xarray(container_type& rhs,shape_type sp)
             :view_(*this,0,sp) {
             data_ = std::move(rhs);
+        }
+        xarray(pointer rhs, shape_type sp)
+            :view_(*this, 0, sp) {
+            data_.resize(view_type::product(sp));
+            memcpy(data_.data(),rhs,data_.size());
         }
         pointer data() {
             return data_.data();
@@ -33,11 +45,17 @@ namespace xt {
         const size_type size() const {
             return data_.size();
         }
+        void resize(size_type len) {
+            data_.resize(len);
+        }
         const size_type dim() const {
             return view_.dim();
         }
         const shape_type shape() const {
             return view_.shape();
+        }
+        void reshape(shape_type sp) {
+            return view_.reshape(sp);
         }
         view_type operator [](size_t index) {
             return view_[index];
@@ -56,14 +74,6 @@ namespace xt {
         }
         iterator end() {
             return data_.begin();
-        }
-    private:
-        size_t product(shape_type& tmp) {
-            size_t val=1;
-            for (auto v : tmp) {
-                val*=v;
-            }
-            return val;
         }
     protected:
         container_type data_;

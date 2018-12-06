@@ -35,11 +35,11 @@ namespace xt {
         const size_type dim() const {
             return shape_.size();
         }
-        void reshape(shape_type rhs) {
-            shape_ = rhs;
-        }
         const shape_type shape() const {
             return shape_;
+        }
+        void reshape(shape_type sp) {
+            shape_=sp;
         }
         xview operator [](size_t index) {
             assert(shape_.size() > 1);
@@ -61,8 +61,7 @@ namespace xt {
             }
             return storage_.data()[val];
         }
-    private:
-        size_t product(shape_type& tmp) {
+        static size_t product(shape_type& tmp) {
             size_t val = 1;
             for (auto v : tmp) {
                 val *= v;

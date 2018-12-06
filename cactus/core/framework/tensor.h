@@ -16,8 +16,9 @@ namespace cactus {
         using pointer = typename Storage::pointer;
     public:
         tensor() {}
-        tensor(shape_type sp):storage_(sp) {}
-        tensor(container_type buf,shape_type sp):storage_(buf,sp) {}
+        tensor(std::initializer_list<value_type> buf):storage_(buf) {}
+        //tensor(container_type& buf, shape_type sp):storage_(buf,sp) {}
+        //tensor(pointer buf, shape_type sp) :storage_(buf, sp) {}
         
         pointer data() {
             return storage_.data();
@@ -30,6 +31,10 @@ namespace cactus {
         }
         const shape_type shape() const {
             return storage_.shape();
+        }
+        void reshape(shape_type sp){
+            storage_.resize(view_type::product(sp));
+            storage_.reshape(sp);
         }
         reference ref(shape_type sp) {
             return storage_.ref(std::move(sp));

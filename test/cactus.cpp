@@ -9,8 +9,8 @@
 using namespace cactus;
 
 TEST(core, xtensor) {
-    tensor<int>::container_type buf = { 1,2,3,4,5,6,7,8,9,10,11,12};
-    tensor<int> x(buf,{2,2,3});
+    tensor<int>x = { 1,2,3,4,5,6,7,8,9,10,11,12};
+    x.reshape({2,2,3});
     int* p = x[1].data();
     EXPECT_EQ(x.size(), 12);
     EXPECT_EQ(x.dim(), 3);
@@ -39,28 +39,26 @@ TEST(core, complex) {
     EXPECT_EQ(m.size(), 0);*/
 }
 TEST(layer, input) {
-    bk_eigen bk;
-    tensor<int> in_data({1,2,3,4},{ 4 }), out_data({ 4 });
-    input_layer<int> il({2});
-    il.forward(in_data,out_data,bk);
+    tensor<int> in_data={1,2,3,4} , out_data({ 4 });
+    input_layer<bk_eigen,int> il({2});
+    il.forward(in_data,out_data);
     EXPECT_EQ(in_data.ref({ 0 }), 1);
     EXPECT_EQ(in_data.ref({ 1 }), 2);
     EXPECT_EQ(in_data.ref({ 2 }), 3);
     EXPECT_EQ(in_data.ref({ 3 }), 4);
 }
 TEST(layer, fully) {
-    bk_eigen bk;
-    fully_connected_layer<> l({ 4 }, { 2 });
-    
-    l.weight_init(tensor<>({ 1,1,1,1 }, {2,2}));
-    /*l.bias_init(weight_init::constant(0.5));*/
-
-    tensor<> in({ 0, 1, 2, 3 }, {2,2});
+    fully_connected_layer<bk_eigen> l(4, 2);
+    tensor<> w = { 1,1,1,1,2,2,2,2 }, b = {0.5,0.5};
     tensor<> out;
-    l.forward(in, out,bk);
+    out.reshape({ 2 });
+    w.reshape({ 2, 4 });
+    b.reshape({ 2,1 });
+    l.weight_init(w);
+    l.bias_init(b);
+    l.forward({ 0, 1, 2, 3 }, out);
 
     for (size_t i = 0; i < out.size(); i++) {
-        std::cout << out.data()[i] << std::endl;
-        /*EXPECT_FLOAT_EQ(out_expected[i], out[i]);*/
+        EXPECT_FLOAT_EQ(out.data()[i], i*6+6);
     }
 }
