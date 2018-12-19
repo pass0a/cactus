@@ -10,7 +10,7 @@ namespace cactus {
             :layer(ins,ins) {
           
         }
-        void forward(tensor<T> inputs,tensor<T> outputs) {
+        void forward(tensor<T> inputs,tensor<T>& outputs) {
             outputs = inputs;
         }
         

@@ -57,7 +57,7 @@ namespace cactus {
     class bk_eigen {
     private:
         template<typename shape_type>
-        shape3d transport(shape_type x) {
+        shape3d toS3d(shape_type x) {
             switch (x.size()) {
             case 0:
                 return shape3d(0, 0, 0);
@@ -74,8 +74,8 @@ namespace cactus {
     public:
         template<typename Type>
         void bias_init(Type& dst, Type& src) {
-            shape3d x3d = transport(dst.shape());
-            shape3d y3d = transport(src.shape());
+            shape3d x3d = toS3d(dst.shape());
+            shape3d y3d = toS3d(src.shape());
             Map<Matrix<Type::value_type, Dynamic, Dynamic, RowMajor>>
                 d(dst.data(), x3d.height_, x3d.width_),
                 s(src.data(), y3d.height_, y3d.width_);
@@ -83,8 +83,8 @@ namespace cactus {
         }
         template<typename Type>
         void weights_init(Type& dst, Type& src) {
-            shape3d x3d = transport(dst.shape());
-            shape3d y3d = transport(src.shape());
+            shape3d x3d = toS3d(dst.shape());
+            shape3d y3d = toS3d(src.shape());
             Map<Matrix<Type::value_type, Dynamic, Dynamic, RowMajor>>
                 d(dst.data(), x3d.height_, x3d.width_),
                 s(src.data(), y3d.height_, y3d.width_);
@@ -92,9 +92,9 @@ namespace cactus {
         }
         template<typename Type>
         void full_connect(Type& x, Type& y, Type& z){
-            shape3d x3d = transport(x.shape());
-            shape3d y3d = transport(y.shape());
-            shape3d z3d = transport(z.shape());
+            shape3d x3d = toS3d(x.shape());
+            shape3d y3d = toS3d(y.shape());
+            shape3d z3d = toS3d(z.shape());
             Map<Matrix<Type::value_type, Dynamic, Dynamic, RowMajor>>
                 a(x.data(), x3d.height_, x3d.width_),
                 b(y.data(), y3d.height_, y3d.width_),

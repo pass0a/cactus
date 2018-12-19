@@ -42,10 +42,10 @@ TEST(layer, input) {
     tensor<int> in_data={1,2,3,4} , out_data({ 4 });
     input_layer<bk_eigen,int> il({2});
     il.forward(in_data,out_data);
-    EXPECT_EQ(in_data.ref({ 0 }), 1);
-    EXPECT_EQ(in_data.ref({ 1 }), 2);
-    EXPECT_EQ(in_data.ref({ 2 }), 3);
-    EXPECT_EQ(in_data.ref({ 3 }), 4);
+    EXPECT_EQ(out_data.ref({ 0 }), 1);
+    EXPECT_EQ(out_data.ref({ 1 }), 2);
+    EXPECT_EQ(out_data.ref({ 2 }), 3);
+    EXPECT_EQ(out_data.ref({ 3 }), 4);
 }
 TEST(layer, fully) {
     fully_connected_layer<bk_eigen> l(4, 2);
