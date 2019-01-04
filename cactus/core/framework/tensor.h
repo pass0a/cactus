@@ -1,6 +1,11 @@
 #ifndef CACTUS_TENSOR_HPP
 #define CACTUS_TENSOR_HPP
 
+//#ifdef USE_EIGEN3
+//#else
+//#include "../../util/eigen3.hpp"
+//#endif
+
 #include "../../xtensor/xarray.hpp"
 
 namespace cactus {

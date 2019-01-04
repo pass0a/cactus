@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "../cactus/core/framework/tensor.h"
 #include "../cactus/util/bk_eigen.hpp"
+#include "../cactus/util/eigen3.hpp"
 #include "../cactus/network.hpp"
 #include "../cactus/layers/input_layer.hpp"
 #include "../cactus/layers/fully_connected_layer.hpp"
@@ -8,8 +9,14 @@
 
 using namespace cactus;
 
+TEST(core, xtensor1) {
+    tensor<int> x = { 1,2,3,4,5,6,7,8,9,10,11,12 };
+    x.reshape({ 4,3 });
+    auto y = x + 2;
+    std::cout << y.ref({ 0,0 }) << std::endl;
+}
 TEST(core, xtensor) {
-    tensor<int>x = { 1,2,3,4,5,6,7,8,9,10,11,12};
+    tensor<int> x = { 1,2,3,4,5,6,7,8,9,10,11,12};
     x.reshape({2,2,3});
     int* p = x[1].data();
     EXPECT_EQ(x.size(), 12);
@@ -49,16 +56,16 @@ TEST(layer, input) {
 }
 TEST(layer, fully) {
     fully_connected_layer<bk_eigen> l(4, 2);
-    tensor<> w = { 1,1,1,1,2,2,2,2 }, b = {0.5,0.5};
+    tensor<> w = { 1,1,1,1,2,2,2,2 }, b = {1,1};
     tensor<> out;
     out.reshape({ 2 });
     w.reshape({ 2, 4 });
-    b.reshape({ 2,1 });
+    b.reshape({ 2, 1 });
     l.weight_init(w);
     l.bias_init(b);
     l.forward({ 0, 1, 2, 3 }, out);
 
     for (size_t i = 0; i < out.size(); i++) {
-        EXPECT_FLOAT_EQ(out.data()[i], i*6+6);
+        EXPECT_FLOAT_EQ(out.data()[i], i*6+6+1);
     }
 }
