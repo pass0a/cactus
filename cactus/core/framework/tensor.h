@@ -20,7 +20,10 @@ namespace cactus {
         using reference = typename Storage::reference;
         using pointer = typename Storage::pointer;
     public:
-        tensor() {}
+        tensor():storage_(){}
+        tensor(tensor& rhs):storage_(rhs.storage_) {
+            
+        }
         tensor(std::initializer_list<value_type> buf):storage_(buf) {}
         //tensor(container_type& buf, shape_type sp):storage_(buf,sp) {}
         //tensor(pointer buf, shape_type sp) :storage_(buf, sp) {}
@@ -51,6 +54,9 @@ namespace cactus {
             storage_ = rhs.storage_;
             return *this;
         }
+        template<typename Type>
+        friend std::ostream & operator<<(std::ostream & os, tensor<Type> & stu);
+        
     private:
         Storage storage_;
     };

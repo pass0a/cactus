@@ -10,10 +10,13 @@
 using namespace cactus;
 
 TEST(core, xtensor1) {
-    tensor<int> x = { 1,2,3,4,5,6,7,8,9,10,11,12 };
-    x.reshape({ 4,3 });
-    auto y = x + 2;
-    std::cout << y.ref({ 0,0 }) << std::endl;
+    tensor<> x = { 5.0,3.0,4.0 };
+    //tensor<> y = { 1,2,3,4,5,6,7,8,9,10,11,12 };
+
+    auto z = x*x*9;
+    std::cout << z << std::endl;
+    z.backward();
+    std::cout << x.grad << std::endl;
 }
 TEST(core, xtensor) {
     tensor<int> x = { 1,2,3,4,5,6,7,8,9,10,11,12};

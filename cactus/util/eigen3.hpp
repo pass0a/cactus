@@ -7,19 +7,60 @@
 namespace cactus {
 
     using namespace Eigen;
-    template<typename LV, typename RV>
+    template<typename LV,typename RV>
     tensor<LV> operator +(tensor<LV> lv, tensor<RV> rv) {
-        /*Map<Matrix<Type::value_type, Dynamic, Dynamic, RowMajor>>
-        x;*/
-        return lv;
+        tensor<LV> val;
+        val.reshape(lv.shape());
+        
+        Map<Array<LV, Dynamic, RowMajor>>
+            x(lv.data(),lv.size()),z(val.data(),val.size());
+        Map<Array<RV, Dynamic, RowMajor>>
+            y(rv.data(), rv.size());
+
+        z=x + y.cast<LV>();
+        return val;
     }
     template<typename LV, typename RV>
     tensor<LV> operator +(tensor<LV>& lv, RV rv) {
-        auto sh=lv.shape();
-        Map<Array<LV, Dynamic, Dynamic, RowMajor>>
-        x(lv.data(),sh[0],sh[1]);
-        x+=rv;
-        return lv;
+        tensor<LV> val;
+        val.reshape(lv.shape());
+        Map<Array<LV, Dynamic, RowMajor>>
+        x(lv.data(),val.size()),z(val.data(),val.size());
+        z=x+rv;
+        return val;
     }
+    template<typename LV, typename RV>
+    tensor<LV> operator *(tensor<LV> lv, tensor<RV> rv) {
+        tensor<LV> val;
+        val.reshape(lv.shape());
+
+        Map<Array<LV, Dynamic, RowMajor>>
+            x(lv.data(), lv.size()), z(val.data(), val.size());
+        Map<Array<RV, Dynamic, RowMajor>>
+            y(rv.data(), rv.size());
+
+        z = x * y.cast<LV>();
+        return val;
+    }
+    template<typename LV, typename RV>
+    tensor<LV> operator *(tensor<LV>& lv, RV rv) {
+        tensor<LV> val;
+        val.reshape(lv.shape());
+        Map<Array<LV, Dynamic, RowMajor>>
+            x(lv.data(), val.size()), z(val.data(), val.size());
+        z = x * rv;
+        return val;
+    }
+    
+    template<typename Type>
+    std::ostream & operator<<(std::ostream & os, tensor<Type> & stu)
+    {
+        // TODO: 在此处插入 return 语句
+        Map<Array<Type, Dynamic, RowMajor>>
+            tmp(stu.data(),stu.size());
+        os << tmp;
+        return os;
+    }
+    
 }
 #endif

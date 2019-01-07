@@ -4,6 +4,7 @@
 #include <vector>
 #include <numeric>
 #include "xview.hpp"
+#include <memory>
 
 namespace xt {
     template<typename T,typename Container = std::vector<T>>
@@ -19,34 +20,39 @@ namespace xt {
         using reference = typename Container::reference;
         using pointer = typename Container::pointer;
         xarray()
-            :data_(0), view_(*this, 0, {0}) {}
+            :data_(std::make_shared<container_type>(0)), view_(*this, 0, {0}) {}
         xarray(std::initializer_list<value_type>& rhs)
             :view_(*this, 0, { rhs.size() }) {
-            data_.resize(rhs.size());
-            std::copy(rhs.begin(), rhs.end(), data_.begin());
+            data_ = std::make_shared<container_type>(rhs.size());
+            std::copy(rhs.begin(), rhs.end(), data_->begin());
             /*for ( auto v:rhs)
             {
-                data_.push_back(v);
+                data_->push_back(v);
             }*/
             //data_=(std::move(rhs));
         }
+        xarray(xarray& rhs)
+            :data_(rhs.data_),
+            view_(*this, 0, rhs.shape()) {
+        }
         xarray(container_type& rhs,shape_type sp)
-            :view_(*this,0,sp) {
-            data_ = std::move(rhs);
+            :data_(std::make_shared<container_type>(rhs)),
+            view_(*this,0,sp) {
+            //*data_ = std::move(rhs);
         }
         xarray(pointer rhs, shape_type sp)
-            :view_(*this, 0, sp) {
-            data_.resize(view_type::product(sp));
-            memcpy(data_.data(),rhs,data_.size());
+            :data_(std::make_shared<container_type>(view_type::product(sp))),
+            view_(*this, 0, sp) {
+            memcpy(data_->data(),rhs,data_->size());
         }
         pointer data() {
-            return data_.data();
+            return data_->data();
         }
         const size_type size() const {
-            return data_.size();
+            return data_->size();
         }
         void resize(size_type len) {
-            data_.resize(len);
+            data_->resize(len);
         }
         const size_type dim() const {
             return view_.dim();
@@ -70,13 +76,13 @@ namespace xt {
             
         }
         iterator begin() {
-            return data_.begin();
+            return data_->begin();
         }
         iterator end() {
-            return data_.begin();
+            return data_->begin();
         }
     protected:
-        container_type data_;
+        std::shared_ptr<container_type> data_;
         view_type view_;
     };
 }
