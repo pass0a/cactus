@@ -7,10 +7,11 @@
 //#endif
 
 #include "../../xtensor/xarray.hpp"
+#include "../operator/add.hpp"
 
 namespace cactus {
-    template <typename T = float_t,typename Storage= xt::xarray<T>>
-    class tensor{
+    template <typename T = float_t, typename Storage = xt::xarray<T>>
+    class tensor {
     public:
         using value_type = typename T;
         using shape_type = typename Storage::shape_type;
@@ -20,14 +21,17 @@ namespace cactus {
         using reference = typename Storage::reference;
         using pointer = typename Storage::pointer;
     public:
-        tensor():storage_(){}
-        tensor(tensor& rhs):storage_(rhs.storage_) {
-            
+        tensor() :storage_() {
         }
-        tensor(std::initializer_list<value_type> buf):storage_(buf) {}
+        tensor(T val) :storage_(val) {
+        }
+        tensor(tensor& rhs) :storage_(rhs.storage_) {
+
+        }
+        tensor(std::initializer_list<value_type> buf) :storage_(buf) {}
         //tensor(container_type& buf, shape_type sp):storage_(buf,sp) {}
         //tensor(pointer buf, shape_type sp) :storage_(buf, sp) {}
-        
+
         pointer data() {
             return storage_.data();
         }
@@ -40,7 +44,7 @@ namespace cactus {
         const shape_type shape() const {
             return storage_.shape();
         }
-        void reshape(shape_type sp){
+        void reshape(shape_type sp) {
             storage_.resize(view_type::product(sp));
             storage_.reshape(sp);
         }
@@ -55,8 +59,12 @@ namespace cactus {
             return *this;
         }
         template<typename Type>
-        friend std::ostream & operator<<(std::ostream & os, tensor<Type> & stu);
-        
+        friend std::ostream & operator<<(std::ostream & os, tensor<Type>& stu);
+        void backward() {
+            
+        }
+    public:
+        Storage grad;
     private:
         Storage storage_;
     };

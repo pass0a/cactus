@@ -1,7 +1,7 @@
 #ifndef CACTUS_LAYER_HPP
 #define CACTUS_LAYER_HPP
 
-#include "../cactus/core/framework/tensor.h"
+#include "../cactus/core/framework/tensor.hpp"
 
 namespace cactus {
     template<typename T,typename Backend, typename Container = tensor<T>>

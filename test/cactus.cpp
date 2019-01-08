@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../cactus/core/framework/tensor.h"
+#include "../cactus/core/framework/tensor.hpp"
 #include "../cactus/util/bk_eigen.hpp"
 #include "../cactus/util/eigen3.hpp"
 #include "../cactus/network.hpp"
@@ -13,7 +13,7 @@ TEST(core, xtensor1) {
     tensor<> x = { 5.0,3.0,4.0 };
     //tensor<> y = { 1,2,3,4,5,6,7,8,9,10,11,12 };
 
-    auto z = x*x*9;
+    auto z = x+2;
     std::cout << z << std::endl;
     z.backward();
     std::cout << x.grad << std::endl;
