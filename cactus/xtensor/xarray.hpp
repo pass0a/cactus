@@ -35,7 +35,7 @@ namespace xt {
             :data_(rhs.data_),
             view_(*this, 0, rhs.shape()) {
         }
-        xarray(T& rhs)
+        xarray(T rhs)
             :view_(*this, 0, {1}) {
             data_ = std::make_shared<container_type>(1);
             data_->at(0)=rhs;
@@ -86,8 +86,6 @@ namespace xt {
         iterator end() {
             return data_->begin();
         }
-        template<typename Type>
-        friend std::ostream & operator<<(std::ostream & os, xt::xarray<T> stu);
     protected:
         std::shared_ptr<container_type> data_;
         view_type view_;

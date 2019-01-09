@@ -7,10 +7,21 @@
 //#endif
 
 #include "../../xtensor/xarray.hpp"
-#include "../operator/add.hpp"
 
 namespace cactus {
-    template <typename T = float_t, typename Storage = xt::xarray<T>>
+    class NoneGradOp {
+    public:
+        NoneGradOp():name_("NoneGradOp"){}
+        template<typename T>
+        int operator()(T ) {
+            return 0;
+        }
+        std::string name_;
+    };
+    template <
+        typename T = float_t,
+        typename GradOp=NoneGradOp,
+        typename Storage = xt::xarray<T>>
     class tensor {
     public:
         using value_type = typename T;
@@ -21,14 +32,23 @@ namespace cactus {
         using reference = typename Storage::reference;
         using pointer = typename Storage::pointer;
     public:
-        tensor() :storage_() {
+        tensor() :storage_(), grad_(1){
         }
-        tensor(T val) :storage_(val) {
+        tensor(GradOp &op) :storage_(), grad_(1),gof_(op) {
         }
-        tensor(tensor& rhs) :storage_(rhs.storage_) {
+        tensor(Storage &s) :storage_(s), grad_(1) {
+        }
+        tensor(T val) :storage_(val), grad_(1) {
+        }
+        tensor(tensor& rhs) 
+            :storage_(rhs.storage_),
+            gof_(rhs.gof_),
+            grad_(1) {
 
         }
-        tensor(std::initializer_list<value_type> buf) :storage_(buf) {}
+        tensor(std::initializer_list<value_type> buf) 
+            :storage_(buf),
+            grad_(1) {}
         //tensor(container_type& buf, shape_type sp):storage_(buf,sp) {}
         //tensor(pointer buf, shape_type sp) :storage_(buf, sp) {}
 
@@ -54,19 +74,35 @@ namespace cactus {
         view_type operator [](size_t idx) {
             return storage_[idx];
         }
-        tensor& operator =(tensor& rhs) {
-            storage_ = rhs.storage_;
+        template<typename OP>
+        tensor& operator =(tensor<T,OP>& rhs) {
+            //if (this != &rhs) {
+                storage_ = rhs.storage_;
+                //gof_ = rhs.gof_;
+                grad_ = rhs.grad_;
+            //}
             return *this;
         }
-        template<typename Type>
-        friend std::ostream & operator<<(std::ostream & os, tensor<Type>& stu);
+        template<typename Type, typename GradOp>
+        friend std::ostream & operator<<(std::ostream & os, tensor<Type, GradOp>& stu);
         void backward() {
-            
+            gof_(grad_);
+        }
+        void backward(tensor gd) {
+            grad_ = gd.storage_;
+            gof_(grad_);
+        }
+        /*void bindGrad(GradOp fp) {
+            gof_ = std::move(fp);
+        }*/
+    public:
+        tensor grad() {
+            return grad_;
         }
     public:
-        Storage grad;
-    private:
         Storage storage_;
+        Storage grad_;
+        GradOp gof_;
     };
 
 }
