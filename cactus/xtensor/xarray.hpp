@@ -71,9 +71,13 @@ namespace xt {
         view_type operator [](size_t index) {
             return view_[index];
         }
-        xarray& operator =(xarray rhs) {
-            data_ = rhs.data_;
-            view_.reshape(rhs.shape());
+        xarray& operator =(xarray& rhs) {
+            this->resize(rhs.size());
+            this->reshape(rhs.shape());
+            if (this->shape() == rhs.shape()) {
+                std::copy(rhs.begin(), rhs.end(), (*data_).begin());
+                //data_ = rhs.data_;
+            }
             return *this;
         }
         reference ref(shape_type sp) {
@@ -84,7 +88,7 @@ namespace xt {
             return data_->begin();
         }
         iterator end() {
-            return data_->begin();
+            return data_->end();
         }
     protected:
         std::shared_ptr<container_type> data_;

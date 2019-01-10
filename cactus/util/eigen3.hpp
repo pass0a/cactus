@@ -5,7 +5,24 @@
 #include "../core/framework/tensor.hpp"
 
 namespace cactus {
-
+#define arithmetic_eigen(val,lv,rv,opt) if (lv.size() == rv.size()) {\
+    val.reshape(lv.shape());\
+    Map<Array<LV, Dynamic, RowMajor>>\
+        x(lv.data(), lv.size()), y(rv.data(), rv.size()), z(val.data(), val.size());\
+    z = x opt y;\
+    }\
+else if (lv.size() == 1) {\
+    val.reshape(rv.shape());\
+    Map<Array<LV, Dynamic, RowMajor>>\
+        y(rv.data(), rv.size()), z(val.data(), val.size());\
+    z = lv.ref({ 0 }) opt y;\
+}\
+else if (rv.size() == 1) {\
+    val.reshape(lv.shape());\
+    Map<Array<LV, Dynamic, RowMajor>>\
+        x(lv.data(), lv.size()), y(rv.data(), rv.size()), z(val.data(), val.size());\
+    z = x opt rv.ref({ 0 });\
+}
     using namespace Eigen;
     template<typename LV, typename RV>
     class AddGradOp{
@@ -61,8 +78,7 @@ namespace cactus {
         }
 
         int operator()(tensor<LV> gd) {
-            auto x=lv_.grad();
-            x= gd*rv_;
+            lv_.grad()= gd*rv_;
             lv_.backward();
             rv_.backward();
             return 0;
@@ -75,23 +91,10 @@ namespace cactus {
     template<typename LV, typename RV>
     tensor<LV, MulGradOp<LV, RV>> operator *(tensor<LV>& lv, tensor<RV>& rv) {
         tensor<LV, MulGradOp<LV, RV>> val(MulGradOp<LV, RV>(lv, rv));
-        val.reshape(lv.shape());
-
-        Map<Array<LV, Dynamic, RowMajor>>
-            x(lv.data(), lv.size()), z(val.data(), val.size());
-
-        if (rv.size() == lv.size()) {
-            z = x * rv.ref({ 0 });
-        }
-        else if (lv.size() == 1) {
-            z = y * lv.ref({ 0 });
-        }else {
-            Map<Array<RV, Dynamic, RowMajor>>
-                y(rv.data(), rv.size());
-            z = x * y.cast<LV>();
-        }
+        arithmetic_eigen(val,lv,rv,*);
         return val;
     }
+    
     template<typename LV, typename RV>
     tensor<LV, MulGradOp<LV, RV>> operator *(tensor<LV>& lv, RV rv) {
         tensor<RV> val = rv;
