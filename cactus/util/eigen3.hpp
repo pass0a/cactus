@@ -4,105 +4,141 @@
 #include "../3rd/eigen/Eigen/Dense"
 #include "../core/framework/tensor.hpp"
 
+
 namespace cactus {
-#define arithmetic_eigen(val,lv,rv,opt) if (lv.size() == rv.size()) {\
-    val.reshape(lv.shape());\
-    Map<Array<LV, Dynamic, RowMajor>>\
-        x(lv.data(), lv.size()), y(rv.data(), rv.size()), z(val.data(), val.size());\
-    z = x opt y;\
-    }\
-else if (lv.size() == 1) {\
-    val.reshape(rv.shape());\
-    Map<Array<LV, Dynamic, RowMajor>>\
-        y(rv.data(), rv.size()), z(val.data(), val.size());\
-    z = lv.ref({ 0 }) opt y;\
-}\
-else if (rv.size() == 1) {\
-    val.reshape(lv.shape());\
-    Map<Array<LV, Dynamic, RowMajor>>\
-        x(lv.data(), lv.size()), y(rv.data(), rv.size()), z(val.data(), val.size());\
-    z = x opt rv.ref({ 0 });\
-}
     using namespace Eigen;
+
+    //#define arithmetic_eigen(val,lv,rv,opt) 
+
+        /*template<typename LV, typename OPL, typename RV, typename OPR>
+        void setgrad(tensor<LV, OPL>& lv, tensor<RV, OPR>& rv) {
+            if (lv.size()) {
+                lv = lv+rv;
+            }
+            else {
+                lv = rv;
+            }
+        }*/
     template<typename LV, typename RV>
-    class AddGradOp{
+    class AddGradOp :public GradOp {
     public:
-        AddGradOp() {}
-        //AddGradOp(AddGradOp& v) :lv_(v.lv_), rv_(v.rv_) {}
-        AddGradOp(tensor<LV> lv, tensor<RV> rv)
-            :lv_(lv),rv_(rv) {
+        AddGradOp() :name_("AddGradOp") {}
+        AddGradOp(tensor<LV>& res, tensor<LV>& lv, tensor<RV>& rv)
+            :name_("AddGradOp"), res_(res), lv_(lv), rv_(rv)
+        {
+
         }
-        
-        int operator()(tensor<LV> gd) {
-            lv_.backward();
-            rv_.backward();
+        ~AddGradOp() {
+        }
+        virtual int backward() {
+            //rv_.grad() = tensor<RV>(1)*1.0;
             return 0;
         }
-        std::string name = "AddGradOp";
     private:
+        std::string name_;
+        tensor<LV> res_;
         tensor<LV> lv_;
         tensor<RV> rv_;
     };
-    template<typename LV,typename RV>
-    tensor<LV, AddGradOp<LV, RV>> operator +(tensor<LV>& lv, tensor<RV>& rv) {
-        tensor<LV,AddGradOp<LV,RV>> val;
-        val.bindGrad(AddGradOp<LV, RV>(lv,rv));
-        val.reshape(lv.shape());
-        
-        Map<Array<LV, Dynamic, RowMajor>>
-            x(lv.data(),lv.size()),z(val.data(),val.size());
-       
-        if (rv.size() == 1) {
-            z = x + rv.ref({ 0 });
-        }
-        else {
-            Map<Array<RV, Dynamic, RowMajor>>
+    template<typename LV, typename RV>
+    tensor<LV> operator +(tensor<LV>& lv, tensor<RV>& rv) {
+        tensor<LV> val;
+        val.bindOp(std::make_shared<AddGradOp<LV, RV>>(val, lv, rv));
+        if (lv.size() == rv.size()) {
+            val.reshape(lv.shape());
+            Map<Array<LV, Dynamic, RowMajor>>
+                x(lv.data(), lv.size()), z(val.data(), val.size()); \
+                Map<Array<RV, Dynamic, RowMajor>>
                 y(rv.data(), rv.size());
             z = x + y.cast<LV>();
         }
+        else if (lv.size() == 1) {
+            val.reshape(rv.shape());
+            Map<Array<LV, Dynamic, RowMajor>>
+                z(val.data(), val.size());
+            Map<Array<RV, Dynamic, RowMajor>>
+                y(rv.data(), rv.size());
+            z = lv.ref({ 0 }) + y.cast<LV>();
+        }
+        else if (rv.size() == 1) {
+            val.reshape(lv.shape());
+            Map<Array<LV, Dynamic, RowMajor>>
+                x(lv.data(), lv.size()), z(val.data(), val.size());
+            z = x + rv.ref({ 0 });
+        }
         return val;
     }
-    template<typename LV, typename RV>
-    tensor<LV, AddGradOp<LV, RV>> operator +(tensor<LV>& lv, RV rv) {
-        tensor<RV> val=rv;
-        return lv+val;
+    template<typename LV, typename OPL, typename RV>
+    tensor<LV, AddGradOp<LV, RV>> operator +(tensor<LV, OPL>& lv, RV rv) {
+        tensor<RV, OPL> val = rv;
+        return lv + val;
     }
-    
-    template<typename LV, typename RV>
-    class MulGradOp {
-    public:
-        MulGradOp() {}
-        //AddGradOp(AddGradOp& v) :lv_(v.lv_), rv_(v.rv_) {}
-        MulGradOp(tensor<LV> lv, tensor<RV> rv)
-            :lv_(lv), rv_(rv) {
-        }
 
-        int operator()(tensor<LV> gd) {
-            lv_.grad()= gd*rv_;
-            lv_.backward();
-            rv_.backward();
+    template<typename LV, typename RV>
+    class MulGradOp :public GradOp {
+    public:
+        MulGradOp() :name_("AddGradOp") {}
+        MulGradOp(tensor<LV>& res, tensor<LV>& lv, tensor<RV>& rv)
+            :name_("AddGradOp"), res_(res), lv_(lv), rv_(rv)
+        {
+
+        }
+        ~MulGradOp() {
+            std::cout << "????" << std::endl;
+        }
+        virtual int backward() {
+            //lv_.grad() = res_.grad()*rv_;
+            //tensor<RV>(1)*1.0f;
             return 0;
         }
-        std::string name = "MulGradOp";
     private:
+        std::string name_;
+        tensor<LV> res_;
         tensor<LV> lv_;
         tensor<RV> rv_;
     };
     template<typename LV, typename RV>
-    tensor<LV, MulGradOp<LV, RV>> operator *(tensor<LV>& lv, tensor<RV>& rv) {
-        tensor<LV, MulGradOp<LV, RV>> val(MulGradOp<LV, RV>(lv, rv));
-        arithmetic_eigen(val,lv,rv,*);
+    tensor<LV> operator *(tensor<LV>& lv, tensor<RV>& rv) {
+        tensor<LV> val;
+        val.bindOp(std::make_shared<MulGradOp<LV, RV>>(val, lv, rv));
+        //arithmetic_eigen(val, lv, rv, *);
+        std::is_same
+        if (lv.size() == rv.size()) {
+
+            val.reshape(lv.shape());
+            Map<Array<LV, Dynamic, RowMajor>>
+                x(lv.data(), lv.size()), z(val.data(), val.size());
+            Map<Array<RV, Dynamic, RowMajor>>
+                y(rv.data(), rv.size());
+            z = x * y.cast<LV>();
+        }
+        else if (lv.size() == 1) {
+
+            val.reshape(rv.shape());
+            Map<Array<LV, Dynamic, RowMajor>>
+                z(val.data(), val.size());
+            Map<Array<RV, Dynamic, RowMajor>>
+                y(rv.data(), rv.size());
+            z = lv.ref({ 0 }) * y.cast<LV>();
+        }
+        else if (rv.size() == 1) {
+
+            val.reshape(lv.shape());
+            Map<Array<LV, Dynamic, RowMajor>>
+                x(lv.data(), lv.size()), z(val.data(), val.size());
+            z = x * rv.ref({ 0 });
+        }
         return val;
     }
-    
+
     template<typename LV, typename RV>
-    tensor<LV, MulGradOp<LV, RV>> operator *(tensor<LV>& lv, RV rv) {
+    tensor<LV> operator *(tensor<LV>& lv, RV rv) {
         tensor<RV> val = rv;
         return lv * val;
     }
 
-    template<typename Type,typename GradOp>
-    std::ostream & operator<<(std::ostream & os, tensor<Type, GradOp>& stu)
+    template<typename Type>
+    std::ostream & operator<<(std::ostream & os, tensor<Type>& stu)
     {
         // TODO: 在此处插入 return 语句
         Map<Array<Type, Dynamic, RowMajor>>
@@ -110,6 +146,6 @@ else if (rv.size() == 1) {\
         os << tmp;
         return os;
     }
-    
+
 }
 #endif

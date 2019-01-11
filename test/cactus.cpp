@@ -12,8 +12,10 @@ using namespace cactus;
 
 TEST(core, xtensor1) {
     tensor<> x = { 5.0,3.0,4.0 };
+    tensor<int> y = { 1,2,3 };
+    //auto z = x*y;
     //tensor<> y = { 1,2,3,4,5,6,7,8,9,10,11,12 };
-    auto z = x * x;
+    auto z = y * 0.1f;
     z.backward();
     std::cout << x.grad() << std::endl;
     /*auto z = x+2;

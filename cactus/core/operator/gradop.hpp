@@ -2,7 +2,8 @@
 #define CACTUS_GRADOP_HPP
 
 class GradOp {
-    virtual int operator()();
+public:
+    virtual int backward()=0;
 };
 
 #endif
