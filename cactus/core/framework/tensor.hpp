@@ -48,9 +48,8 @@ namespace cactus {
             tensor(T val) :storage_(val), gop_(std::make_shared<NoneGradOp<T>>()) {
             }
             tensor(tensor& rhs)
-                :storage_(rhs.storage_)
+                :storage_(rhs.storage_),grad_(rhs.grad_),gop_(rhs.gop_)
             {
-                gop_ = rhs.gop_;
             }
             tensor(std::initializer_list<value_type> buf)
                 :storage_(buf)
@@ -84,6 +83,7 @@ namespace cactus {
             tensor& operator =(tensor<Type>& rhs) {
                 if (this != &rhs) {
                     storage_ = rhs.storage_;
+					grad_ = rhs.grad_;
                     gop_ = rhs.gop_;
                 }
                 return *this;

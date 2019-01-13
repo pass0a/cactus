@@ -3,11 +3,11 @@
 #include <memory>
 template<typename Tx,typename Ty>
 struct S {
-    auto operator()(Tx,Ty) { return 1.0; }
+    auto operator()() { Tx x; Ty y; return x + y; }
 };
 
 int main() {
-    std::result_of<S<int,int>(int,int)>::type x = 0.4;
+    std::result_of<S<int,int>()>::type x=1.3;
     std::cout << x << std::endl;
     return 0;
 }
