@@ -12,16 +12,12 @@ using namespace cactus;
 
 TEST(core, xtensor1) {
     tensor<> x = { 5.0,3.0,4.0 };
-    tensor<int> y = { 1,2,3 };
-    //auto z = x*y;
-    //tensor<> y = { 1,2,3,4,5,6,7,8,9,10,11,12 };
-    auto z = y * 0.1f;
+    tensor<int> y = { 1,1,1 };
+    auto z = y*y*y*5+x;
     z.backward();
-    std::cout << x.grad() << std::endl;
-    /*auto z = x+2;
-    std::cout << z << std::endl;
+    std::cout << y.grad() << std::endl;
     z.backward();
-    std::cout << x.grad() << std::endl;*/
+    std::cout << y.grad() << std::endl;
 }
 TEST(core, xtensor) {
     tensor<int> x = { 1,2,3,4,5,6,7,8,9,10,11,12};

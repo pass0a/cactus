@@ -4,6 +4,7 @@
 class GradOp {
 public:
     virtual int backward()=0;
+    virtual std::vector<GradOp*> oplist() = 0;
 };
 
 #endif

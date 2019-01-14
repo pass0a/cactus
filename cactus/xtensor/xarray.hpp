@@ -20,14 +20,13 @@ namespace xt {
         using reference = typename Container::reference;
         using pointer = typename Container::pointer;
         xarray()
-            :data_(std::make_shared<container_type>(0)), view_(*this, 0, {0}) {}
+            :data_(0), view_(*this, 0, {0}) {}
         xarray(std::initializer_list<value_type>& rhs)
-            :view_(*this, 0, { rhs.size() }) {
-            data_ = std::make_shared<container_type>(rhs.size());
-            std::copy(rhs.begin(), rhs.end(), data_->begin());
+            :view_(*this, 0, { rhs.size() }), data_(rhs.size()) {
+            std::copy(rhs.begin(), rhs.end(), data_.begin());
             /*for ( auto v:rhs)
             {
-                data_->push_back(v);
+                data_.push_back(v);
             }*/
             //data_=(std::move(rhs));
         }
@@ -36,28 +35,27 @@ namespace xt {
             view_(*this, 0, rhs.shape()) {
         }
         xarray(T rhs)
-            :view_(*this, 0, {1}) {
-            data_ = std::make_shared<container_type>(1);
-            data_->at(0)=rhs;
+            :view_(*this, 0, {1}), data_(1) {
+            data_.at(0)=rhs;
         }
         xarray(container_type& rhs,shape_type sp)
-            :data_(std::make_shared<container_type>(rhs)),
+            :data_(rhs),
             view_(*this,0,sp) {
             //*data_ = std::move(rhs);
         }
         xarray(pointer rhs, shape_type sp)
-            :data_(std::make_shared<container_type>(view_type::product(sp))),
+            :data_(view_type::product(sp)),
             view_(*this, 0, sp) {
-            memcpy(data_->data(),rhs,data_->size());
+            memcpy(data_.data(),rhs,data_.size());
         }
         pointer data() {
-            return data_->data();
+            return data_.data();
         }
         const size_type size() const {
-            return data_->size();
+            return data_.size();
         }
         void resize(size_type len) {
-            data_->resize(len);
+            data_.resize(len);
         }
         const size_type dim() const {
             return view_.dim();
@@ -75,7 +73,7 @@ namespace xt {
             this->resize(rhs.size());
             this->reshape(rhs.shape());
             if (this->shape() == rhs.shape()) {
-                std::copy(rhs.begin(), rhs.end(), (*data_).begin());
+                std::copy(rhs.begin(), rhs.end(), data_.begin());
                 //data_ = rhs.data_;
             }
             return *this;
@@ -85,13 +83,13 @@ namespace xt {
             
         }
         iterator begin() {
-            return data_->begin();
+            return data_.begin();
         }
         iterator end() {
-            return data_->end();
+            return data_.end();
         }
     protected:
-        std::shared_ptr<container_type> data_;
+        container_type data_;
         view_type view_;
     };
 }
