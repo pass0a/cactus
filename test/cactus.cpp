@@ -15,7 +15,7 @@ TEST(core, xtensor1) {
     tensor<int> y = { 1,1,1 };
     auto z = y*y*y*5+x;
     z.backward();
-    std::cout << y.grad() << std::endl;
+    std::cout << y.grad()<<"x:"<<x.grad() << std::endl;
     z.backward();
     std::cout << y.grad() << std::endl;
 }

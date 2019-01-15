@@ -8,6 +8,7 @@
 
 #include "../../xtensor/xarray.hpp"
 #include "../operator/gradop.hpp"
+#include <queue>
 
 namespace cactus {
     template <
@@ -114,20 +115,29 @@ namespace cactus {
                 tensor<float> tmp(grad_);
                 tmp.reshape({ 1 });
                 tmp.ref({ 0 }) = 1;
+
                 GradOp* ptr = gop_.get();
-                std::vector<GradOp*> list,tmp;
-                list.emplace_back(root);
+                std::vector<GradOp*> list,opl;
+                std::queue<GradOp*> queue;
+                list.emplace_back(ptr);
                 while (ptr)
                 {
-                    tmp = ptr->oplist();
-                    list.insert(list.end(), tmp.begin(), tmp.end());
-
+                    opl = ptr->oplist();
+                    for (auto it:opl)
+                    {
+                        queue.emplace(it);
+                    }
+                    list.insert(list.end(), opl.begin(), opl.end());
+                    if (queue.empty()) {
+                        ptr = NULL;
+                    }else{
+                        ptr = queue.front();
+                        queue.pop();
+                    }
                 }
-                
-                //gop_->backward();
-            }
-            void backward_() {
-                gop_->backward();
+                for (auto it:list) {
+                    it->backward();
+                }
             }
             void backward(tensor<float> gd) {
                 tensor<float> tmp(grad_);

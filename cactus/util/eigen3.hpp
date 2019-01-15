@@ -15,9 +15,9 @@ namespace cactus {
     template<typename RET, typename LV, typename RV>
     class AddGradOp :public GradOp {
     public:
-        AddGradOp() :name_("MulGradOp") {}
+        AddGradOp() :name_("AddGradOp") {}
         AddGradOp(tensor<RET>& res, tensor<LV>& lv, tensor<RV>& rv)
-            :name_("MulGradOp"), res_(res), lv_(lv), rv_(rv)
+            :name_("AddGradOp"), res_(res), lv_(lv), rv_(rv)
         {
 
         }
@@ -39,8 +39,8 @@ namespace cactus {
         tensor<RV> rv_;
     };
     template<typename LV, typename RV>
-    auto operator +(tensor<LV>& lv, tensor<RV>& rv) {
-        using result_type = std::result_of<S<LV, RV>()>::type;
+    tensor<typename std::result_of<S<LV, RV>()>::type> operator +(tensor<LV>& lv, tensor<RV>& rv) {
+        using result_type = typename std::result_of<S<LV, RV>()>::type;
         tensor<result_type> val;
         val.bindOp(std::make_shared<AddGradOp<result_type, LV, RV>>(val, lv, rv));
         //arithmetic_eigen(val, lv, rv, *);
@@ -73,7 +73,7 @@ namespace cactus {
         return val;
     }
     template<typename LV, typename RV>
-    auto operator +(tensor<LV>& lv, RV rv) {
+    tensor<typename std::result_of<S<LV, RV>()>::type> operator +(tensor<LV>& lv, RV rv) {
         tensor<RV> val = rv;
         return lv + val;
     }
@@ -93,8 +93,6 @@ namespace cactus {
         virtual int backward() {
             lv_.setGrad(res_.grad()*rv_);
             rv_.setGrad(res_.grad()*lv_);
-            lv_.backward_();
-            rv_.backward_();
             return 0;
         }
         virtual std::vector<GradOp*> oplist() {
@@ -107,8 +105,8 @@ namespace cactus {
         tensor<RV> rv_;
     };
     template<typename LV, typename RV>
-    auto operator *(tensor<LV>& lv, tensor<RV>& rv) {
-		using result_type = std::result_of<S<LV, RV>()>::type;
+    tensor<typename std::result_of<S<LV, RV>()>::type> operator *(tensor<LV>& lv, tensor<RV>& rv) {
+        using result_type = typename std::result_of<S<LV, RV>()>::type;
         tensor<result_type> val;
         val.bindOp(std::make_shared<MulGradOp<result_type,LV, RV>>(val, lv, rv));
         //arithmetic_eigen(val, lv, rv, *);
@@ -142,7 +140,7 @@ namespace cactus {
     }
 
     template<typename LV, typename RV>
-    auto operator *(tensor<LV>& lv, RV rv) {
+    tensor<typename std::result_of<S<LV, RV>()>::type> operator *(tensor<LV>& lv, RV rv) {
         tensor<RV> val = rv;
         return lv * val;
     }
