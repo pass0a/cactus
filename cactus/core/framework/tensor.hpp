@@ -1,10 +1,7 @@
 #ifndef CACTUS_TENSOR_HPP
 #define CACTUS_TENSOR_HPP
 
-//#ifdef USE_EIGEN3
-//#else
-//#include "../../util/eigen3.hpp"
-//#endif
+
 
 #include "../../xtensor/xarray.hpp"
 #include "../operator/gradop.hpp"
@@ -18,18 +15,21 @@ namespace cactus {
     class tensor;
     template<typename Tx, typename Ty>
     tensor<Ty> tensor_cast(tensor<Tx> in);
-    template<typename T>
+    template<typename RET, typename LV=void, typename RV=void>
     class NoneGradOp:public GradOp {
     public:
         NoneGradOp()
             :name_("NoneGradOp")
             {}
+        NoneGradOp(tensor<RET>& res, tensor<RET>& lv) {}
+        NoneGradOp(tensor<RET>& res, tensor<LV>& lv, tensor<RV>& rv) {}
         virtual int backward() {
             return 0;
         }
         virtual std::vector<GradOp*> oplist() {
             return { };
         }
+        virtual void reback() {}
         std::string name_;
     };
     template <
@@ -103,48 +103,55 @@ namespace cactus {
             }
             tensor& operator =(const tensor& rhs) {
                 if (this != &rhs) {
-                    *storage_ = *rhs.storage_;
-                    *grad_ = *rhs.grad_;
+                    storage_ = rhs.storage_;
+                    grad_ = rhs.grad_;
                     gop_ = rhs.gop_;
                 }
                 return *this;
             }
             template<typename Type, typename GradOp>
             friend std::ostream & operator<<(std::ostream & os, tensor<Type, GradOp>& stu);
-            void backward() {
-                tensor<float> tmp(grad_);
-                tmp.reshape({ 1 });
-                tmp.ref({ 0 }) = 1;
-
+            void backward_impl() {
                 GradOp* ptr = gop_.get();
-                std::vector<GradOp*> list,opl;
+                std::vector<GradOp*> list, opl;
                 std::queue<GradOp*> queue;
                 list.emplace_back(ptr);
                 while (ptr)
                 {
                     opl = ptr->oplist();
-                    for (auto it:opl)
+                    for (auto it : opl)
                     {
                         queue.emplace(it);
                     }
                     list.insert(list.end(), opl.begin(), opl.end());
                     if (queue.empty()) {
                         ptr = NULL;
-                    }else{
+                    }
+                    else {
                         ptr = queue.front();
                         queue.pop();
                     }
                 }
-                for (auto it:list) {
+                for (auto it : list) {
+                    it->reback();
+                }
+                for (auto it : list) {
                     it->backward();
                 }
+            }
+            void backward() {
+                tensor<float> tmp(grad_);
+                tmp.reshape({ 1 });
+                tmp.ref({ 0 }) = 1;
+
+                backward_impl();
             }
             void backward(tensor<float> gd) {
                 tensor<float> tmp(grad_);
                 tmp = gd;
-                gop_->backward();
+                backward_impl();
             }
-
+            
             tensor<float> grad() {
                 return tensor<float>(grad_);
             }
@@ -155,23 +162,40 @@ namespace cactus {
             tensor<Type> cast() {
                 return tensor_cast<T,Type>(*this);
             }
-            void setGrad(tensor<float> gd) {
+            void reback() {
+                grad_->clear();
+            }
+            template<typename Type>
+            void setGrad(tensor<Type> gd) {
                 tensor<float> tmp(grad_);
                 if (tmp.size()) {
-                    tmp =tmp+ gd;
+                    tmp.assign(tmp+ gd.cast<float>());
                 }
                 else {
-                    tmp = gd;
+                    tmp.assign(gd.cast<float>());
                 }
             }
             GradOp* gop() {
                 return gop_.get();
+            }
+            void fill(T val) {
+                storage_->fill(val);
+            }
+            void assign(tensor& rhs) {
+                *storage_ = *rhs.storage_;
+                *grad_ = *rhs.grad_;
             }
     private:
         std::shared_ptr<Storage> storage_;
         std::shared_ptr<GradType> grad_;
         std::shared_ptr<GradOp> gop_;
     };
-
+    template<typename T>
+    tensor<T> generate(T val,typename tensor<T>::shape_type st) {
+        tensor<T> tmp;
+        tmp.reshape(st);
+        tmp.fill(val);
+        return tmp;
+    }
 }
 #endif

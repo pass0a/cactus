@@ -5,8 +5,9 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 ## 添加项目
-
-include_directories(${PROJECT_SOURCE_DIR}/src/)
+include_directories(D:/dev/python36/Lib/site-packages/numpy/core/include)
+include_directories(D:/dev/python36/include)
+link_directories(D:/dev/python36/libs)
 include_directories(${PROJECT_SOURCE_DIR}/3rd/eigen)
 include_directories(${PROJECT_SOURCE_DIR}/3rd/googletest/googletest/include)
 include_directories(${PROJECT_SOURCE_DIR}/3rd/googletest/googletest/)

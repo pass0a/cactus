@@ -51,6 +51,12 @@ namespace xt {
         pointer data() {
             return data_.data();
         }
+        void clear() {
+            data_.clear();
+        }
+        void fill(T val) {
+            std::fill(data_.begin(),data_.end(),val);
+        }
         const size_type size() const {
             return data_.size();
         }
@@ -72,10 +78,7 @@ namespace xt {
         xarray& operator =(xarray& rhs) {
             this->resize(rhs.size());
             this->reshape(rhs.shape());
-            if (this->shape() == rhs.shape()) {
-                std::copy(rhs.begin(), rhs.end(), data_.begin());
-                //data_ = rhs.data_;
-            }
+            std::copy(rhs.begin(), rhs.end(), data_.begin());
             return *this;
         }
         reference ref(shape_type sp) {

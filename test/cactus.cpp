@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
-#include "../cactus/core/framework/tensor.hpp"
+#include "../cactus/cactus.hpp"
 #include "../cactus/util/bk_eigen.hpp"
-#include "../cactus/util/eigen3.hpp"
 #include "../cactus/network.hpp"
 #include "../cactus/layers/input_layer.hpp"
 #include "../cactus/layers/fully_connected_layer.hpp"
@@ -9,15 +8,33 @@
 
 using namespace cactus;
 
+TEST(core, GreatThan) {
+    /*tensor<> x = { 5.0,3.0,4.0 };
+    auto z = cactus::sqrt(x);
+    EXPECT_EQ(z.ref({ 0 }), 1);
+    EXPECT_EQ(z.ref({ 1 }), 0);
+    EXPECT_EQ(z.ref({ 2 }), 0);*/
+}
+TEST(core, autograd) {
+    tensor<float> x = { 5.0,3.0,4.0 };
+    tensor<float> y = { 3.0,1.0,1.0 };
+    auto z = sqrt(x);
+    z.backward();
+    z = x + y;
+    z.backward();
+    z = x - y;
+    z.backward();
+    z = x * x;
+    z.backward();
+    z = log(y);
+    z.backward();
+    z = abs(x);
+    z.backward();
+    z = log10(x);
+    z.backward();
+    z = exp(x);
+    z.backward();
 
-TEST(core, xtensor1) {
-    tensor<> x = { 5.0,3.0,4.0 };
-    tensor<int> y = { 1,1,1 };
-    auto z = y*y*y*5+x;
-    z.backward();
-    std::cout << y.grad()<<"x:"<<x.grad() << std::endl;
-    z.backward();
-    std::cout << y.grad() << std::endl;
 }
 TEST(core, xtensor) {
     tensor<int> x = { 1,2,3,4,5,6,7,8,9,10,11,12};
@@ -42,12 +59,11 @@ TEST(core, xview) {
     }
 }
 TEST(core, complex) {
-    /*std::vector<std::complex<int>> m;
-    m[0] = std::complex<int>(1, 1);
-    m[0] = std::complex<int>(1, 1);
-    cactus::Tensor<std::complex<int>> out(m, { 2,2 });
+    cactus::tensor<std::complex<int>> out({ std::complex<int>(1, 1),std::complex<int>(1, 1) });
+    std::complex<int> x(1,1);
+    auto z=x + 2;
     EXPECT_EQ(out.size(), 2);
-    EXPECT_EQ(m.size(), 0);*/
+    EXPECT_EQ(z.real(), 2);
 }
 TEST(layer, input) {
     tensor<int> in_data={1,2,3,4} , out_data({ 4 });

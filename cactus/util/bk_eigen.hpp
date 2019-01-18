@@ -5,8 +5,6 @@
 #include <cstdarg>
 
 namespace cactus {
-    using namespace Eigen;
-    
     /**
     * error exception class for tiny-dnn
     **/
@@ -74,6 +72,7 @@ namespace cactus {
     public:
         template<typename Type>
         void bias_init(Type& dst, Type& src) {
+            using namespace Eigen;
             shape3d x3d = toS3d(dst.shape());
             shape3d y3d = toS3d(src.shape());
             Map<Matrix<Type::value_type, Dynamic, Dynamic, RowMajor>>
@@ -83,6 +82,7 @@ namespace cactus {
         }
         template<typename Type>
         void weights_init(Type& dst, Type& src) {
+            using namespace Eigen;
             shape3d x3d = toS3d(dst.shape());
             shape3d y3d = toS3d(src.shape());
             Map<Matrix<Type::value_type, Dynamic, Dynamic, RowMajor>>
@@ -92,6 +92,7 @@ namespace cactus {
         }
         template<typename Type>
         void full_connect(Type& x, Type& y, Type& z){
+            using namespace Eigen;
             shape3d x3d = toS3d(x.shape());
             shape3d y3d = toS3d(y.shape());
             shape3d z3d = toS3d(z.shape());

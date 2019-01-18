@@ -1,5 +1,7 @@
 #ifndef CACTUS_XVIEW_HPP
 #define CACTUS_XVIEW_HPP
+
+#include <assert.h>
 namespace xt {
     template<typename Storage>
     class xview {
