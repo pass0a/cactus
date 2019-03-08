@@ -167,13 +167,13 @@ namespace cactus {
             }
             template<typename Type>
             void setGrad(tensor<Type> gd) {
-                tensor<float> tmp(grad_);
+                /*tensor<float> tmp(grad_);
                 if (tmp.size()) {
                     tmp.assign(tmp+ gd.cast<float>());
                 }
                 else {
                     tmp.assign(gd.cast<float>());
-                }
+                }*/
             }
             GradOp* gop() {
                 return gop_.get();

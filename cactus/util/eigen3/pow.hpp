@@ -17,7 +17,7 @@ namespace cactus {
 
         }
         virtual int backward() {
-            lv_.setGrad(res_.grad()*pow(lv_, rv_ - 1)*rv_);
+            lv_.setGrad(res_.grad()*pow(lv_, rv_ - static_cast<RET>(1))*rv_);
             rv_.setGrad(res_.grad()*pow(lv_, rv_)*log(lv_));
             return 0;
         }
@@ -37,7 +37,6 @@ namespace cactus {
         using result_type = typename std::result_of<S<LV, RV>()>::type;
         tensor<result_type> val;
         val.bindOp(std::make_shared<PowGradOp<result_type, LV, RV>>(val, lv, rv));
-        //arithmetic_eigen(val, lv, rv, *);
         if (lv.size() == rv.size()) {
             val.reshape(lv.shape());
             Map<Array<result_type, Dynamic, RowMajor>>
@@ -54,7 +53,7 @@ namespace cactus {
                 z(val.data(), val.size());
             Map<Array<RV, Dynamic, RowMajor>>
                 y(rv.data(), rv.size());
-            z = pow((result_type)lv.ref({ 0 }),y.cast<result_type>());
+            z = pow(lv.ref({ 0 }),y);
         }
         else if (rv.size() == 1) {
             val.reshape(lv.shape());
@@ -62,14 +61,15 @@ namespace cactus {
                 z(val.data(), val.size());
             Map<Array<LV, Dynamic, RowMajor>>
                 x(lv.data(), lv.size());
-            z = pow(x.cast<result_type>(),(result_type)rv.ref({ 0 }));
+            z = pow(x, rv.ref({ 0 }));
         }
         return val;
     }
 
     template<typename LV, typename RV>
     tensor<typename std::result_of<S<LV, RV>()>::type> pow(tensor<LV>& lv, RV rv) {
-        tensor<RV> val = rv;
+        using result_type = typename std::result_of<S<LV, RV>()>::type;
+        tensor<result_type> val(static_cast<result_type>(rv));
         return pow(lv,val);
     }
 }
