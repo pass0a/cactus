@@ -47,7 +47,7 @@ namespace cactus {
                 y(rv.data(), rv.size());
             z = Eigen::pow(x.cast<result_type>(), y.cast<result_type>());
         }
-        if (lv.size() == 1) {
+        else if (lv.size() == 1) {
             val.reshape({ rv.size() });
             Map<Array<result_type, Dynamic, RowMajor>>
                 z(val.data(), val.size());
@@ -55,7 +55,7 @@ namespace cactus {
                 y(rv.data(), rv.size());
             z = Eigen::pow(lv.ref({0}), y.cast<result_type>());
         }
-        if (rv.size() == 1) {
+        else if (rv.size() == 1) {
             val.reshape({ lv.size() });
             Map<Array<result_type, Dynamic, RowMajor>>
                 z(val.data(), val.size());
