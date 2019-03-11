@@ -17,7 +17,7 @@ namespace cactus {
 
         }
         virtual int backward() {
-            lv_.setGrad(res_.grad()*pow(lv_, rv_ - static_cast<RET>(1))*rv_);
+            lv_.setGrad(res_.grad()*pow(lv_, rv_ - 1)*rv_);
             rv_.setGrad(res_.grad()*pow(lv_, rv_)*log(lv_));
             return 0;
         }
@@ -38,39 +38,44 @@ namespace cactus {
         tensor<result_type> val;
         val.bindOp(std::make_shared<PowGradOp<result_type, LV, RV>>(val, lv, rv));
         if (lv.size() == rv.size()) {
-            val.reshape(lv.shape());
+            val.reshape({lv.size()});
             Map<Array<result_type, Dynamic, RowMajor>>
                 z(val.data(), val.size());
             Map<Array<LV, Dynamic, RowMajor>>
                 x(lv.data(), lv.size());
             Map<Array<RV, Dynamic, RowMajor>>
                 y(rv.data(), rv.size());
-            z = pow(x.cast<result_type>(),y.cast<result_type>());
+            z = Eigen::pow(x.cast<result_type>(), y.cast<result_type>());
         }
-        else if (lv.size() == 1) {
-            val.reshape(rv.shape());
+        if (lv.size() == 1) {
+            val.reshape({ rv.size() });
             Map<Array<result_type, Dynamic, RowMajor>>
                 z(val.data(), val.size());
             Map<Array<RV, Dynamic, RowMajor>>
                 y(rv.data(), rv.size());
-            z = pow(lv.ref({ 0 }),y);
+            z = Eigen::pow(lv.ref({0}), y.cast<result_type>());
         }
-        else if (rv.size() == 1) {
-            val.reshape(lv.shape());
+        if (rv.size() == 1) {
+            val.reshape({ lv.size() });
             Map<Array<result_type, Dynamic, RowMajor>>
                 z(val.data(), val.size());
             Map<Array<LV, Dynamic, RowMajor>>
                 x(lv.data(), lv.size());
-            z = pow(x, rv.ref({ 0 }));
+            std::cout << x.cast<result_type>() << std::endl;
+            std::cout << rv.ref({ 0 }) << std::endl;
+            z = Eigen::pow(x.cast<result_type>(), rv.ref({ 0 }));
         }
         return val;
     }
-
     template<typename LV, typename RV>
-    tensor<typename std::result_of<S<LV, RV>()>::type> pow(tensor<LV>& lv, RV rv) {
-        using result_type = typename std::result_of<S<LV, RV>()>::type;
-        tensor<result_type> val(static_cast<result_type>(rv));
-        return pow(lv,val);
+    tensor<typename std::result_of<S<LV, RV>()>::type> pow(tensor<LV>& lv,RV rv) {
+        tensor<RV> tmp(rv);
+        return pow(lv, tmp);
+    }
+    template<typename LV, typename RV>
+    tensor<typename std::result_of<S<LV, RV>()>::type> pow(LV lv, tensor<RV> rv) {
+        tensor<LV> tmp(lv);
+        return pow(tmp, rv);
     }
 }
 #endif

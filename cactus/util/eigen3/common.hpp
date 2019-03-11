@@ -7,7 +7,7 @@ namespace cactus {
 
     template<typename Tx, typename Ty>
     struct S {
-        auto operator()() { Tx x; Ty y; return x + y; }
+        auto operator()() { return Tx(0) + Ty(0); }
     };
 
 #define REG_RET_TYPE typename std::result_of<S<LV, RV>()>::type
