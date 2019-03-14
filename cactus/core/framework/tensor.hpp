@@ -8,6 +8,10 @@
 #include <queue>
 
 namespace cactus {
+    struct xrange{
+        int start;
+        int end;
+    };
     template <
         typename T = float,
         typename Storage = xt::xarray<T>,
@@ -72,6 +76,14 @@ namespace cactus {
                 gop_(rhs.gop_)
             {
             }
+            template <typename... Values>
+            tensor(tensor& rhs, std::vector<cactus::xrange> lists)
+                : storage_(rhs.storage_),
+                view(lists),
+                grad_(std::make_shared<GradType>()),
+                gop_(std::make_shared<NoneGradOp<T>>())
+            {
+            }
             tensor(std::initializer_list<value_type> buf)
                 :storage_(std::make_shared<Storage>(buf)),
                 grad_(std::make_shared<GradType>()),
@@ -98,9 +110,9 @@ namespace cactus {
             reference ref(shape_type sp) {
                 return storage_->ref(std::move(sp));
             }
-            view_type operator [](size_t idx) {
+            /*view_type operator [](size_t idx) {
                 return (*storage_)[idx];
-            }
+            }*/
             tensor& operator =(const tensor& rhs) {
                 if (this != &rhs) {
                     storage_ = rhs.storage_;
@@ -189,6 +201,7 @@ namespace cactus {
         std::shared_ptr<Storage> storage_;
         std::shared_ptr<GradType> grad_;
         std::shared_ptr<GradOp> gop_;
+        std::vector<xrange> view;
     };
     template<typename T>
     tensor<T> generate(T val,typename tensor<T>::shape_type st) {

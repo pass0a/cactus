@@ -20,9 +20,9 @@ namespace xt {
         using reference = typename Container::reference;
         using pointer = typename Container::pointer;
         xarray()
-            :data_(0), view_(*this, 0, {0}) {}
+            :data_(0)/*, view_(*this, 0, {0})*/ {}
         xarray(std::initializer_list<value_type>& rhs)
-            :view_(*this, 0, { rhs.size() }), data_(rhs.size()) {
+            :/*view_(*this, 0, { rhs.size() }) ,*/ data_(rhs.size()){
             std::copy(rhs.begin(), rhs.end(), data_.begin());
             /*for ( auto v:rhs)
             {
@@ -31,21 +31,21 @@ namespace xt {
             //data_=(std::move(rhs));
         }
         xarray(xarray& rhs)
-            :data_(rhs.data_),
-            view_(*this, 0, rhs.shape()) {
+            :data_(rhs.data_)
+            /*,view_(*this, 0, rhs.shape())*/ {
         }
         xarray(T rhs)
-            :view_(*this, 0, {1}), data_(1) {
+            /*:view_(*this, 0, {1}), data_(1)*/ {
             data_.at(0)=rhs;
         }
         xarray(container_type& rhs,shape_type sp)
-            :data_(rhs),
-            view_(*this,0,sp) {
+            :data_(rhs)
+            /*,view_(*this,0,sp)*/ {
             //*data_ = std::move(rhs);
         }
         xarray(pointer rhs, shape_type sp)
-            :data_(view_type::product(sp)),
-            view_(*this, 0, sp) {
+            :data_(view_type::product(sp))
+            /*,view_(*this, 0, sp)*/ {
             memcpy(data_.data(),rhs,data_.size());
         }
         pointer data() {
@@ -63,7 +63,7 @@ namespace xt {
         void resize(size_type len) {
             data_.resize(len);
         }
-        const size_type dim() const {
+        /*const size_type dim() const {
             return view_.dim();
         }
         const shape_type shape() const {
@@ -74,17 +74,17 @@ namespace xt {
         }
         view_type operator [](size_t index) {
             return view_[index];
-        }
+        }*/
         xarray& operator =(xarray& rhs) {
             this->resize(rhs.size());
             this->reshape(rhs.shape());
             std::copy(rhs.begin(), rhs.end(), data_.begin());
             return *this;
         }
-        reference ref(shape_type sp) {
+        /*reference ref(shape_type sp) {
             return view_.ref(std::move(sp));
             
-        }
+        }*/
         iterator begin() {
             return data_.begin();
         }
@@ -93,7 +93,7 @@ namespace xt {
         }
     protected:
         container_type data_;
-        view_type view_;
+        //view_type view_;
     };
 }
 

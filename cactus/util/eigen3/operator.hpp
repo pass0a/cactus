@@ -3,21 +3,22 @@
 #define CACTUS_EIGEN3_COND_HPP
 #include "common.hpp"
 #include "four_operations.hpp"
-#include "pow.hpp"
-#include "func.hpp"
+//#include "pow.hpp"
+//#include "func.hpp"
+//#include "cc.hpp"
 
 namespace cactus {
-    REG_OP(int, NoneGradOp, > );
+    /*REG_OP(int, NoneGradOp, > );
     REG_OP(int, NoneGradOp, < );
     REG_OP(int, NoneGradOp, >=);
     REG_OP(int, NoneGradOp, <=);
     REG_OP(int, NoneGradOp, != );
-    REG_OP(int, NoneGradOp, == );
+    REG_OP(int, NoneGradOp, == );*/
     REG_OP(REG_RET_TYPE, AddGradOp, +);
     REG_OP(REG_RET_TYPE, SubGradOp, -);
     REG_OP(REG_RET_TYPE, MulGradOp, *);
     REG_OP(REG_RET_TYPE, DivGradOp, /);
-    REG_FUNC_OP(LogGradOp, log);
+    /*REG_FUNC_OP(LogGradOp, log);
     REG_FUNC_OP(AbsGradOp, abs);
     REG_FUNC_OP(SqrtGradOp, sqrt);
     REG_FUNC_OP(NoneGradOp, log10);
@@ -37,6 +38,6 @@ namespace cactus {
     REG_FUNC_OP(NoneGradOp, round);
     REG_FUNC_OP(NoneGradOp, isfinite);
     REG_FUNC_OP(NoneGradOp, isinf);
-    REG_FUNC_OP(NoneGradOp, isnan);
+    REG_FUNC_OP(NoneGradOp, isnan);*/
 }
 #endif

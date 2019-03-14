@@ -3,8 +3,22 @@
 #include "../../../3rd/eigen/Eigen/Dense"
 #include "../../core/framework/tensor.hpp"
 namespace cactus {
-    
+    template<typename T>
+    auto TensorToArray(tensor<T>& val) {
+        using namespace Eigen;
+        Map<Array<ret_type, Dynamic, RowMajor>>
+            z(val.data(), val.size());
 
+        return z.segment(1,10);
+    }
+    template<typename T>
+    auto TensorToMatrix(tensor<T>& val) {
+        using namespace Eigen;
+        Map<Array<ret_type, Dynamic, RowMajor>>
+            z(val.data(), val.size());
+
+        return z.segment(1, 10);
+    }
     template<typename Tx, typename Ty>
     struct S {
         auto operator()() { return Tx(0) + Ty(0); }

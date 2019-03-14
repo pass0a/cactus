@@ -11,7 +11,8 @@ namespace cactus {
         using namespace Eigen;
         Map<Array<Type, Dynamic, RowMajor>>
             tmp(stu.data(), stu.size());
-        os << tmp;
+        auto z=tmp.segment(0,6);
+        os << z;
         return os;
     }
     template<typename Tx,typename Ty>
