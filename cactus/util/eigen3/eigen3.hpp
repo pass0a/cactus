@@ -9,10 +9,29 @@ namespace cactus {
     {
         // TODO: 在此处插入 return 语句
         using namespace Eigen;
-        Map<Array<Type, Dynamic, RowMajor>>
-            tmp(stu.data(), stu.size());
-        auto z=tmp.segment(0,6);
-        os << z;
+        auto r=stu.range();
+        switch (stu.dim()) {
+        case 1:
+            {
+                Map<Array<Type, Dynamic, RowMajor>>
+                    tmp(stu.data(), stu.size());
+                auto z = tmp.segment(r[0].start, r[0].len);
+                os << z;
+            }   
+            break;
+        case 2:
+            {
+                auto sh = stu.rawShape();
+                Map<Matrix<Type, Dynamic, Dynamic, RowMajor>>
+                tmp(stu.data(),sh[0],sh[1] );
+                auto z = tmp.block(r[0].start, r[1].start, r[0].len, r[1].len);
+                os << z;
+            }   
+            break;
+        default:
+            break;
+        }
+        
         return os;
     }
     template<typename Tx,typename Ty>

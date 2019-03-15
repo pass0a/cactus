@@ -60,9 +60,12 @@ using namespace cactus;
 //    EXPECT_EQ(x.ref({1,1,2}), 12);
 //}
 TEST(core, subview) {
-    tensor<> x = {1,2,3,4,5,6,7,8,9,10,11,12};
-    tensor<> y(x, { { 1,10 }, { 2,3 } });
-    std::cout << y << std::endl;
+    tensor<> z1= { 1,2,3,4,5,6,7,8,9,10,11,12 };
+    z1.reshape({ 3, 4 });
+    tensor<> z3(z1, { {1,2},{2,2} });
+    std::cout << z3.ref({ 0, 0 }) << std::endl;
+    std::cout << z3*3 << std::endl;
+    /*std::cout << z3 << std::endl;*/
 }
 //TEST(core, xview) {
 //    xt::xarray<int>::container_type buf = {1,2,3,4,4,6,7,8,9};

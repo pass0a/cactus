@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <numeric>
-#include "xview.hpp"
 #include <memory>
 
 namespace xt {
@@ -16,36 +15,30 @@ namespace xt {
         using value_type = typename Container::value_type;
         using iterator = typename Container::iterator;
         using const_iterator = typename Container::const_iterator;
-        using view_type = typename xview<xarray>;
         using reference = typename Container::reference;
         using pointer = typename Container::pointer;
         xarray()
-            :data_(0)/*, view_(*this, 0, {0})*/ {}
-        xarray(std::initializer_list<value_type>& rhs)
-            :/*view_(*this, 0, { rhs.size() }) ,*/ data_(rhs.size()){
+            :data_(0), shape_({ 0 }) {}
+        xarray(std::initializer_list<value_type> rhs)
+            :shape_({rhs.size()}), data_(rhs.size()) {
             std::copy(rhs.begin(), rhs.end(), data_.begin());
-            /*for ( auto v:rhs)
-            {
-                data_.push_back(v);
-            }*/
-            //data_=(std::move(rhs));
         }
         xarray(xarray& rhs)
             :data_(rhs.data_)
-            /*,view_(*this, 0, rhs.shape())*/ {
+            shape_(rhs.shape()) {
         }
         xarray(T rhs)
-            /*:view_(*this, 0, {1}), data_(1)*/ {
+            :shape_({1}), data_(1) {
             data_.at(0)=rhs;
         }
         xarray(container_type& rhs,shape_type sp)
             :data_(rhs)
-            /*,view_(*this,0,sp)*/ {
+            ,shape_(sp) {
             //*data_ = std::move(rhs);
         }
         xarray(pointer rhs, shape_type sp)
             :data_(view_type::product(sp))
-            /*,view_(*this, 0, sp)*/ {
+            ,shape_(sp) {
             memcpy(data_.data(),rhs,data_.size());
         }
         pointer data() {
@@ -63,16 +56,16 @@ namespace xt {
         void resize(size_type len) {
             data_.resize(len);
         }
-        /*const size_type dim() const {
-            return view_.dim();
+        const size_type dim() const {
+            return shape_.size();
         }
         const shape_type shape() const {
-            return view_.shape();
+            return shape_;
         }
         void reshape(shape_type sp) {
-            return view_.reshape(sp);
+            shape_=sp;
         }
-        view_type operator [](size_t index) {
+        /*view_type operator [](size_t index) {
             return view_[index];
         }*/
         xarray& operator =(xarray& rhs) {
@@ -85,15 +78,15 @@ namespace xt {
             return view_.ref(std::move(sp));
             
         }*/
-        iterator begin() {
+        /*iterator begin() {
             return data_.begin();
         }
         iterator end() {
             return data_.end();
-        }
+        }*/
     protected:
         container_type data_;
-        //view_type view_;
+        shape_type shape_;
     };
 }
 

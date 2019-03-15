@@ -2,7 +2,12 @@
 #define CACTUS_XVIEW_HPP
 
 #include <assert.h>
+#include <memory>
 namespace xt {
+    struct xrange {
+        int start;
+        int len;
+    };
     template<typename Storage>
     class xview {
     public:
@@ -14,25 +19,38 @@ namespace xt {
         using const_iterator = typename Storage::const_iterator;
         using container_type = typename Storage::container_type;
         using reference = typename Storage::reference;
-
-        xview(Storage& storage, size_type start, shape_type shape)
-            :storage_(storage), start_(start), shape_(shape) {
-            len_ = 1;
-            for (auto v : shape_) {
-                len_ *= v;
+        using xranges = typename std::vector<xrange>;
+        xview(Storage& storage)
+            :storage_(storage)
+            ,shape_(storage_.shape()){
+        }
+        xview(xview& xv, xranges range)
+             :storage_(xv.storage_)
+             ,range_(range)
+             ,shape_() {
+            xrange tmp;
+            shape_type shape=xv.shape();
+            for (size_t i = 0; i < shape.size(); i++)
+            {
+                tmp = range_.at(i);
+                assert(tmp.start+tmp.len <= shape[i]);
+                shape_.push_back(tmp.len);
             }
         }
-        iterator begin() {
+        /*iterator begin() {
             return storage_.begin() + start_;
         }
         iterator end() {
             return storage_.begin() + start_+len_;
+        }*/
+        const xranges range() const {
+            return range_;
         }
         pointer data() {
-            return storage_.data()+start_;
+            return storage_.data();
         }
         const size_type size() const {
-            return len_;
+            return storage_.size();
         }
         const size_type dim() const {
             return shape_.size();
@@ -72,9 +90,8 @@ namespace xt {
         }
     private:
         Storage& storage_;
+        xranges range_;
         shape_type shape_;
-        size_type start_;
-        size_type len_;
     };
     
 }

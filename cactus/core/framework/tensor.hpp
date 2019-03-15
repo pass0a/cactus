@@ -2,16 +2,13 @@
 #define CACTUS_TENSOR_HPP
 
 
-
 #include "../../xtensor/xarray.hpp"
+#include "../../xtensor/xview.hpp"
 #include "../operator/gradop.hpp"
 #include <queue>
 
 namespace cactus {
-    struct xrange{
-        int start;
-        int end;
-    };
+    
     template <
         typename T = float,
         typename Storage = xt::xarray<T>,
@@ -45,70 +42,87 @@ namespace cactus {
             using value_type = typename T;
             using shape_type = typename Storage::shape_type;
             using container_type = typename Storage::container_type;
-            using view_type = typename Storage::view_type;
             using size_type = typename Storage::size_type;
             using reference = typename Storage::reference;
             using pointer = typename Storage::pointer;
+            using xranges = typename xt::xview<Storage>::xranges;
         public:
             tensor()
                 :storage_(std::make_shared<Storage>()),
+                view_(*storage_),
                 grad_(std::make_shared<GradType>()),
                 gop_(std::make_shared<NoneGradOp<T>>()) {
             }
             tensor(std::shared_ptr<GradOp> gop)
                 :storage_(std::make_shared<Storage>()),
+                view_(*storage_),
                 grad_(std::make_shared<GradType>()),
                 gop_(gop) {
             }
             tensor(std::shared_ptr<Storage> &s)
                 :storage_(s),
+                view_(*storage_),
                 grad_(std::make_shared<GradType>()),
                 gop_(std::make_shared<NoneGradOp<T>>()) {
             }
             tensor(T val)
                 :storage_(std::make_shared<Storage>(val)),
+                view_(*storage_),
                 grad_(std::make_shared<GradType>()),
                 gop_(std::make_shared<NoneGradOp<T>>()) {
             }
             tensor(tensor& rhs)
                 :storage_(rhs.storage_),
+                view_(*storage_),
                 grad_(rhs.grad_),
                 gop_(rhs.gop_)
             {
             }
-            template <typename... Values>
-            tensor(tensor& rhs, std::vector<cactus::xrange> lists)
+            tensor(tensor& rhs, std::vector<xt::xrange> lists)
                 : storage_(rhs.storage_),
-                view(lists),
+                view_(rhs.view_,lists),
                 grad_(std::make_shared<GradType>()),
                 gop_(std::make_shared<NoneGradOp<T>>())
             {
             }
             tensor(std::initializer_list<value_type> buf)
                 :storage_(std::make_shared<Storage>(buf)),
+                view_(*storage_),
                 grad_(std::make_shared<GradType>()),
                 gop_(std::make_shared<NoneGradOp<T>>()) {}
             //tensor(container_type& buf, shape_type sp):storage_(buf,sp) {}
             //tensor(pointer buf, shape_type sp) :storage_(buf, sp) {}
-
-            pointer data() {
-                return storage_->data();
+            const xranges range() const {
+                return view_.range();
             }
-            const size_type size() const {
-                return storage_->size();
-            }
-            const size_type dim() const {
-                return storage_->dim();
-            }
-            const shape_type shape() const {
+            const shape_type rawShape() const {
                 return storage_->shape();
             }
+            pointer data() {
+                return view_.data();
+            }
+            const size_type size() const {
+                return view_.size();
+            }
+            const size_type dim() const {
+                return view_.dim();
+            }
+            const shape_type shape() const {
+                return view_.shape();
+            }
             void reshape(shape_type sp) {
-                storage_->resize(view_type::product(sp));
-                storage_->reshape(sp);
+                if (view_.range().size()) {
+                    view_.reshape(sp);
+                }
+                else {
+                    storage_->resize(xt::xview<Storage>::product(sp));
+                    storage_->reshape(sp);
+                    view_.reshape(sp);
+                }
+                
             }
             reference ref(shape_type sp) {
-                return storage_->ref(std::move(sp));
+                return view_.ref(std::move(sp));
             }
             /*view_type operator [](size_t idx) {
                 return (*storage_)[idx];
@@ -201,7 +215,7 @@ namespace cactus {
         std::shared_ptr<Storage> storage_;
         std::shared_ptr<GradType> grad_;
         std::shared_ptr<GradOp> gop_;
-        std::vector<xrange> view;
+        xt::xview<Storage> view_;
     };
     template<typename T>
     tensor<T> generate(T val,typename tensor<T>::shape_type st) {
