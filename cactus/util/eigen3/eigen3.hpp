@@ -14,16 +14,16 @@ namespace cactus {
         case 1:
             {
                 Map<Array<Type, Dynamic, RowMajor>>
-                    tmp(stu.data(), stu.size());
+                    tmp(stu.raw_data(), stu.raw_size());
                 auto z = tmp.segment(r[0].start, r[0].len);
                 os << z;
             }   
             break;
         case 2:
             {
-                auto sh = stu.rawShape();
+                auto sh = stu.raw_shape();
                 Map<Matrix<Type, Dynamic, Dynamic, RowMajor>>
-                tmp(stu.data(),sh[0],sh[1] );
+                tmp(stu.raw_data(),sh[0],sh[1] );
                 auto z = tmp.block(r[0].start, r[1].start, r[0].len, r[1].len);
                 os << z;
             }   

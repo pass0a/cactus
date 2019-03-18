@@ -23,6 +23,9 @@ namespace xt {
         xview(Storage& storage)
             :storage_(storage)
             ,shape_(storage_.shape()){
+            /*for (auto it : shape_) {
+                range_.push_back({ 0, (int)it });
+            }*/
         }
         xview(xview& xv, xranges range)
              :storage_(xv.storage_)
@@ -77,16 +80,9 @@ namespace xt {
             {
                 assert(sp[i] < shape_[i]);
                 tmp.erase(tmp.begin());
-                val += sp[i] * product(tmp);
+                val += sp[i] * view_type::product(tmp);
             }
             return storage_.data()[val];
-        }
-        static size_t product(shape_type& tmp) {
-            size_t val = 1;
-            for (auto v : tmp) {
-                val *= v;
-            }
-            return val;
         }
     private:
         Storage& storage_;

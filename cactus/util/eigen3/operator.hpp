@@ -45,7 +45,7 @@ namespace cactus {
         using namespace Eigen;
         tensor<result_type> val;
         val.bindOp(std::make_shared<NoneGradOp<result_type, LV, RV>>(val, lv, rv));
-        if (lv.size() == rv.size()) {
+        /*if (lv.size() == rv.size()) {
 
             val.reshape(lv.shape());
             Map<Array<result_type, Dynamic, RowMajor>>
@@ -67,13 +67,11 @@ namespace cactus {
             auto tmp = (result_type)lv.ref({ 0 }) * y.cast<result_type>();
             z = tmp.cast<result_type>();
         }
-        else if (rv.size() == 1) {
+        else */ if (rv.raw_size() == 1) {
 
             val.reshape(lv.shape());
-            Map<Array<result_type, Dynamic, RowMajor>>
-                z(val.data(), val.size());
-            Map<Array<LV, Dynamic, RowMajor>>
-                x(lv.data(), lv.size());
+            auto& z = tensor2array(val);
+            auto& x = tensor2array(lv);
             auto tmp = x.cast<result_type>() *(result_type)rv.ref({ 0 });
             z = tmp.cast<result_type>();
         }

@@ -85,8 +85,8 @@ namespace cactus {
                 gop_(std::make_shared<NoneGradOp<T>>())
             {
             }
-            tensor(std::initializer_list<value_type> buf)
-                :storage_(std::make_shared<Storage>(buf)),
+            tensor(shape_type shape)
+                :storage_(std::make_shared<Storage>(shape)),
                 view_(*storage_),
                 grad_(std::make_shared<GradType>()),
                 gop_(std::make_shared<NoneGradOp<T>>()) {}
@@ -95,14 +95,14 @@ namespace cactus {
             const xranges range() const {
                 return view_.range();
             }
-            const shape_type rawShape() const {
+            const shape_type raw_shape() const {
                 return storage_->shape();
             }
-            pointer data() {
-                return view_.data();
+            pointer raw_data() {
+                return storage_->data();
             }
-            const size_type size() const {
-                return view_.size();
+            const size_type raw_size() const {
+                return storage_->size();
             }
             const size_type dim() const {
                 return view_.dim();
@@ -119,7 +119,6 @@ namespace cactus {
                     storage_->reshape(sp);
                     view_.reshape(sp);
                 }
-                
             }
             reference ref(shape_type sp) {
                 return view_.ref(std::move(sp));
@@ -133,6 +132,10 @@ namespace cactus {
                     grad_ = rhs.grad_;
                     gop_ = rhs.gop_;
                 }
+                return *this;
+            }
+            tensor& operator =(std::initializer_list<T> rhs) {
+                *storage_ = rhs;
                 return *this;
             }
             template<typename Type, typename GradOp>

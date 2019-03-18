@@ -19,9 +19,9 @@ namespace xt {
         using pointer = typename Container::pointer;
         xarray()
             :data_(0), shape_({ 0 }) {}
-        xarray(std::initializer_list<value_type> rhs)
-            :shape_({rhs.size()}), data_(rhs.size()) {
-            std::copy(rhs.begin(), rhs.end(), data_.begin());
+        xarray(shape_type sp)
+            :shape_(sp), data_(product(sp)) {
+            //std::copy(rhs.begin(), rhs.end(), data_.begin());
         }
         xarray(xarray& rhs)
             :data_(rhs.data_)
@@ -74,6 +74,15 @@ namespace xt {
             std::copy(rhs.begin(), rhs.end(), data_.begin());
             return *this;
         }
+        xarray& operator =(std::initializer_list<T>& rhs) {
+            if (rhs.size() > data_.size()) {
+                std::copy(rhs.begin(), rhs.begin()+rhs.size(), data_.begin());
+            }
+            else {
+                std::copy(rhs.begin(), rhs.end(), data_.begin());
+            }
+            return *this;
+        }
         /*reference ref(shape_type sp) {
             return view_.ref(std::move(sp));
             
@@ -84,6 +93,13 @@ namespace xt {
         iterator end() {
             return data_.end();
         }*/
+        static size_t product(shape_type& tmp) {
+            size_t val = 1;
+            for (auto v : tmp) {
+                val *= v;
+            }
+            return val;
+        }
     protected:
         container_type data_;
         shape_type shape_;

@@ -4,12 +4,12 @@
 #include "../../core/framework/tensor.hpp"
 namespace cactus {
     template<typename T>
-    auto TensorToArray(tensor<T>& val) {
+    auto tensor2array(tensor<T>& val) {
         using namespace Eigen;
-        Map<Array<ret_type, Dynamic, RowMajor>>
-            z(val.data(), val.size());
-
-        return z.segment(1,10);
+        auto r = val.range();
+        Map<Array<T, Dynamic, Dynamic, RowMajor>>
+            tmp(val.raw_data(), val.raw_size());
+        return tmp.segment(r[0].start, r[0].len);
     }
     template<typename T>
     auto TensorToMatrix(tensor<T>& val) {

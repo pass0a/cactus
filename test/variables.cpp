@@ -12,11 +12,12 @@ TEST(layer, fully) {
         13, 14, 15, 16;
     std::cout << "Block in the middle" << std::endl;
     
-    auto z = m.block(1, 1, 8, 2);
+    auto z = m.block(1, 1, 2, 2);
     std::cout << z.array() << std::endl;
-    auto f=z.array().data();
-    for (size_t i = 0; i < z.size(); i++)
-    {
-        std::cout << f[i] << std::endl;
-    }
+    Eigen::Array<int, 12, RowMajor> tmp;
+    tmp << 1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12;
+    auto tmpz = tmp.block(0, 0, 11, 1);
+    std::cout << tmpz << std::endl;
 }
