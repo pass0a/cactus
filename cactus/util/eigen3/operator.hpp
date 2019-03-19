@@ -38,47 +38,51 @@ namespace cactus {
     REG_FUNC_OP(NoneGradOp, isfinite);
     REG_FUNC_OP(NoneGradOp, isinf);
     REG_FUNC_OP(NoneGradOp, isnan);*/
-    template<typename LV, typename RV>
-    tensor<typename std::result_of<S<LV, RV>()>::type> operator * (tensor<LV>& lv, tensor<RV>& rv) {
+    //template<typename LV, typename LVlayout>
+    //template<typename RV, typename RVlayout>
+    //tensor<typename std::result_of<S<LV, RV>()>::type> operator * (tensor<LV,LVlayout>& lv, tensor<RV,RVlayout>& rv) {
 
-        using result_type = typename std::result_of<S<LV, RV>()>::type;
-        using namespace Eigen;
-        tensor<result_type> val;
-        val.bindOp(std::make_shared<NoneGradOp<result_type, LV, RV>>(val, lv, rv));
-        /*if (lv.size() == rv.size()) {
+    //    using result_type = typename std::result_of<S<LV, RV>()>::type;
+    //    using namespace Eigen;
+    //    tensor<result_type> val;
+    //    //val.bindOp(std::make_shared<NoneGradOp<result_type, LV, RV>>(val, lv, rv));
+    //    /*if (lv.size() == rv.size()) {
 
-            val.reshape(lv.shape());
-            Map<Array<result_type, Dynamic, RowMajor>>
-                z(val.data(), val.size());
-            Map<Array<LV, Dynamic, RowMajor>>
-                x(lv.data(), lv.size());
-            Map<Array<RV, Dynamic, RowMajor>>
-                y(rv.data(), rv.size());
-            auto tmp = x.cast<result_type>() * y.cast<result_type>();
-            z = tmp.cast<result_type>();
-        }
-        else if (lv.size() == 1) {
+    //        val.reshape(lv.shape());
+    //        Map<Array<result_type, Dynamic, RowMajor>>
+    //            z(val.data(), val.size());
+    //        Map<Array<LV, Dynamic, RowMajor>>
+    //            x(lv.data(), lv.size());
+    //        Map<Array<RV, Dynamic, RowMajor>>
+    //            y(rv.data(), rv.size());
+    //        auto tmp = x.cast<result_type>() * y.cast<result_type>();
+    //        z = tmp.cast<result_type>();
+    //    }
+    //    else if (lv.size() == 1) {
 
-            val.reshape(rv.shape());
-            Map<Array<result_type, Dynamic, RowMajor>>
-                z(val.data(), val.size());
-            Map<Array<RV, Dynamic, RowMajor>>
-                y(rv.data(), rv.size());
-            auto tmp = (result_type)lv.ref({ 0 }) * y.cast<result_type>();
-            z = tmp.cast<result_type>();
-        }
-        else */ if (rv.raw_size() == 1) {
+    //        val.reshape(rv.shape());
+    //        Map<Array<result_type, Dynamic, RowMajor>>
+    //            z(val.data(), val.size());
+    //        Map<Array<RV, Dynamic, RowMajor>>
+    //            y(rv.data(), rv.size());
+    //        auto tmp = (result_type)lv.ref({ 0 }) * y.cast<result_type>();
+    //        z = tmp.cast<result_type>();
+    //    }
+    //    else  if (rv.raw_size() == 1) {
 
-            val.reshape(lv.shape());
-            auto& z = tensor2array(val);
-            auto& x = tensor2array(lv);
-            auto tmp = x.cast<result_type>() *(result_type)rv.ref({ 0 });
-            z = tmp.cast<result_type>();
-        }
-        return val;
-    }
-    template<typename LV, typename RV>
-    tensor<typename std::result_of<S<LV, RV>()>::type> operator *(tensor<LV>& lv, RV rv) {
+    //        val.reshape(lv.shape());
+    //        auto& z = tensor2array(val);
+    //        auto& x = tensor2array(lv);
+    //        auto tmp = x.cast<result_type>() *(result_type)rv.ref({ 0 });
+    //        z = tmp.cast<result_type>();
+    //    }*/
+    //    return val;
+    //}
+    template<
+        typename LV, 
+        typename LVlayout,
+        typename RV>
+    tensor<typename std::result_of<S<LV, RV>()>::type> operator *(tensor<LV,LVlayout>& lv, RV rv) {
         tensor<RV> val = rv; 
         return lv * val; 
     }

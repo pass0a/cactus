@@ -63,6 +63,7 @@ namespace xt {
             return shape_;
         }
         void reshape(shape_type sp) {
+            resize(product(sp));
             shape_=sp;
         }
         /*view_type operator [](size_t index) {

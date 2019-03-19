@@ -4,36 +4,24 @@
 #include "operator.hpp"
 
 namespace cactus {
+    using namespace Eigen;
+    template<typename T>
+    class T2V {
+    public:
+        T2V(T* data, size_t x, size_t y) {}
+        auto array(T* data,size_t x, size_t y) {
+            Map<Array<T, Dynamic, Dynamic, RowMajor>> tmp(data,x,y);
+            return tmp;
+        }
+    };
     template<typename Type>
     std::ostream & operator<<(std::ostream & os, tensor<Type>& stu)
     {
         // TODO: 在此处插入 return 语句
-        using namespace Eigen;
-        auto r=stu.range();
-        switch (stu.dim()) {
-        case 1:
-            {
-                Map<Array<Type, Dynamic, RowMajor>>
-                    tmp(stu.raw_data(), stu.raw_size());
-                auto z = tmp.segment(r[0].start, r[0].len);
-                os << z;
-            }   
-            break;
-        case 2:
-            {
-                auto sh = stu.raw_shape();
-                Map<Matrix<Type, Dynamic, Dynamic, RowMajor>>
-                tmp(stu.raw_data(),sh[0],sh[1] );
-                auto z = tmp.block(r[0].start, r[1].start, r[0].len, r[1].len);
-                os << z;
-            }   
-            break;
-        default:
-            break;
-        }
-        
+        os << stu.array();
         return os;
     }
+    
     template<typename Tx,typename Ty>
     tensor<Ty> tensor_cast(tensor<Tx> in) {
         using namespace Eigen;
