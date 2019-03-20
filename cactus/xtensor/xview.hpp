@@ -4,35 +4,26 @@
 #include <assert.h>
 #include <memory>
 namespace xt {
-    struct xrange {
-        int start;
-        int len;
-    };
+    
     template<typename Storage>
     class xview {
     public:
-        using size_type = typename Storage::size_type;
+        using comput_type = typename Storage::comput_type;
+        using xranges = typename comput_type::xranges;
+        using out_type = typename Storage::out_type;
         using shape_type = typename Storage::shape_type;
+        using size_type = typename Storage::size_type;
         using value_type = typename Storage::value_type;
         using iterator = typename Storage::iterator;
         using pointer = typename Storage::pointer;
-        using const_iterator = typename Storage::const_iterator;
-        using container_type = typename Storage::container_type;
         using reference = typename Storage::reference;
-        using xranges = typename std::vector<xrange>;
-        xview(Storage& storage)
-            :storage_(storage)
-            ,shape_(storage_.shape()){
-            /*for (auto it : shape_) {
-                range_.push_back({ 0, (int)it });
-            }*/
-        }
-        xview(xview& xv, xranges range)
-             :storage_(xv.storage_)
+        
+        xview(Storage& storage, xranges range)
+             :storage_(storage)
              ,range_(range)
              ,shape_() {
             xrange tmp;
-            shape_type shape=xv.shape();
+            shape_type shape=storage_.shape();
             for (size_t i = 0; i < shape.size(); i++)
             {
                 tmp = range_.at(i);
@@ -40,14 +31,8 @@ namespace xt {
                 shape_.push_back(tmp.len);
             }
         }
-        /*iterator begin() {
-            return storage_.begin() + start_;
-        }
-        iterator end() {
-            return storage_.begin() + start_+len_;
-        }*/
-        const xranges range() const {
-            return range_;
+        decltype(auto) value(){
+            return comput_type::matrix(storage_.data(), storage_.shape(),range_);
         }
         pointer data() {
             return storage_.data();
@@ -60,9 +45,6 @@ namespace xt {
         }
         const shape_type shape() const {
             return shape_;
-        }
-        void reshape(shape_type sp) {
-            shape_=sp;
         }
         xview operator [](size_t index) {
             assert(shape_.size() > 1);

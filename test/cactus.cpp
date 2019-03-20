@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
-#include "../cactus/cactus.hpp"
-#include "../cactus/util/bk_eigen.hpp"
-#include "../cactus/network.hpp"
-#include "../cactus/layers/input_layer.hpp"
-#include "../cactus/layers/fully_connected_layer.hpp"
+#include "../cactus/util/eigen3/eigen3.hpp"
+//#include "../cactus/util/bk_eigen.hpp"
+//#include "../cactus/network.hpp"
+//#include "../cactus/layers/input_layer.hpp"
+//#include "../cactus/layers/fully_connected_layer.hpp"
 #include <complex>
 
 using namespace cactus; 
@@ -60,15 +60,16 @@ using namespace cactus;
 //    EXPECT_EQ(x.ref({1,1,2}), 12);
 //}
 TEST(core, subview) {
-    tensor<> z1({ 3,4 });
-    z1={ 1,2,3,4,5,6,7,8,9,10,11,12 };
+    Tensor<float> z1({ 3,4 });
+    z1 = { 1,2,3,4,5,6,7,8,9,10,11,12 };
     z1.reshape({ 3, 4 });
-    
     std::cout << z1 << std::endl;
-    
-    //tensor<> z3(z1, { {1,2},{2,2} });
-    ///*std::cout << z3.ref({ 0, 0 }) << std::endl;
-    //std::cout << z3*3 << std::endl;*/
+    auto x = z1.subView({ {0,2},{0,2} });
+    auto y = z1.subView({ { 1,2 },{ 2,2 } });
+    std::cout << y*x << std::endl;
+    std::cout << x*3 << std::endl;
+    std::cout << 3*y << std::endl;
+    std::cout << (y>x) << std::endl;
     //std::cout << z3 << std::endl;
 }
 //TEST(core, xview) {

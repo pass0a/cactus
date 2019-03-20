@@ -2,23 +2,33 @@
 #define CACTUS_EIGEN3_COMMON_HPP
 #include "../../../3rd/eigen/Eigen/Dense"
 #include "../../core/framework/tensor.hpp"
+#include <vector>
 namespace cactus {
+    struct xrange {
+        int start;
+        int len;
+    };
     template<typename T>
-    auto tensor2array(tensor<T>& val) {
-        using namespace Eigen;
-        auto r = val.range();
-        Map<Array<T, Dynamic, Dynamic, RowMajor>>
-            tmp(val.raw_data(), val.raw_size());
-        return tmp.segment(r[0].start, r[0].len);
-    }
+    class comput {
+    public:
+        using shape_type = typename std::vector<size_t>;
+        using xranges = typename std::vector<xrange>;
+        using mat_type = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
+        static mat_type matrix(T* data,shape_type sh) {
+            using namespace Eigen;
+            mat_type tmp(data,sh[0],sh[1]);
+            return tmp;
+        }
+        static decltype(auto) matrix(T* data, shape_type sh,xranges xrgs){
+            using namespace Eigen;
+            mat_type tmp(data, sh[0], sh[1]);
+            return tmp.block(xrgs[0].start,xrgs[1].start, xrgs[0].len, xrgs[1].len);
+        }
+    };
     template<typename T>
-    auto TensorToMatrix(tensor<T>& val) {
-        using namespace Eigen;
-        Map<Array<ret_type, Dynamic, RowMajor>>
-            z(val.data(), val.size());
-
-        return z.segment(1, 10);
-    }
+    using Tensor = tensor<T, xt::xarray<T,comput<T>>>;
+    template<typename T>
+    using Xscalar = tensor<T, xt::xscalar<xt::xarray<T, comput<T>>>>;
     template<typename Tx, typename Ty>
     struct S {
         auto operator()() { return Tx(0) + Ty(0); }
@@ -26,49 +36,41 @@ namespace cactus {
 
 #define REG_RET_TYPE typename std::result_of<S<LV, RV>()>::type
 #define REG_OP(ret_type,grad_op,op_type) \
-    template<typename LV, typename RV>\
-    tensor<ret_type> operator op_type (tensor<LV>& lv, tensor<RV>& rv) {\
-        using result_type = typename std::result_of<S<LV, RV>()>::type;\
-        using namespace Eigen;\
-        tensor<ret_type> val;\
-        val.bindOp(std::make_shared<grad_op<ret_type, LV, RV>>(val, lv, rv)); \
-        if (lv.size() == rv.size()) {\
-            val.reshape(lv.shape());\
-            Map<Array<ret_type, Dynamic, RowMajor>>\
-                z(val.data(), val.size());\
-            Map<Array<LV, Dynamic, RowMajor>>\
-                x(lv.data(), lv.size());\
-            Map<Array<RV, Dynamic, RowMajor>>\
-                y(rv.data(), rv.size());\
-            auto tmp = x.cast<result_type>() op_type y.cast<result_type>();\
-            z = tmp.cast<ret_type>();\
+    template<\
+    typename LV,\
+        typename LVlayout,\
+        typename RV,\
+        typename RVlayout>\
+        decltype(auto) operator op_type (tensor<LV, LVlayout>& lv, tensor<RV, RVlayout>& rv) {\
+        Tensor<typename std::result_of<S<LV, RV>()>::type> tmp;\
+        auto lvsh = lv.shape(), rvsh = rv.shape();\
+        if (std::equal(lvsh.begin(), lvsh.end(), rvsh.begin())) {\
+            tmp.reshape(lvsh);\
+            tmp.value() = lv.value() op_type rv.value();\
         }\
-        else if (lv.size() == 1) {\
-            val.reshape(rv.shape());\
-            Map<Array<ret_type, Dynamic, RowMajor>>\
-                z(val.data(), val.size());\
-            Map<Array<RV, Dynamic, RowMajor>>\
-                y(rv.data(), rv.size());\
-            auto tmp = (result_type)lv.ref({ 0 }) op_type y.cast<result_type>();\
-            z = tmp.cast<ret_type>();\
-        }\
-        else if (rv.size() == 1) {\
-            val.reshape(lv.shape());\
-            Map<Array<ret_type, Dynamic, RowMajor>>\
-                z(val.data(), val.size());\
-            Map<Array<LV, Dynamic, RowMajor>>\
-                x(lv.data(), lv.size());\
-            auto tmp = x.cast<result_type>() op_type (result_type)rv.ref({ 0 });\
-            z = tmp.cast<ret_type>();\
-        }\
-        return val;\
+        return tmp;\
     }\
-    template<typename LV, typename RV>\
-    tensor<ret_type> operator op_type(tensor<LV>& lv, RV rv) {\
-        tensor<RV> val = rv;\
-        return lv op_type val;\
+    template<\
+        typename LV,\
+        typename LVlayout,\
+        typename RV>\
+        decltype(auto) operator op_type (tensor<LV, LVlayout>& lv, RV rv) {\
+        Tensor<typename std::result_of<S<LV, RV>()>::type> tmp(lv.shape());\
+        Xscalar<RV> val = rv;\
+        tmp.value() = lv.value() op_type val.value();\
+        return tmp;\
+    }\
+    template<\
+        typename LV,\
+        typename RV,\
+        typename RVlayout>\
+        decltype(auto) operator op_type (LV lv, tensor<RV, RVlayout>& rv) {\
+        Tensor<typename std::result_of<S<LV, RV>()>::type> tmp(rv.shape());\
+        Xscalar<LV> val = lv;\
+        tmp.value() = val.value() op_type rv.value();\
+        return tmp;\
     }
-#define REG_FUNC_OP(grad_op,op_func) \
+/*#define REG_FUNC_OP(grad_op,op_func) \
     template<typename LV>\
     tensor<LV> op_func(tensor<LV>& lv) {\
         using namespace Eigen;\
@@ -81,7 +83,7 @@ namespace cactus {
             x(lv.data(), lv.size());\
         z = op_func(x);\
         return val;\
-    }
+    }*/
 }
 
 #endif

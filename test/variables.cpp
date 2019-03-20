@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+#include <memory>
 
 TEST(layer, fully) {
     using namespace Eigen;
@@ -14,10 +15,12 @@ TEST(layer, fully) {
     
     auto z = m.block(1, 1, 2, 2);
     std::cout << z.array() << std::endl;
-    Eigen::Array<int, 12, RowMajor> tmp;
+    Eigen::Matrix<int, 4,3, RowMajor> tmp;
     tmp << 1, 2, 3, 4,
         5, 6, 7, 8,
         9, 10, 11, 12;
-    auto tmpz = tmp.block(0, 0, 11, 1);
-    std::cout << tmpz << std::endl;
+    auto tmpz = tmp.block(0, 0, 3, 3);
+    auto ret = tmpz.array() > 7;
+    std::cout << ret << std::endl;
+    
 }
