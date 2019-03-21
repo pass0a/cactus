@@ -5,8 +5,8 @@
 #include <vector>
 namespace cactus {
     struct xrange {
-        int start;
-        int len;
+        size_t start;
+        size_t len;
     };
     template<typename T>
     class comput {
@@ -16,11 +16,18 @@ namespace cactus {
         using mat_type = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
         static decltype(auto) matrix(T* data,shape_type sh) {
             using namespace Eigen;
+            if (sh.size() < 2) {
+                sh.emplace_back(1);
+            }
             mat_type tmp(data,sh[0],sh[1]);
             return tmp.block(0, 0, sh[0], sh[1]);
         }
         static decltype(auto) matrix(T* data, shape_type sh,xranges xrgs){
             using namespace Eigen;
+            if (sh.size() < 2) {
+                sh.emplace_back(1);
+                xrgs.emplace_back(xrange({ 0, 1 }));
+            }
             mat_type tmp(data, sh[0], sh[1]);
             return tmp.block(xrgs[0].start,xrgs[1].start, xrgs[0].len, xrgs[1].len);
         }
@@ -57,7 +64,7 @@ namespace cactus {
         typename RV>\
     decltype(auto) operator op_type (tensor<LV, LVlayout>& lv, RV rv) {\
         Tensor<ret_type> tmp(lv.shape());\
-        Xscalar<RV> val = rv;\
+        Xscalar<RV> val(rv);\
         auto t=lv.value().array() op_type val.value();\
         tmp.value() = t.cast<ret_type>();\
         return tmp;\
@@ -68,7 +75,7 @@ namespace cactus {
         typename RVlayout>\
     decltype(auto) operator op_type (LV lv, tensor<RV, RVlayout>& rv) {\
         Tensor<ret_type> tmp(rv.shape());\
-        Xscalar<LV> val = lv;\
+        Xscalar<LV> val(lv);\
         auto t=val.value() op_type rv.value().array();\
         tmp.value() = t.cast<ret_type>();\
         return tmp;\

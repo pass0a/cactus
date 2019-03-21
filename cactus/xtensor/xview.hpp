@@ -55,7 +55,7 @@ namespace xt {
             return xview(storage_, start, tmp);
         }
         reference ref(shape_type sp) {
-            assert(sp.size() <= shape_.size());
+            /*assert(sp.size() <= shape_.size());
             size_t val = 0;
             shape_type tmp = shape_;
             for (size_t i = 0; i<sp.size(); i++)
@@ -63,8 +63,8 @@ namespace xt {
                 assert(sp[i] < shape_[i]);
                 tmp.erase(tmp.begin());
                 val += sp[i] * view_type::product(tmp);
-            }
-            return storage_.data()[val];
+            }*/
+            return storage_.data()[0];
         }
     private:
         Storage& storage_;

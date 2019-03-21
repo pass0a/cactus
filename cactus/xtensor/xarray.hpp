@@ -71,12 +71,12 @@ namespace xt {
         /*view_type operator [](size_t index) {
             return view_[index];
         }*/
-        xarray& operator =(xarray& rhs) {
+        /*xarray& operator =(xarray& rhs) {
             this->resize(rhs.size());
             this->reshape(rhs.shape());
             std::copy(rhs.begin(), rhs.end(), data_->begin());
             return *this;
-        }
+        }*/
         xarray& operator =(std::initializer_list<T>& rhs) {
             if (rhs.size() > data_->size()) {
                 std::copy(rhs.begin(), rhs.begin()+rhs.size(), data_->begin());
@@ -86,16 +86,15 @@ namespace xt {
             }
             return *this;
         }
-        /*reference ref(shape_type sp) {
-            return view_.ref(std::move(sp));
-            
-        }*/
-        /*iterator begin() {
+        reference ref(shape_type sp) {
+            return data_->at(product(sp));
+        }
+        iterator begin() {
             return data_->begin();
         }
         iterator end() {
             return data_->end();
-        }*/
+        }
         static size_t product(shape_type& tmp) {
             size_t val = 1;
             for (auto v : tmp) {

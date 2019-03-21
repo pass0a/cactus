@@ -30,25 +30,18 @@ namespace cactus {
             tensor(Storage &s)
                 :storage_(s) {
             }
-            tensor(T val)
-                :storage_(val) {
-            }
             tensor(tensor& rhs)
                 :storage_(rhs.storage_)
             {
             }
-            
-            /*tensor(Storage& s)
-                : storage_(s)
-            {
-            }*/
-            tensor(shape_type shape)
+            explicit tensor(std::initializer_list<size_t> shape)
                 :storage_(shape){}
-            //tensor(container_type& buf, shape_type sp):storage_(buf,sp) {}
-            //tensor(pointer buf, shape_type sp) :storage_(buf, sp) {}
-            /*const xranges range() const {
-                return view_.range();
-            }*/
+            explicit tensor(shape_type shape)
+                :storage_(shape) {}
+            explicit tensor(T val)
+                :storage_(val) {
+            }
+            
             tensor<T, xt::xview<Storage>> subView(xranges xrgs) {
                 tensor<T, xt::xview<Storage>> tmp(xt::xview<Storage>(storage_,xrgs));
                 return tmp;
@@ -75,7 +68,7 @@ namespace cactus {
             /*view_type operator [](size_t idx) {
                 return (*storage_)[idx];
             }*/
-            tensor& operator =(const tensor& rhs) {
+            tensor& operator =(tensor& rhs) {
                 if (this != &rhs) {
                     storage_ = rhs.storage_;
                 }
@@ -85,10 +78,6 @@ namespace cactus {
                 storage_ = rhs;
                 return *this;
             }
-            /*
-            template<typename Type, typename GradOp>
-            friend std::ostream & operator<<(std::ostream & os, tensor<Type, GradOp>& stu);
-            */
             void fill(T val) {
                 storage_.fill(val);
             }

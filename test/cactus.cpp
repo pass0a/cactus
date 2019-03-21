@@ -7,9 +7,23 @@
 #include <complex>
 
 using namespace cactus; 
-
 TEST(core, assign) {
-    Tensor<float> x({20,20});
+    Tensor<float> z1({ 12 });
+    z1 = { 1,2,3,4,5,6,7,8,9,10,11,12 };
+    Tensor<float> z2;
+    z2 = z1;
+    z2.ref({ 0 }) = 15;
+    EXPECT_EQ(z1.ref({ 0 }), 15);
+}
+TEST(core, sun) {
+    Tensor<float> z1({ 12 });
+    z1 = { 1,2,3,4,5,6,7,8,9,10,11,12 };
+    auto len = z1.shape()[0];
+    auto s = z1.subView({ { 0,len - 1 } });
+    auto s3 = s*0.97;
+    auto s1 = z1.subView({ { 1,len - 1 } });
+    auto s2=s1 -s3;
+    EXPECT_EQ(s2.ref({ 0 }), 0.03);
 }
 //TEST(core, autograd) {
 //    tensor<float> x = { 5.0,3.0,4.0 };
@@ -46,7 +60,7 @@ TEST(core, assign) {
 //    EXPECT_EQ(x.ref({1,1,2}), 12);
 //}
 TEST(core, subview) {
-    Tensor<float> z1({ 3,4 });
+    /*Tensor<float> z1({ 3,4 });
     z1 = { 1,2,3,4,5,6,7,8,9,10,11,12 };
     z1.reshape({ 3, 4 });
     std::cout << z1 << std::endl;
@@ -57,7 +71,7 @@ TEST(core, subview) {
     std::cout << 3*y << std::endl;
     std::cout << (y>x) << std::endl;
     std::cout << sin(x) << std::endl;
-    std::cout << cos(x) << std::endl;
+    std::cout << cos(x) << std::endl;*/
     //std::cout << z3 << std::endl;
 }
 //TEST(core, xview) {
