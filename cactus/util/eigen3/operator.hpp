@@ -92,7 +92,7 @@ namespace cactus {
         if (std::equal(lvsh.begin(), lvsh.end(), rvsh.begin())) {
 
             tmp.reshape(lvsh);
-            auto t = lv.value().array() - rv.value().array();
+            auto t = lv.value().cast<REG_RET_TYPE>().array() - rv.value().cast<REG_RET_TYPE>().array();
             tmp.value() = t.cast<REG_RET_TYPE>();
         }
         return tmp;
@@ -114,7 +114,9 @@ namespace cactus {
         typename RV,
         typename RVlayout>
         decltype(auto) operator - (LV lv, tensor<RV, RVlayout>& rv) {
-
+		if (!std::is_same<LV, RV>()) {
+			std::cout << typeid(REG_RET_TYPE).name() << typeid(RV).name() << std::endl;
+		}
         Tensor<REG_RET_TYPE> tmp(rv.shape());
         Xscalar<LV> val(lv);
         auto t = val.value() - rv.value().array();

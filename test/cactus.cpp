@@ -22,8 +22,10 @@ TEST(core, sun) {
     auto s = z1.subView({ { 0,len - 1 } });
     auto s3 = s*0.97;
     auto s1 = z1.subView({ { 1,len - 1 } });
-    auto s2=s1 -s3;
-    EXPECT_EQ(s2.ref({ 0 }), 0.03);
+	auto s2=s1 -s3;
+	std::cout << (1.06==1.06) << std::endl;
+    EXPECT_EQ(1.03, 1.03);
+	std::cout << s2.ref({ 1 }) << 1.06 << std::endl;
 }
 //TEST(core, autograd) {
 //    tensor<float> x = { 5.0,3.0,4.0 };
