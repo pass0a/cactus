@@ -78,8 +78,6 @@ namespace cactus {
             tensor& operator =(const tensor& rhs) {
                 if (this != &rhs) {
                     storage_ = rhs.storage_;
-                    grad_ = rhs.grad_;
-                    gop_ = rhs.gop_;
                 }
                 return *this;
             }
@@ -93,9 +91,6 @@ namespace cactus {
             */
             void fill(T val) {
                 storage_.fill(val);
-            }
-            void assign(tensor& rhs) {
-                storage_ = rhs.storage_;
             }
     private:
         Storage storage_;

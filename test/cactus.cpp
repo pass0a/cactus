@@ -8,23 +8,9 @@
 
 using namespace cactus; 
 
-//TEST(core, GreatThan) {
-//    tensor<> x = { 5.0,3.0,4.0 };
-//    tensor<> x1 = { 5.0,3.0,4.0 };
-//    std::complex<float> p(2.0f,1.0f);
-//    tensor<std::complex<float>> tmp = {(1.0f,2.0f),(4.0f,2.0f) ,(1.0f,3.0f) };
-//    tensor<> y = 2;
-//    int y2 = 2;
-//    auto z = cactus::pow(x, x1);
-//    auto z1 = cactus::pow(x, y);
-//    auto z2 = cactus::pow(y, x);
-//    auto z3 = cactus::pow(y, 3);
-//    auto z4 = cactus::pow(tmp,2.0f);
-//    //std::cout << z << z1 << z2  << std::endl;
-//    /*EXPECT_EQ(z.ref({ 0 }), 1);
-//    EXPECT_EQ(z.ref({ 1 }), 0);
-//    EXPECT_EQ(z.ref({ 2 }), 0);*/
-//}
+TEST(core, assign) {
+    Tensor<float> x({20,20});
+}
 //TEST(core, autograd) {
 //    tensor<float> x = { 5.0,3.0,4.0 };
 //    tensor<float> y = { 3.0,1.0,1.0 };
