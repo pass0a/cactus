@@ -30,6 +30,8 @@ build/*
 !build/*.sh
 binary/*/
 binary/*
+tmp/
+data/
 !.gitignore
 !.travis.yml
 !*.sh
