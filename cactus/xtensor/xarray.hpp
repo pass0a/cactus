@@ -40,7 +40,7 @@ namespace xt {
             ,shape_(sp) {
             memcpy(data_->data(),rhs,data_->size());
         }
-        out_type value() {
+        decltype(auto) value() {
             return comput<T>::matrix(data_->data(),shape_);
         }
         pointer data() {

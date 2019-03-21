@@ -6,21 +6,17 @@
 
 TEST(layer, fully) {
     using namespace Eigen;
-    Eigen::MatrixXf m(4, 4);
+    Eigen::Matrix<float, 4, 4, RowMajor> m;
     m << 1, 2, 3, 4,
         5, 6, 7, 8,
         9, 10, 11, 12,
         13, 14, 15, 16;
-    std::cout << "Block in the middle" << std::endl;
-    
-    auto z = m.block(1, 1, 2, 2);
-    std::cout << z.array() << std::endl;
-    Eigen::Matrix<int, 4,3, RowMajor> tmp;
+    Eigen::Matrix<float, 4,3, RowMajor> tmp;
     tmp << 1, 2, 3, 4,
         5, 6, 7, 8,
         9, 10, 11, 12;
-    auto tmpz = tmp.block(0, 0, 3, 3);
-    auto ret = tmpz.array() > 7;
-    std::cout << ret << std::endl;
-    
+    auto t = tmp.block(0, 0, 3, 3).array() > m.block(0, 0, 3, 3).array();
+    Eigen::Matrix<int, 3, 3, RowMajor> c;
+    c= t.matrix();
+    std::cout << m << std::endl;
 }

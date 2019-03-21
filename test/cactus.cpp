@@ -66,10 +66,12 @@ TEST(core, subview) {
     std::cout << z1 << std::endl;
     auto x = z1.subView({ {0,2},{0,2} });
     auto y = z1.subView({ { 1,2 },{ 2,2 } });
-    std::cout << y*x << std::endl;
+    std::cout << (y*x) << std::endl;
     std::cout << x*3 << std::endl;
     std::cout << 3*y << std::endl;
     std::cout << (y>x) << std::endl;
+    std::cout << sin(x) << std::endl;
+    std::cout << cos(x) << std::endl;
     //std::cout << z3 << std::endl;
 }
 //TEST(core, xview) {
