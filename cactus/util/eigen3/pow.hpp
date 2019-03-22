@@ -4,78 +4,47 @@
 #include "common.hpp"
 
 namespace cactus {
-    template<typename RET, typename LV, typename RV>
-    class PowGradOp :public GradOp {
-    public:
-        PowGradOp() :name_("PowGradOp") {}
-        PowGradOp(tensor<RET>& res, tensor<LV>& lv, tensor<RV>& rv)
-            :name_("PowGradOp"), res_(res), lv_(lv), rv_(rv)
-        {
-
-        }
-        ~PowGradOp() {
-
-        }
-        virtual int backward() {
-            lv_.setGrad(res_.grad()*pow(lv_, rv_ - 1)*rv_);
-            rv_.setGrad(res_.grad()*pow(lv_, rv_)*log(lv_));
-            return 0;
-        }
-        virtual void reback() { lv_.reback(); }
-        virtual std::vector<GradOp*> oplist() {
-            return{ lv_.gop(),rv_.gop() };
-        }
-    private:
-        std::string name_;
-        tensor<RET> res_;
-        tensor<LV> lv_;
-        tensor<RV> rv_;
-    };
-    template<typename LV, typename RV>
-    tensor<typename std::result_of<S<LV, RV>()>::type> pow(tensor<LV>& lv, tensor<RV>& rv) {
+    template<
+        typename LV,
+        typename LVlayout,
+        typename RV,
+        typename RVlayout>
+        decltype(auto) pow (tensor<LV, LVlayout>& lv, tensor<RV, RVlayout>& rv) {
         using namespace Eigen;
-        using result_type = typename std::result_of<S<LV, RV>()>::type;
-        tensor<result_type> val;
-        val.bindOp(std::make_shared<PowGradOp<result_type, LV, RV>>(val, lv, rv));
-        if (lv.size() == rv.size()) {
-            val.reshape({lv.size()});
-            Map<Array<result_type, Dynamic, RowMajor>>
-                z(val.data(), val.size());
-            Map<Array<LV, Dynamic, RowMajor>>
-                x(lv.data(), lv.size());
-            Map<Array<RV, Dynamic, RowMajor>>
-                y(rv.data(), rv.size());
-            z = Eigen::pow(x.cast<result_type>(), y.cast<result_type>());
+        using ret_type = REG_RET_TYPE;
+        Tensor<ret_type> tmp;
+        auto lvsh = lv.shape(), rvsh = rv.shape();
+        if (std::equal(lvsh.begin(), lvsh.end(), rvsh.begin())) {
+            tmp.reshape(lvsh);
+            tmp.value() = pow(lv.value().cast<ret_type>().array(),rv.value().cast<ret_type>().array());
         }
-        else if (lv.size() == 1) {
-            val.reshape({ rv.size() });
-            Map<Array<result_type, Dynamic, RowMajor>>
-                z(val.data(), val.size());
-            Map<Array<RV, Dynamic, RowMajor>>
-                y(rv.data(), rv.size());
-            z = Eigen::pow(lv.ref({0}), y.cast<result_type>());
-        }
-        else if (rv.size() == 1) {
-            val.reshape({ lv.size() });
-            Map<Array<result_type, Dynamic, RowMajor>>
-                z(val.data(), val.size());
-            Map<Array<LV, Dynamic, RowMajor>>
-                x(lv.data(), lv.size());
-            std::cout << x.cast<result_type>() << std::endl;
-            std::cout << rv.ref({ 0 }) << std::endl;
-            z = Eigen::pow(x.cast<result_type>(), rv.ref({ 0 }));
-        }
-        return val;
+        return tmp;
     }
-    template<typename LV, typename RV>
-    tensor<typename std::result_of<S<LV, RV>()>::type> pow(tensor<LV>& lv,RV rv) {
-        tensor<RV> tmp(rv);
-        return pow(lv, tmp);
+    template<
+        typename LV,
+        typename LVlayout,
+        typename RV>
+        decltype(auto) pow (tensor<LV, LVlayout>& lv, const RV& rv) {
+        using namespace Eigen;
+        using ret_type = REG_RET_TYPE;
+        Tensor<REG_RET_TYPE> tmp(lv.shape());
+        Xscalar<RV> val(rv);
+        auto t = pow(lv.value().array(),val.value());
+        tmp.value() = t.cast<ret_type>();
+        return tmp;
     }
-    template<typename LV, typename RV>
-    tensor<typename std::result_of<S<LV, RV>()>::type> pow(LV lv, tensor<RV> rv) {
-        tensor<LV> tmp(lv);
-        return pow(tmp, rv);
+    template<
+        typename LV,
+        typename RV,
+        typename RVlayout>
+        decltype(auto) pow (const LV& lv, tensor<RV, RVlayout>& rv) {
+        using namespace Eigen;
+        using ret_type = REG_RET_TYPE;
+        Tensor<REG_RET_TYPE> tmp(rv.shape());
+        Xscalar<LV> val(lv);
+        auto t = pow(val.value(), rv.value().array());
+        tmp.value() = t.cast<ret_type>();
+        return tmp;
     }
 }
 #endif

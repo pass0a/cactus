@@ -6,7 +6,7 @@
 //#include "../cactus/layers/fully_connected_layer.hpp"
 #include <complex>
 
-using namespace cactus; 
+using namespace cactus;
 TEST(core, assign) {
     Tensor<float> z1({ 12 });
     z1 = { 1,2,3,4,5,6,7,8,9,10,11,12 };
@@ -19,13 +19,10 @@ TEST(core, sun) {
     Tensor<float> z1({ 12 });
     z1 = { 1,2,3,4,5,6,7,8,9,10,11,12 };
     auto len = z1.shape()[0];
-    auto s = z1.subView({ { 0,len - 1 } });
-    auto s3 = s*0.97;
-    auto s1 = z1.subView({ { 1,len - 1 } });
-	auto s2=s1 -s3;
-	std::cout << (1.06==1.06) << std::endl;
-    EXPECT_EQ(1.03, 1.03);
-	std::cout << s2.ref({ 1 }) << 1.06 << std::endl;
+    auto s = z1.subView({ {1,len - 1} }) - z1.subView({ { 0,len - 1 } })*0.97f;
+    //z1.subView({ { 1,len - 1 } }) = s;
+    auto s1 = pow(2, z1.subView({ { 1,len - 1 } }));
+    auto s2 = sin(z1.subView({ { 1,len - 1 } }));
 }
 //TEST(core, autograd) {
 //    tensor<float> x = { 5.0,3.0,4.0 };

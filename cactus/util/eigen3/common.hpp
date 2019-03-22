@@ -53,8 +53,7 @@ namespace cactus {
         auto lvsh = lv.shape(), rvsh = rv.shape();\
         if (std::equal(lvsh.begin(), lvsh.end(), rvsh.begin())) {\
             tmp.reshape(lvsh);\
-            auto t=lv.value().array() op_type rv.value().array();\
-            tmp.value() = t.cast<ret_type>();\
+            tmp.value()=lv.value().cast<ret_type>().array() op_type rv.value().cast<ret_type>().array();\
         }\
         return tmp;\
     }\
@@ -62,7 +61,7 @@ namespace cactus {
         typename LV,\
         typename LVlayout,\
         typename RV>\
-    decltype(auto) operator op_type (tensor<LV, LVlayout>& lv, RV rv) {\
+    decltype(auto) operator op_type (tensor<LV, LVlayout>& lv, const RV& rv) {\
         Tensor<ret_type> tmp(lv.shape());\
         Xscalar<RV> val(rv);\
         auto t=lv.value().array() op_type val.value();\
@@ -73,7 +72,7 @@ namespace cactus {
         typename LV,\
         typename RV,\
         typename RVlayout>\
-    decltype(auto) operator op_type (LV lv, tensor<RV, RVlayout>& rv) {\
+    decltype(auto) operator op_type (const LV& lv, tensor<RV, RVlayout>& rv) {\
         Tensor<ret_type> tmp(rv.shape());\
         Xscalar<LV> val(lv);\
         auto t=val.value() op_type rv.value().array();\

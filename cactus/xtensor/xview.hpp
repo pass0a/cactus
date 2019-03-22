@@ -17,7 +17,7 @@ namespace xt {
         using iterator = typename Storage::iterator;
         using pointer = typename Storage::pointer;
         using reference = typename Storage::reference;
-        
+
         xview(Storage& storage, xranges range)
              :storage_(storage)
              ,range_(range)
@@ -42,6 +42,9 @@ namespace xt {
         }
         const size_type dim() const {
             return shape_.size();
+        }
+        void reshape(shape_type sp) {
+            assert(0,"xt::xview's reshape is disable!!!");
         }
         const shape_type shape() const {
             return shape_;

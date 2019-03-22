@@ -42,7 +42,7 @@ namespace cactus {
                 :storage_(val) {
             }
             
-            tensor<T, xt::xview<Storage>> subView(xranges xrgs) {
+            decltype(auto) subView(xranges xrgs) {
                 tensor<T, xt::xview<Storage>> tmp(xt::xview<Storage>(storage_,xrgs));
                 return tmp;
             }
@@ -68,9 +68,20 @@ namespace cactus {
             /*view_type operator [](size_t idx) {
                 return (*storage_)[idx];
             }*/
-            tensor& operator =(tensor& rhs) {
-                if (this != &rhs) {
-                    storage_ = rhs.storage_;
+            //template<typename Type,typename Storage>
+            //tensor& operator =(tensor<Type, xt::xview<Storage>>& rhs) {
+            //    /*if (this != &rhs) {
+            //        storage_ = rhs.storage_;
+            //    }*/
+            //    return *this;
+            //}
+            template<typename Type,typename TS>
+            tensor& operator =(tensor<Type,TS>& rhs) {
+                if (!storage_.size()) {
+                    storage_.reshape(rhs.shape());
+                }
+                if (std::is_same<T, Type>()) {
+                    value() = rhs.value();
                 }
                 return *this;
             }
