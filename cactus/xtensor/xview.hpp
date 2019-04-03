@@ -44,7 +44,7 @@ namespace xt {
             return shape_.size();
         }
         void reshape(shape_type sp) {
-            assert(0,"xt::xview's reshape is disable!!!");
+            assert(0/*,"xt::xview's reshape is disable!!!"*/);
         }
         const shape_type shape() const {
             return shape_;

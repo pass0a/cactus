@@ -23,6 +23,7 @@ TEST(core, sun) {
     //z1.subView({ { 1,len - 1 } }) = s;
     auto s1 = pow(2, z1.subView({ { 1,len - 1 } }));
     auto s2 = sin(z1.subView({ { 1,len - 1 } }));
+    std::cout << 1 - s1 << std::endl;
 }
 //TEST(core, autograd) {
 //    tensor<float> x = { 5.0,3.0,4.0 };
