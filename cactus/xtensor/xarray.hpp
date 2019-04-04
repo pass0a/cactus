@@ -78,6 +78,7 @@ namespace xt {
             return *this;
         }*/
         xarray& operator =(std::initializer_list<T>& rhs) {
+            assert(data_->size());
             if (rhs.size() > data_->size()) {
                 std::copy(rhs.begin(), rhs.begin()+rhs.size(), data_->begin());
             }

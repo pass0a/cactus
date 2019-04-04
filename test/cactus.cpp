@@ -7,6 +7,15 @@
 #include <complex>
 
 using namespace cactus;
+TEST(core, complex) {
+    
+    std::complex<float> x(1,1);
+    Tensor<std::complex<float>> out;
+    out = { x };
+    auto z=out + 2.0f;
+    EXPECT_EQ(out.shape()[0], 1);
+    EXPECT_EQ(z.ref({ 0 }).real(), 3);
+}
 TEST(core, assign) {
     Tensor<float> z1({ 12 });
     z1 = { 1,2,3,4,5,6,7,8,9,10,11,12 };
@@ -84,15 +93,7 @@ TEST(core, subview) {
 //        EXPECT_EQ(*iter,i++);
 //    }
 //}
-//TEST(core, complex) {
-//    cactus::tensor<std::complex<float>> out({ (1.0f, 1.0f),(1.0f, 1.0f) });
-//    cactus::tensor<> cc;
-//    std::complex<int> x(1,1);
-//    auto z=x + 2;
-//    cactus::pow(cc, 2.0f);
-//    EXPECT_EQ(out.size(), 2);
-//    EXPECT_EQ(z.real(), 2);
-//}
+
 //TEST(layer, input) {
 //    tensor<int> in_data={1,2,3,4} , out_data({ 4 });
 //    input_layer<bk_eigen,int> il({2});

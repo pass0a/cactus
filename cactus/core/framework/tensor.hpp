@@ -86,6 +86,9 @@ namespace cactus {
                 return *this;
             }
             tensor& operator =(std::initializer_list<T> rhs) {
+                if (!storage_.size()) {
+                    storage_.reshape({ rhs.size() });
+                }
                 storage_ = rhs;
                 return *this;
             }

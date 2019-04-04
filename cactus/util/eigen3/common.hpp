@@ -47,7 +47,7 @@ namespace cactus {
         typename LV,\
         typename LVlayout,\
         typename RV,\
-        typename = std::enable_if_t<std::is_trivial<RV>::value>>\
+        typename = std::enable_if_t<std::is_trivially_destructible<RV>::value>>\
     decltype(auto) operator op_type (tensor<LV, LVlayout>& lv,RV rv) {\
         Tensor<ret_type> tmp(lv.shape());\
         Xscalar<RV> val(rv);\
@@ -59,7 +59,7 @@ namespace cactus {
     typename LV,\
     typename RV,\
     typename RVlayout,\
-    typename = std::enable_if_t<std::is_trivial<RV>::value>>\
+    typename = std::enable_if_t<std::is_trivially_destructible<LV>::value>>\
     decltype(auto) operator op_type (LV lv,tensor<RV, RVlayout>& rv) {\
         Tensor<ret_type> tmp(rv.shape());\
         Xscalar<LV> val(lv);\
