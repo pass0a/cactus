@@ -23,6 +23,8 @@
 *.mp4
 *.ts
 *.h264
+*.gch
+*.out
 \#*
 output/
 build/*
