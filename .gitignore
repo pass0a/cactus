@@ -36,5 +36,7 @@ tmp/
 data/
 !.gitignore
 !.travis.yml
+!.dir_locals.el
+!.projectile
 !*.sh
 *node_modules*
