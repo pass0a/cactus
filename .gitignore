@@ -9,7 +9,8 @@
 *.a
 *.so
 *.dll
-.*
+.git
+.ccls-cache
 .#*
 *.ilk
 *.obj
@@ -34,9 +35,4 @@ binary/*/
 binary/*
 tmp/
 data/
-!.gitignore
-!.travis.yml
-!.dir_locals.el
-!.projectile
-!*.sh
 *node_modules*
