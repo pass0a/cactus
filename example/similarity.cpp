@@ -1,10 +1,11 @@
+
 #define DR_WAV_IMPLEMENTATION
 #define WITHOUT_NUMPY
 #include "../cactus/cactus.hpp"
 #include "cmdline.hxx"
 #include "dir-wav.hxx"
-#include "mathplotlibcpp.h"
 #include <fftw3.h>
+#include <fstream>
 #include <iostream>
 
 using namespace cactus;
@@ -30,10 +31,20 @@ void wavWrite( const char *filename, const void *buffer, int sampleRate,
         }
     }
 }
-
+int write_file( const char *path, void *data, size_t len ) {
+    std::ofstream fout( path, std::ios::binary );
+    std::cout << path << "-->" << len << std::endl;
+    if ( fout.is_open() ) {
+        fout.write( reinterpret_cast<char *>( data ), len );
+        fout.close();
+        return 0;
+    }
+    return -1;
+}
 int main( int argc, char **argv ) {
     cmdline::parser args;
-    Tensor<float>   samples, out;
+    Tensor<short>   samples;
+    Tensor<float>   out;
     drwav           wav;
 
     args.add<std::string>( "src", 's', "src audio'path", true, "" );
@@ -46,17 +57,19 @@ int main( int argc, char **argv ) {
     }
     size_t len = wav.totalPCMFrameCount * wav.channels;
     samples.reshape( {len} );
-    size_t numberOfSamplesActuallyDecoded = drwav_read_pcm_frames_f32(
+    size_t numberOfSamplesActuallyDecoded = drwav_read_pcm_frames_s16(
         &wav, wav.totalPCMFrameCount, samples.data() );
-    std::cout << numberOfSamplesActuallyDecoded << std::endl;
+    std::cout << "samples.len:" << samples.shape()[ 0 ] << std::endl;
     // wavWrite( args.get<std::string>( "dst" ).c_str(), samples.data(),
     //           wav.sampleRate, wav.totalPCMFrameCount );
-
-    fftwf_plan p = fftwf_plan_dft_r2c_1d(
-        wav.sampleRate, samples.data(),
-        reinterpret_cast<fftwf_complex *>( out.data() ), FFTW_ESTIMATE );
+    auto z = ( samples + 32768 ) / 65535.0f;
+    write_file( "test.data", z.data(), z.shape()[ 0 ] * sizeof( float ) );
+    out.reshape( z.shape() );
+    fftwf_plan p = fftwf_plan_r2r_1d( z.shape()[ 0 ], z.data(), out.data(),
+                                      FFTW_HC2R, FFTW_ESTIMATE );
     fftwf_execute( p ); /* repeat as needed */
     fftwf_destroy_plan( p );
+    write_file( "test1.data", out.data(), out.shape()[ 0 ] * sizeof( float ) );
     // auto z = samples.subView( {{0, 20}} );
     // std::cout << z << std::endl;
     drwav_uninit( &wav );
