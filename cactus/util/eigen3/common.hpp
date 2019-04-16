@@ -74,11 +74,13 @@ template <typename Tx, typename Ty> struct S {
         auto             lvsh = lv.shape(), rvsh = rv.shape();                 \
         if ( std::equal( lvsh.begin(), lvsh.end(), rvsh.begin() ) ) {          \
             tmp.reshape( lvsh );                                               \
-            tmp.value() = ( lv.value()                                         \
-                                .template cast<REG_RET_TYPE>()                 \
-                                .array() op_type rv.value()                    \
-                                .template cast<REG_RET_TYPE>()                 \
-                                .array() );                                    \
+            auto z = lv.value()                                                \
+                         .template cast<REG_RET_TYPE>()                        \
+                         .array() op_type rv.value()                           \
+                         .template cast<REG_RET_TYPE>()                        \
+                         .array();                                             \
+            std::cout << "debug" << z << std::endl;                            \
+            tmp.value() = z.template cast<ret_type>();                         \
         }                                                                      \
         return tmp;                                                            \
     }

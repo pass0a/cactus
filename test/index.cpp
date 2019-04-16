@@ -17,13 +17,12 @@ TEST_CASE( "sin", "[sin]" ) {
     int  SAMPLING = 22050;
     int  FFT_SIZE = 512;
     auto a        = arange<float>( 0, 1.0, 0.2 );
-    std::cout << a << std::endl;
-    auto          b = linspace<float>( 0, 1.0, 10, false );
+    auto b        = linspace<float>( 0, 1.0, 10, false );
+    std::cout << b << std::endl;
+
     Tensor<float> bx( {10} );
-    bx = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
-    Tensor<float> bxy( {10} );
-    auto          x = bxy.value();
-    auto          y = bx.value().array() > 0.2f;
-    x               = y;
-    std::cout << bxy << std::endl;
+    bx     = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
+    auto z = bx - b;
+    std::cout << z << std::endl;
+    std::cout << b.ref( {9} ) << bx.ref( {9} ) << std::endl;
 }
