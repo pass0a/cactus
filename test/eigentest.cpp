@@ -1,8 +1,11 @@
 #include "../3rd/eigen/Eigen/Dense"
 #include <iostream>
 int main() {
-    Eigen::Array3i sample;
-    sample << 1, 2, 3;
-    std::cout << sample.cast<double>() * 0.1 << std::endl;
+    auto z = Eigen::ArrayXf::LinSpaced( 10, 0, 2 );
+    std::cout << z << std::endl;
+    auto zz = z > 1;
+    std::cout << zz << std::endl;
+    auto zy = z > zz;
+    std::cout << zy << std::endl;
     return 0;
 }

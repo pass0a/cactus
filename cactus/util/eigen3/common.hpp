@@ -52,17 +52,19 @@ template <typename Tx, typename Ty> struct S {
         Tensor<ret_type> tmp( lv.shape() );                                    \
         Xscalar<RV>      val( rv );                                            \
         tmp.value() =                                                          \
-            lv.value().array().template cast<ret_type>() op_type val.value();  \
+            lv.value().array().template cast<REG_RET_TYPE>()                   \
+                op_type val.value();                                           \
         return tmp;                                                            \
     }                                                                          \
     template <typename LV, typename RV, typename RVlayout,                     \
               typename =                                                       \
                   std::enable_if_t<std::is_trivially_destructible<LV>::value>> \
     decltype( auto ) operator op_type( LV lv, tensor<RV, RVlayout> rv ) {      \
-        Tensor<ret_type> tmp( rv.shape() );                                    \
-        Xscalar<LV>      val( lv );                                            \
-        tmp.value() =                                                          \
-            val.value() op_type rv.value().array().template cast<ret_type>();  \
+        Tensor<ret_type>                  tmp( rv.shape() );                   \
+        Xscalar<LV>                       val( lv );                           \
+        tmp.value() = val.value() op_type rv.value()                           \
+                          .array()                                             \
+                          .template cast<REG_RET_TYPE>();                      \
         return tmp;                                                            \
     }                                                                          \
     template <typename LV, typename LVlayout, typename RV, typename RVlayout>  \
@@ -72,11 +74,11 @@ template <typename Tx, typename Ty> struct S {
         auto             lvsh = lv.shape(), rvsh = rv.shape();                 \
         if ( std::equal( lvsh.begin(), lvsh.end(), rvsh.begin() ) ) {          \
             tmp.reshape( lvsh );                                               \
-            tmp.value() = lv.value()                                           \
-                              .template cast<ret_type>()                       \
-                              .array() op_type rv.value()                      \
-                              .template cast<ret_type>()                       \
-                              .array();                                        \
+            tmp.value() = ( lv.value()                                         \
+                                .template cast<REG_RET_TYPE>()                 \
+                                .array() op_type rv.value()                    \
+                                .template cast<REG_RET_TYPE>()                 \
+                                .array() );                                    \
         }                                                                      \
         return tmp;                                                            \
     }
