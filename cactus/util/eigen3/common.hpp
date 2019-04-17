@@ -51,20 +51,21 @@ template <typename Tx, typename Ty> struct S {
     decltype( auto ) operator op_type( tensor<LV, LVlayout> lv, RV rv ) {      \
         Tensor<ret_type> tmp( lv.shape() );                                    \
         Xscalar<RV>      val( rv );                                            \
-        tmp.value() =                                                          \
-            lv.value().array().template cast<REG_RET_TYPE>()                   \
-                op_type val.value();                                           \
+        auto             z = lv.value().array().template cast<REG_RET_TYPE>()  \
+                     op_type val.value();                                      \
+        tmp.value() = z.template cast<ret_type>();                             \
         return tmp;                                                            \
     }                                                                          \
     template <typename LV, typename RV, typename RVlayout,                     \
               typename =                                                       \
                   std::enable_if_t<std::is_trivially_destructible<LV>::value>> \
     decltype( auto ) operator op_type( LV lv, tensor<RV, RVlayout> rv ) {      \
-        Tensor<ret_type>                  tmp( rv.shape() );                   \
-        Xscalar<LV>                       val( lv );                           \
-        tmp.value() = val.value() op_type rv.value()                           \
-                          .array()                                             \
-                          .template cast<REG_RET_TYPE>();                      \
+        Tensor<ret_type> tmp( rv.shape() );                                    \
+        Xscalar<LV>      val( lv );                                            \
+        auto z = val.value() op_type rv.value()                                \
+                     .array()                                                  \
+                     .template cast<REG_RET_TYPE>();                           \
+        tmp.value() = z.template cast<ret_type>();                             \
         return tmp;                                                            \
     }                                                                          \
     template <typename LV, typename LVlayout, typename RV, typename RVlayout>  \
@@ -79,7 +80,6 @@ template <typename Tx, typename Ty> struct S {
                          .array() op_type rv.value()                           \
                          .template cast<REG_RET_TYPE>()                        \
                          .array();                                             \
-            std::cout << "debug" << z << std::endl;                            \
             tmp.value() = z.template cast<ret_type>();                         \
         }                                                                      \
         return tmp;                                                            \

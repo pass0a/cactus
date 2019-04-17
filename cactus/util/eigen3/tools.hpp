@@ -61,5 +61,11 @@ template <typename T> Tensor<T> arange( T start, T stop, T step = 1 ) {
     }
     return std::move( tmp );
 }
+template <typename T, typename Layout> T max( tensor<T, Layout> in ) {
+    return in.value().maxCoeff();
+}
+template <typename T, typename Layout> T min( tensor<T, Layout> in ) {
+    return in.value().minCoeff();
+}
 } // namespace cactus
 #endif

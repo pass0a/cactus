@@ -49,9 +49,10 @@ template <typename T, typename Storage> class tensor {
         storage_.reshape( sp );
     }
     reference ref( shape_type sp ) { return storage_.ref( std::move( sp ) ); }
+    size_t    size() { return storage_.size(); }
     /*view_type operator [](size_t idx) {
-        return (*storage_)[idx];
-    }*/
+          return (*storage_)[idx];
+      }*/
     // template<typename Type,typename Storage>
     // tensor& operator =(tensor<Type, xt::xview<Storage>>& rhs) {
     //    /*if (this != &rhs) {
