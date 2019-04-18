@@ -34,8 +34,8 @@ template <typename Storage> class xview {
     decltype( auto ) value() {
         return comput_type::matrix( storage_.data(), storage_.shape(), range_ );
     }
-    pointer         data() { return storage_.data(); }
-    const size_type size() const { return storage_.size(); }
+    // pointer         data() { return storage_.data(); }
+    // const size_type size() const { return storage_.size(); }
     const size_type dim() const { return shape_.size(); }
     void            reshape( shape_type sp ) {
         assert( 0 /*,"xt::xview's reshape is disable!!!"*/ );
@@ -44,7 +44,7 @@ template <typename Storage> class xview {
     xview            operator[]( size_t index ) {
         assert( shape_.size() > 1 );
         shape_type tmp   = shape_;
-        size_type  len   = size() / shape_[ 0 ];
+        size_type  len   = storage_.size() / shape_[ 0 ];
         size_type  start = index * len;
         tmp.erase( tmp.begin() );
         return xview( storage_, start, tmp );

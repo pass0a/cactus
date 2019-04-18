@@ -1,8 +1,10 @@
 #include "../cactus/cactus.hpp"
 #define CATCH_CONFIG_MAIN
+#define FMT_HEADER_ONLY
 #include "catch.hpp"
+#include <fftw3.h>
+#include <fmt/format.h>
 #include <iostream>
-
 using namespace cactus;
 
 int write_file( const char *path, void *data, size_t len ) {
@@ -35,12 +37,26 @@ TEST_CASE( "linspace&arange", "[linspace]" ) {
     REQUIRE( min( z2 ) != 0 );
 }
 TEST_CASE( "sin", "[sin]" ) {
-    int  SAMPLING = 22050;
-    int  FFT_SIZE = 512;
-    auto data_x   = arange<float>( 0, 1.0, 1.0 / SAMPLING );
-    auto data_y   = sin( 2 * 3.14159f * data_x );
-    std::cout << data_y.subView( {{0, 40}} ) << std::endl;
+    int                         SAMPLING = 22050;
+    int                         FFT_SIZE = 512;
+    Tensor<std::complex<float>> out( {22050} );
+    auto                        data_x = linspace<float>( 0, 1.0, SAMPLING );
+    auto                        data_y = sin( 2 * 3.14159f * data_x );
     write_file( "sin.data", data_y.data(), data_y.size() * sizeof( float ) );
-    system( "gnuplot -e \"plot 'sin.data' binary array=(22050) "
-            "format='%float' with lines;pause -1;\"" );
+    auto cmd = fmt::format( "gnuplot -e \"plot 'sin.data' binary array=({0}) "
+                            "format='%float' with lines;pause -1;\"",
+                            20 );
+    system( cmd.c_str() );
+    fftwf_plan p = fftwf_plan_dft_r2c_1d(
+        data_y.size(), data_y.data(),
+        reinterpret_cast<fftwf_complex *>( out.data() ), FFTW_ESTIMATE );
+    fftwf_execute( p );
+    fftwf_destroy_plan( p );
+    auto fftw_out = real( out );
+    write_file( "fft.data", fftw_out.data(),
+                fftw_out.size() * sizeof( float ) );
+    cmd = fmt::format( "gnuplot -e \"plot 'fft.data' binary array=({0}) "
+                       "format='%float' with lines;pause -1;\"",
+                       SAMPLING );
+    system( cmd.c_str() );
 }

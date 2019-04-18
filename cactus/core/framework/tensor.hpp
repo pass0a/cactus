@@ -84,12 +84,5 @@ template <typename T, typename Storage> class tensor {
   private:
     Storage storage_;
 };
-/*template<typename T>
-tensor<T> generate(T val,typename tensor<T>::shape_type st) {
-    tensor<T> tmp;
-    tmp.reshape(st);
-    tmp.fill(val);
-    return tmp;
-}*/
 } // namespace cactus
 #endif

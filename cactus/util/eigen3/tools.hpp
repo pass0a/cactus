@@ -67,5 +67,23 @@ template <typename T, typename Layout> T max( tensor<T, Layout> in ) {
 template <typename T, typename Layout> T min( tensor<T, Layout> in ) {
     return in.value().minCoeff();
 }
+template <typename D, typename S, typename Layout>
+Tensor<D> cast( tensor<S, Layout> in ) {
+    Tensor<D> tmp( in.shape() );
+    tmp.value() = in.value().template cast<D>();
+    return tmp;
+}
+template <typename T, typename Layout>
+Tensor<T> real( tensor<std::complex<T>, Layout> in ) {
+    Tensor<T> tmp( in.shape() );
+    tmp.value() = in.value().real();
+    return tmp;
+}
+template <typename T, typename Layout>
+Tensor<T> imag( tensor<std::complex<T>, Layout> in ) {
+    Tensor<T> tmp( in.shape() );
+    tmp.value() = in.value().real();
+    return tmp;
+}
 } // namespace cactus
 #endif

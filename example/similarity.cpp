@@ -1,10 +1,12 @@
 
 #define DR_WAV_IMPLEMENTATION
-#define WITHOUT_NUMPY
+#define FMT_HEADER_ONLY
+
 #include "../cactus/cactus.hpp"
 #include "cmdline.hxx"
 #include "dir-wav.hxx"
 #include <fftw3.h>
+#include <fmt/format.h>
 #include <fstream>
 #include <iostream>
 
@@ -41,6 +43,25 @@ int write_file( const char *path, void *data, size_t len ) {
     }
     return -1;
 }
+template <typename T, typename Layout> int plot( tensor<T, Layout> z ) {
+    write_file( "tmp.data", z.data(), z.size() * sizeof( T ) );
+
+    auto cmd = fmt::format( "gnuplot -e \"plot 'tmp.data' binary array=({0}) "
+                            "format='%float' with lines;pause -1;\"",
+                            z.size() );
+    return system( cmd.c_str() );
+}
+void framing( Tensor<float> data, size_t rate, float timeperframe,
+              float stride ) {}
+template <typename T, typename Layout>
+tensor<T, Layout> preprocess( tensor<T, Layout> in ) {
+    tensor<T, Layout> tmp( in.shape() );
+    auto              z = tmp.subView( {{1, in.size()}} );
+    auto              zi =
+        in.subView( {{1, in.size()}} ) - in.subView( {{0, in.size() - 1}} );
+    z = zi;
+    return tmp;
+}
 int main( int argc, char **argv ) {
     cmdline::parser args;
     Tensor<short>   samples;
@@ -48,7 +69,6 @@ int main( int argc, char **argv ) {
     drwav           wav;
 
     args.add<std::string>( "src", 's', "src audio'path", true, "" );
-    args.add<std::string>( "dst", 'd', "dst audio'path", true, "" );
     args.parse_check( argc, argv );
 
     if ( !drwav_init_file( &wav, args.get<std::string>( "src" ).c_str() ) ) {
@@ -63,13 +83,9 @@ int main( int argc, char **argv ) {
     // wavWrite( args.get<std::string>( "dst" ).c_str(), samples.data(),
     //           wav.sampleRate, wav.totalPCMFrameCount );
     auto z = ( samples + 32768 ) / 65535.0f;
-    write_file( "test.data", z.data(), z.shape()[ 0 ] * sizeof( float ) );
-    out.reshape( z.shape() );
-    fftwf_plan p = fftwf_plan_r2r_1d( z.shape()[ 0 ], z.data(), out.data(),
-                                      FFTW_HC2R, FFTW_ESTIMATE );
-    fftwf_execute( p ); /* repeat as needed */
-    fftwf_destroy_plan( p );
-    write_file( "test1.data", out.data(), out.shape()[ 0 ] * sizeof( float ) );
+    plot( z );
+    preprocess( z );
+    // framing( z, wav.sampleRate, 0.025, 0.010 );
     // auto z = samples.subView( {{0, 20}} );
     // std::cout << z << std::endl;
     drwav_uninit( &wav );

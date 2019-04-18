@@ -8,6 +8,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 find_package(FFTW REQUIRED)
 include_directories(${FFTW_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/3rd/eigen)
+include_directories(${PROJECT_SOURCE_DIR}/3rd/fmt/include)
+
 ADD_EXECUTABLE(hpptest
 				${PROJECT_SOURCE_DIR}/test/index.cpp
 				#${PROJECT_SOURCE_DIR}/test/cactus.cpp
