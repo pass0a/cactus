@@ -36,6 +36,13 @@ TEST_CASE( "linspace&arange", "[linspace]" ) {
     REQUIRE( min( z1 ) != 0 );
     REQUIRE( min( z2 ) != 0 );
 }
+TEST_CASE( "subview", "[subview]" ) {
+    auto x = linspace<float>( 0, 1, 10 );
+    auto y = x.subView( {{0, 5}} );
+    auto z = x.subView( {{5, 5}} );
+    y      = z;
+    std::cout << x << std::endl;
+}
 TEST_CASE( "sin", "[sin]" ) {
     int                         SAMPLING = 22050;
     int                         FFT_SIZE = 512;
@@ -43,10 +50,11 @@ TEST_CASE( "sin", "[sin]" ) {
     auto                        data_x = linspace<float>( 0, 1.0, SAMPLING );
     auto                        data_y = sin( 2 * 3.14159f * data_x );
     write_file( "sin.data", data_y.data(), data_y.size() * sizeof( float ) );
-    auto cmd = fmt::format( "gnuplot -e \"plot 'sin.data' binary array=({0}) "
-                            "format='%float' with lines;pause -1;\"",
-                            20 );
-    system( cmd.c_str() );
+    // auto cmd = fmt::format( "gnuplot -e \"plot 'sin.data' binary array=({0})
+    // "
+    //                         "format='%float' with lines;pause -1;\"",
+    //                         20 );
+    // system( cmd.c_str() );
     fftwf_plan p = fftwf_plan_dft_r2c_1d(
         data_y.size(), data_y.data(),
         reinterpret_cast<fftwf_complex *>( out.data() ), FFTW_ESTIMATE );
@@ -55,8 +63,8 @@ TEST_CASE( "sin", "[sin]" ) {
     auto fftw_out = real( out );
     write_file( "fft.data", fftw_out.data(),
                 fftw_out.size() * sizeof( float ) );
-    cmd = fmt::format( "gnuplot -e \"plot 'fft.data' binary array=({0}) "
-                       "format='%float' with lines;pause -1;\"",
-                       SAMPLING );
-    system( cmd.c_str() );
+    // cmd = fmt::format( "gnuplot -e \"plot 'fft.data' binary array=({0}) "
+    //                    "format='%float' with lines;pause -1;\"",
+    //                    SAMPLING );
+    // system( cmd.c_str() );
 }

@@ -1,6 +1,8 @@
 #ifndef CACTUS_XVIEW_HPP
 #define CACTUS_XVIEW_HPP
+#define FMT_HEADER_ONLY
 
+#include "fmt/format.h"
 #include <assert.h>
 #include <iostream>
 #include <memory>
@@ -27,7 +29,12 @@ template <typename Storage> class xview {
         shape_type shape = storage_.shape();
         for ( size_t i = 0; i < shape.size(); i++ ) {
             tmp = range_.at( i );
-            assert( tmp.start + tmp.len <= shape[ i ] );
+            if ( tmp.start + tmp.len > shape[ i ] ) {
+                throw std::invalid_argument(
+                    fmt::format( "tmp.start:{0}+tmp.len:{1}>shape[i]:{2}",
+                                 tmp.start, tmp.len, shape[ i ] ) );
+            }
+            // assert( tmp.start + tmp.len <= shape[ i ] );
             shape_.push_back( tmp.len );
         }
     }
@@ -63,7 +70,7 @@ template <typename Storage> class xview {
     }
 
   private:
-    Storage &  storage_;
+    Storage    storage_;
     xranges    range_;
     shape_type shape_;
 };

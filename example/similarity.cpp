@@ -43,23 +43,26 @@ int write_file( const char *path, void *data, size_t len ) {
     }
     return -1;
 }
-template <typename T, typename Layout> int plot( tensor<T, Layout> z ) {
+template <typename T, typename Layout>
+int plot( tensor<T, Layout> z, const char *format = "float" ) {
     write_file( "tmp.data", z.data(), z.size() * sizeof( T ) );
 
     auto cmd = fmt::format( "gnuplot -e \"plot 'tmp.data' binary array=({0}) "
-                            "format='%float' with lines;pause -1;\"",
-                            z.size() );
+                            "format='%{1}' with lines;pause -1;\"",
+                            z.size(), format );
     return system( cmd.c_str() );
 }
-void framing( Tensor<float> data, size_t rate, float timeperframe,
-              float stride ) {}
+void          framing( Tensor<float> data, size_t rate, float timeperframe,
+                       float stride ) {}
+Tensor<float> normalize( Tensor<short> data ) {
+    return ( data + 32768 ) / 65535.0f;
+}
 template <typename T, typename Layout>
-tensor<T, Layout> preprocess( tensor<T, Layout> in ) {
-    tensor<T, Layout> tmp( in.shape() );
-    auto              z = tmp.subView( {{1, in.size()}} );
-    auto              zi =
-        in.subView( {{1, in.size()}} ) - in.subView( {{0, in.size() - 1}} );
-    z = zi;
+tensor<T, Layout> pre_emphasis( tensor<T, Layout> data ) {
+    tensor<T, Layout> tmp( data.shape() );
+    tmp.subView( {{1, data.size() - 1}} ) =
+        data.subView( {{1, data.size() - 1}} ) -
+        data.subView( {{0, data.size() - 1}} ) * 0.97f;
     return tmp;
 }
 int main( int argc, char **argv ) {
@@ -82,9 +85,12 @@ int main( int argc, char **argv ) {
     std::cout << "samples.len:" << samples.shape()[ 0 ] << std::endl;
     // wavWrite( args.get<std::string>( "dst" ).c_str(), samples.data(),
     //           wav.sampleRate, wav.totalPCMFrameCount );
-    auto z = ( samples + 32768 ) / 65535.0f;
-    plot( z );
-    preprocess( z );
+
+    plot( samples, "short" );
+    auto x = normalize( samples );
+    plot( x );
+    auto tmp = pre_emphasis( x );
+    plot( tmp );
     // framing( z, wav.sampleRate, 0.025, 0.010 );
     // auto z = samples.subView( {{0, 20}} );
     // std::cout << z << std::endl;

@@ -61,17 +61,19 @@ template <typename T, typename Storage> class tensor {
     //    return *this;
     //}
     template <typename Type, typename TS>
-    tensor &operator=( tensor<Type, TS> &rhs ) {
-        if ( !storage_.size() ) {
+    tensor &operator=( const tensor<Type, TS> &rhs ) {
+        if ( storage_.shape() == shape_type( {0} ) ) {
             storage_.reshape( rhs.shape() );
         }
+        tensor<Type, TS> *tmp = const_cast<tensor<Type, TS> *>( &rhs );
+
         if ( std::is_same<T, Type>() ) {
-            value() = rhs.value();
+            value() = tmp->value();
         }
         return *this;
     }
     tensor &operator=( std::initializer_list<T> rhs ) {
-        if ( !storage_.size() ) {
+        if ( storage_.shape() == shape_type( {0} ) ) {
             storage_.reshape( {rhs.size()} );
         }
         storage_ = rhs;
