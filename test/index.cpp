@@ -43,6 +43,11 @@ TEST_CASE( "subview", "[subview]" ) {
     y      = z;
     std::cout << x << std::endl;
 }
+TEST_CASE( "subview", "[subview]" ) {
+    auto x = linspace<float>( 0, 1, 10 );
+    auto z = ( 1.0f / 1000 ) * pow( x, 2 );
+    std::cout << z << std::endl;
+}
 TEST_CASE( "sin", "[sin]" ) {
     int                         SAMPLING = 22050;
     int                         FFT_SIZE = 512;
@@ -63,8 +68,8 @@ TEST_CASE( "sin", "[sin]" ) {
     auto fftw_out = real( out );
     write_file( "fft.data", fftw_out.data(),
                 fftw_out.size() * sizeof( float ) );
-    // cmd = fmt::format( "gnuplot -e \"plot 'fft.data' binary array=({0}) "
-    //                    "format='%float' with lines;pause -1;\"",
-    //                    SAMPLING );
-    // system( cmd.c_str() );
+    auto cmd = fmt::format( "gnuplot -e \"plot 'fft.data' binary array=({0}) "
+                            "format='%float' with lines;pause -1;\"",
+                            200 );
+    system( cmd.c_str() );
 }

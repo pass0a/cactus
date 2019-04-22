@@ -1,3 +1,4 @@
+
 import matplotlib.pyplot as plt
 import numpy as np
 import wavinfo as wv
@@ -28,12 +29,15 @@ def getff(path):
     emphasized_signal = np.append(data[0], data[1:] - pre_emphasis * data[:-1])
     frames = framing(emphasized_signal, rate, 0.025, 0.010)
     NFFT = 512
-    print(frames.shape)
     frames *= np.hamming(len(frames[0]))
-    print(frames.shape)
     mag_frames = np.absolute(np.fft.rfft(frames, NFFT))
     pow_frames = ((1.0 / NFFT) * ((mag_frames)**2))  # Power Spectrum
-    return pow_frames
+    plt.subplot(211)
+    plt.plot(mag_frames[99])
+    plt.subplot(212)
+    plt.plot(pow_frames[99])
+    plt.show()
+    return mag_frames
 
 
 def getfflist(path):
@@ -41,16 +45,17 @@ def getfflist(path):
     hk = []
     for v in data:
         tmp = []
-        tmp.append(np.argmax(v[:40]))
-        tmp.append(np.argmax(v[40:80]) + 40)
-        tmp.append(np.argmax(v[80:120]) + 80)
-        tmp.append(np.argmax(v[120:180]) + 120)
+        tmp.append(np.argmax(v[0:180]))
+        # tmp.append(np.argmax(v[:40]))
+        # tmp.append(np.argmax(v[40:80]) + 40)
+        # tmp.append(np.argmax(v[80:120]) + 80)
+        # tmp.append(np.argmax(v[120:180]) + 120)
         hk.append(tmp)
     return hk
 
 
-v1 = getfflist("record2.wav")
-v2 = getfflist("record3.wav")
+v1 = getfflist("../../1.wav")
+v2 = getfflist("../../1.noise.wav")
 
 file = open('data1.txt', 'w')
 for line in v1:

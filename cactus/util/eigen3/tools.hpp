@@ -61,6 +61,24 @@ template <typename T> Tensor<T> arange( T start, T stop, T step = 1 ) {
     }
     return std::move( tmp );
 }
+template <typename T, typename Layout>
+std::vector<size_t> argmax( tensor<T, Layout> in ) {
+    std::vector<size_t> sh;
+    int                 x, y;
+    in.value().maxCoeff( &x, &y );
+    sh.emplace_back( x );
+    sh.emplace_back( y );
+    return sh;
+}
+template <typename T, typename Layout>
+std::vector<size_t> argmin( tensor<T, Layout> in ) {
+    std::vector<size_t> sh;
+    int                 x, y;
+    in.value().minCoeff( &x, &y );
+    sh.emplace_back( x );
+    sh.emplace_back( y );
+    return sh;
+}
 template <typename T, typename Layout> T max( tensor<T, Layout> in ) {
     return in.value().maxCoeff();
 }

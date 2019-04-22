@@ -33,9 +33,17 @@ void wavWrite( const char *filename, const void *buffer, int sampleRate,
         }
     }
 }
+int write_vector( const char *path, std::vector<size_t> data ) {
+    std::ofstream f( path, std::ios::out | std::ofstream::binary );
+    for ( auto it = data.begin(); it != data.end(); it++ ) {
+        f << *it << std::endl;
+    }
+    f.close();
+    return 0;
+}
+
 int write_file( const char *path, void *data, size_t len ) {
     std::ofstream fout( path, std::ios::binary );
-    std::cout << path << "-->" << len << std::endl;
     if ( fout.is_open() ) {
         fout.write( reinterpret_cast<char *>( data ), len );
         fout.close();
@@ -52,31 +60,67 @@ int plot( tensor<T, Layout> z, const char *format = "float" ) {
                             z.size(), format );
     return system( cmd.c_str() );
 }
-void          framing( Tensor<float> data, size_t rate, float timeperframe,
-                       float stride ) {}
+Tensor<float> hamming( size_t num ) {
+    auto tmp = linspace<size_t>( 0, num, num );
+    return 0.53836f - 0.46164f * cos( ( 2 * 3.14159f * tmp ) / ( num - 1 ) );
+}
+Tensor<std::complex<float>> fft( Tensor<float> in_data ) {
+    Tensor<std::complex<float>> out_data( {in_data.size()} );
+    fftwf_plan                  p = fftwf_plan_dft_r2c_1d(
+        in_data.size(), in_data.data(),
+        reinterpret_cast<fftwf_complex *>( out_data.data() ), FFTW_ESTIMATE );
+    fftwf_execute( p );
+    fftwf_destroy_plan( p );
+    return out_data;
+}
+/*
+  framing
+  start i(framelen-framestride) to framelen+i(framelen-framestride) for per
+  frame
+*/
+std::vector<size_t> framing( Tensor<float> data, size_t rate, size_t time,
+                             size_t stride ) {
+    size_t framelen    = rate / 1000 * time;
+    size_t framestride = rate / 1000 * stride;
+    size_t len = ( data.size() - framelen ) / ( framelen - framestride );
+    std::cout << data.size() << ":"
+              << framelen + len * ( framelen - framestride ) << std::endl;
+    std::vector<size_t> feature;
+    for ( size_t i = 0; i < len; i++ ) {
+        auto tmp =
+            1 * data.subView( {{i * ( framelen - framestride ), framelen}} );
+        auto mag_frames = abs( real( fft( tmp * hamming( framelen ) ) ) );
+        auto pow_frames = ( ( 1.0f / framelen ) * pow( mag_frames, 2 ) );
+        auto pos        = argmax( pow_frames.subView( {{0, 180}} ) );
+        feature.emplace_back( pos[ 0 ] );
+        // if ( i == 12 ) {
+        //     plot( mag_frames );
+        //     plot( pow_frames );
+        //     plot( tmp );
+        //     // plot( mag_frames );
+        // }
+    }
+    return feature;
+}
 Tensor<float> normalize( Tensor<short> data ) {
-    return ( data + 32768 ) / 65535.0f;
+    // return ( data + 32768 ) / 65535.0f;
+    return data * 1.0f / ( max( abs( data ) ) );
 }
 template <typename T, typename Layout>
 tensor<T, Layout> pre_emphasis( tensor<T, Layout> data ) {
     tensor<T, Layout> tmp( data.shape() );
     tmp.subView( {{1, data.size() - 1}} ) =
         data.subView( {{1, data.size() - 1}} ) -
-        data.subView( {{0, data.size() - 1}} ) * 0.97f;
+        ( data.subView( {{0, data.size() - 1}} ) * 0.97f );
     return tmp;
 }
-int main( int argc, char **argv ) {
-    cmdline::parser args;
-    Tensor<short>   samples;
-    Tensor<float>   out;
-    drwav           wav;
+std::vector<size_t> genfeature( const char *path ) {
+    Tensor<short> samples;
+    Tensor<float> out;
+    drwav         wav;
 
-    args.add<std::string>( "src", 's', "src audio'path", true, "" );
-    args.parse_check( argc, argv );
-
-    if ( !drwav_init_file( &wav, args.get<std::string>( "src" ).c_str() ) ) {
-        std::cout << "error in open wav:" << args.get<std::string>( "src" )
-                  << std::endl;
+    if ( !drwav_init_file( &wav, path ) ) {
+        std::cout << "error in open wav:" << path << std::endl;
     }
     size_t len = wav.totalPCMFrameCount * wav.channels;
     samples.reshape( {len} );
@@ -86,14 +130,27 @@ int main( int argc, char **argv ) {
     // wavWrite( args.get<std::string>( "dst" ).c_str(), samples.data(),
     //           wav.sampleRate, wav.totalPCMFrameCount );
 
-    plot( samples, "short" );
+    // plot( samples, "short" );
     auto x = normalize( samples );
-    plot( x );
+    // plot( x );
     auto tmp = pre_emphasis( x );
-    plot( tmp );
-    // framing( z, wav.sampleRate, 0.025, 0.010 );
+    // plot( tmp );
+    auto feature = framing( tmp, wav.sampleRate, 25, 20 );
+
     // auto z = samples.subView( {{0, 20}} );
     // std::cout << z << std::endl;
     drwav_uninit( &wav );
+    return feature;
+}
+int main( int argc, char **argv ) {
+    cmdline::parser args;
+
+    args.add<std::string>( "src", 's', "src audio'path", true, "" );
+    args.parse_check( argc, argv );
+    auto f1 = genfeature( args.get<std::string>( "src" ).c_str() );
+    auto f2 = genfeature( "../../1.noise.wav" );
+
+    write_vector( "data1.txt", f1 );
+    write_vector( "data2.txt", f2 );
     return 0;
 }
