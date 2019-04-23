@@ -5,6 +5,9 @@
 #include "../cactus/cactus.hpp"
 #include "cmdline.hxx"
 #include "dir-wav.hxx"
+#include "ghc/filesystem.hpp"
+#include <dirent.h>
+//#include "dirent.h"
 #include <fftw3.h>
 #include <fmt/format.h>
 #include <fstream>
@@ -140,17 +143,37 @@ std::vector<size_t> genfeature( const char *path ) {
     // auto z = samples.subView( {{0, 20}} );
     // std::cout << z << std::endl;
     drwav_uninit( &wav );
-    return feature;
+    return std::move( feature );
 }
+
+namespace fs {
+using namespace ghc::filesystem;
+} // namespace fs
 int main( int argc, char **argv ) {
     cmdline::parser args;
 
-    args.add<std::string>( "src", 's', "src audio'path", true, "" );
+    args.add<std::string>( "src", 's', "src audio'path", true, "./" );
+    args.add<std::string>( "dst", 'd', "dst feature'path", true, "./" );
     args.parse_check( argc, argv );
-    auto f1 = genfeature( args.get<std::string>( "src" ).c_str() );
-    auto f2 = genfeature( "../../1.noise.wav" );
+    DIR *          dir;
+    struct dirent *ent;
+    auto path = fs::absolute( fs::path( args.get<std::string>( "src" ) + "/" ) )
+                    .generic_string();
+    dir = opendir( path.c_str() );
+    std::cout << path << std::endl;
 
-    write_vector( "data1.txt", f1 );
-    write_vector( "data2.txt", f2 );
+    if ( dir == NULL ) {
+        std::cout << path << std::endl;
+        return -1;
+    }
+    while ( ( ent = readdir( dir ) ) ) {
+        if ( !strcmp( ent->d_name + strlen( ent->d_name ) - 4, ".wav" ) ) {
+            std::cout << ent->d_name << std::endl;
+            auto file = path + ent->d_name;
+            auto f1   = genfeature( file.c_str() );
+            file = args.get<std::string>( "dst" ) + "/" + ent->d_name + ".data";
+            write_vector( file.c_str(), f1 );
+        }
+    }
     return 0;
 }
