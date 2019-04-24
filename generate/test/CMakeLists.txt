@@ -15,9 +15,15 @@ ADD_EXECUTABLE(hpptest
 				#${PROJECT_SOURCE_DIR}/test/cactus.cpp
 				${PROJECT_SOURCE_DIR}/test/catch.hpp
 				)
-ADD_EXECUTABLE(similarity
-				${PROJECT_SOURCE_DIR}/example/similarity.cpp
+ADD_EXECUTABLE(audio_feature
+				${PROJECT_SOURCE_DIR}/example/audio_feature.cpp
+				${PROJECT_SOURCE_DIR}/example/sqlite/sqlite3.c
+				)
+ADD_EXECUTABLE(audio_search
+				${PROJECT_SOURCE_DIR}/example/audio_search.cpp
+				${PROJECT_SOURCE_DIR}/example/sqlite/sqlite3.c
 				)
 message("finding : " ${FFTW_FLOAT_LIB})
-target_link_libraries(similarity ${FFTW_FLOAT_LIB})
+target_link_libraries(audio_feature ${FFTW_FLOAT_LIB} pthread dl)
+target_link_libraries(audio_search ${FFTW_FLOAT_LIB} pthread dl)
 target_link_libraries(hpptest ${FFTW_FLOAT_LIB})
