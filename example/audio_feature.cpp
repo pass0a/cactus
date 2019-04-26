@@ -1,20 +1,13 @@
+#include "audio_feature.h"
 
 #define DR_WAV_IMPLEMENTATION
-#define FMT_HEADER_ONLY
-
 #include "../cactus/cactus.hpp"
-#include "cmdline.hxx"
 #include "dir-wav.hxx"
-#include "ghc/filesystem.hpp"
-#include <dirent.h>
-//#include "dirent.h"
-#include "sqlite/sqlite3.h"
 #include <fftw3.h>
-#include <fmt/format.h>
 #include <fstream>
-#include <iostream>
 
 using namespace cactus;
+
 void wavWrite( const char *filename, const void *buffer, int sampleRate,
                uint32_t totalSampleCount ) {
     drwav_data_format format;
@@ -87,8 +80,8 @@ std::vector<size_t> framing( Tensor<float> data, size_t rate, size_t time,
     size_t framelen    = rate / 1000 * time;
     size_t framestride = rate / 1000 * stride;
     size_t len = ( data.size() - framelen ) / ( framelen - framestride );
-    std::cout << data.size() << ":"
-              << framelen + len * ( framelen - framestride ) << std::endl;
+    // std::cout << data.size() << ":"
+    // << framelen + len * ( framelen - framestride ) << std::endl;
     std::vector<size_t> feature;
     for ( size_t i = 0; i < len; i++ ) {
         auto tmp =
@@ -130,7 +123,7 @@ std::vector<size_t> genfeature( const char *path ) {
     samples.reshape( {len} );
     size_t numberOfSamplesActuallyDecoded = drwav_read_pcm_frames_s16(
         &wav, wav.totalPCMFrameCount, samples.data() );
-    std::cout << "samples.len:" << samples.shape()[ 0 ] << std::endl;
+    // std::cout << "samples.len:" << samples.shape()[ 0 ] << std::endl;
     // wavWrite( args.get<std::string>( "dst" ).c_str(), samples.data(),
     //           wav.sampleRate, wav.totalPCMFrameCount );
 
@@ -145,97 +138,4 @@ std::vector<size_t> genfeature( const char *path ) {
     // std::cout << z << std::endl;
     drwav_uninit( &wav );
     return std::move( feature );
-}
-
-namespace fs {
-using namespace ghc::filesystem;
-} // namespace fs
-void onError( int code, const char *info ) {
-    switch ( code ) {
-    case SQLITE_OK:
-    case SQLITE_ROW:
-    case SQLITE_DONE:
-        break;
-    default:
-        std::cout << code << ":" << info << std::endl;
-        break;
-    }
-}
-int createSql( const char *dbname ) {
-    sqlite3 *     db = NULL;
-    sqlite3_stmt *stmt;
-    sqlite3_open( dbname, &db );
-    const char *sql = "create table audio(ID INTEGER PRIMARY KEY AUTOINCREMENT "
-                      "NOT NULL, NAME "
-                      "TEXT NOT NULL, POS TEXT NOT NULL, FEATURE INT NOT NULL)";
-
-    int rc = sqlite3_prepare( db, sql, -1, &stmt, NULL );
-    onError( rc, sqlite3_errmsg( db ) );
-    rc = sqlite3_step( stmt );
-    onError( rc, sqlite3_errmsg( db ) );
-    sqlite3_close( db );
-    return 0;
-}
-int insertSql( const char *dbname, const char *filename,
-               std::vector<size_t> f ) {
-    sqlite3 *     db = NULL;
-    sqlite3_stmt *stmt;
-    sqlite3_open( dbname, &db );
-    size_t pos = 0;
-
-    const char *sql = "insert into audio values(NULL,?,?,?)";
-    int         rc  = 0;
-    sqlite3_exec( db, "begin;", 0, 0, 0 );
-    rc = sqlite3_prepare_v2( db, sql, -1, &stmt, NULL );
-    onError( rc, sqlite3_errmsg( db ) );
-
-    for ( auto fea : f ) {
-        rc = sqlite3_reset( stmt );
-        rc = sqlite3_bind_text( stmt, 1, filename, -1, SQLITE_STATIC );
-        rc = sqlite3_bind_int( stmt, 2, pos );
-        rc = sqlite3_bind_int( stmt, 3, fea );
-        rc = sqlite3_step( stmt );
-        // onError( rc, sqlite3_errmsg( db ) );
-        pos++;
-    }
-    sqlite3_finalize( stmt );
-    sqlite3_exec( db, "commit;", 0, 0, 0 );
-    sqlite3_close( db );
-    return 0;
-}
-int main( int argc, char **argv ) {
-
-    cmdline::parser args;
-
-    args.add<std::string>( "src", 's', "src audio'path", true, "./" );
-    args.add<std::string>( "dst", 'd', "dst feature'path", true, "./" );
-    args.parse_check( argc, argv );
-    DIR *          dir;
-    struct dirent *ent;
-    auto path = fs::absolute( fs::path( args.get<std::string>( "src" ) + "/" ) )
-                    .generic_string();
-    auto dst = fs::path( args.get<std::string>( "dst" ) );
-    if ( fs::exists( dst ) ) {
-        std::cout << "feature db already exists!!!" << std::endl;
-        return 0;
-    }
-    dir = opendir( path.c_str() );
-    std::cout << path << std::endl;
-
-    if ( dir == NULL ) {
-        std::cout << path << std::endl;
-        return -1;
-    }
-    createSql( dst.generic_string().c_str() );
-    while ( ( ent = readdir( dir ) ) ) {
-        if ( !strcmp( ent->d_name + strlen( ent->d_name ) - 4, ".wav" ) ) {
-            std::cout << ent->d_name << std::endl;
-            auto wavf = path + ent->d_name;
-            auto f1   = genfeature( wavf.c_str() );
-            // file = args.get<std::string>( "dst" ) + "/" + ent->d_name +
-            // ".data";
-            insertSql( dst.generic_string().c_str(), ent->d_name, f1 );
-        }
-    }
-    return 0;
 }
