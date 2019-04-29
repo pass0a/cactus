@@ -20,6 +20,11 @@ ADD_EXECUTABLE(lcstest
 				#${PROJECT_SOURCE_DIR}/test/cactus.cpp
 				${PROJECT_SOURCE_DIR}/test/catch.hpp
 				)
+ADD_EXECUTABLE(treetest
+				${PROJECT_SOURCE_DIR}/test/trietree.cpp
+				#${PROJECT_SOURCE_DIR}/test/cactus.cpp
+				${PROJECT_SOURCE_DIR}/test/catch.hpp
+				)
 ADD_EXECUTABLE(audio_build
 				${PROJECT_SOURCE_DIR}/example/audio_build.cpp
 				${PROJECT_SOURCE_DIR}/example/audio_feature.cpp
