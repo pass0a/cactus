@@ -28,7 +28,6 @@ ADD_EXECUTABLE(treetest
 ADD_EXECUTABLE(audio_build
 				${PROJECT_SOURCE_DIR}/example/audio_build.cpp
 				${PROJECT_SOURCE_DIR}/example/audio_feature.cpp
-				${PROJECT_SOURCE_DIR}/example/simhash.cpp
 				${PROJECT_SOURCE_DIR}/example/sqlite/sqlite3.c
 				)
 ADD_EXECUTABLE(audio_search

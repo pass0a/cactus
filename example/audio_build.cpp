@@ -7,7 +7,6 @@
 #include "ghc/filesystem.hpp"
 #include <dirent.h>
 //#include "dirent.h"
-#include "simhash.h"
 #include "sqlite/sqlite3.h"
 #include <fmt/format.h>
 #include <fstream>
