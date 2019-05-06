@@ -2,7 +2,7 @@
 
 #include "../cactus/algorithm/trietree.hpp"
 #include "../cactus/algorithm/simhash.hpp"
-#include "../cactus/algorithm/suffixtree.hpp"
+//#include "../cactus/algorithm/suffixtree.hpp"
 #include "catch.hpp"
 #include <iostream>
 #include <string>
