@@ -54,7 +54,7 @@ template <typename T> Tensor<T> arange( T start, T stop, T step = 1 ) {
         std::cerr << errStr << std::endl;
         throw std::invalid_argument( errStr );
     }
-    size_t    num = abs( ceil( ( stop - start ) / step ) );
+    size_t    num = std::abs( std::ceil( ( stop - start ) / step ) );
     Tensor<T> tmp( {num} );
     for ( int i = 0; i < num; i++ ) {
         tmp.data()[ i ] = i * step;
