@@ -37,9 +37,7 @@ ADD_EXECUTABLE(audio_search
 				${PROJECT_SOURCE_DIR}/example/sqlite/sqlite3.c
 				)
 ADD_EXECUTABLE(audio_cast
-				${PROJECT_SOURCE_DIR}/example/audio_search.cpp
-				${PROJECT_SOURCE_DIR}/example/audio_feature.cpp
-				${PROJECT_SOURCE_DIR}/example/sqlite/sqlite3.c
+				${PROJECT_SOURCE_DIR}/example/audio_cast.cpp
 				)
 message("finding : " ${FFTW_FLOAT_LIB})
 if(PASSOA_COMPILER_MSVC)
