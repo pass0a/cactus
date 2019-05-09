@@ -3,7 +3,6 @@
 #include "audio_feature.h"
 #include "cmdline.hxx"
 #include "ghc/filesystem.hpp"
-#include <dirent.h>
 //#include "dirent.h"
 #include "sqlite/sqlite3.h"
 #include <fmt/format.h>

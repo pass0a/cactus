@@ -7,6 +7,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 ## 添加项目
 find_package(FFTW REQUIRED)
 include_directories(${FFTW_INCLUDE_DIRS})
+link_directories(${FFTW_FLOAT_LIB})
 include_directories(${PROJECT_SOURCE_DIR}/3rd/eigen)
 include_directories(${PROJECT_SOURCE_DIR}/3rd/fmt/include)
 
@@ -41,6 +42,12 @@ ADD_EXECUTABLE(audio_cast
 				${PROJECT_SOURCE_DIR}/example/sqlite/sqlite3.c
 				)
 message("finding : " ${FFTW_FLOAT_LIB})
+if(PASSOA_COMPILER_MSVC)
+target_link_libraries(audio_build ${FFTW_FLOAT_LIB})
+target_link_libraries(audio_search ${FFTW_FLOAT_LIB})
+target_link_libraries(hpptest ${FFTW_FLOAT_LIB})
+else()
 target_link_libraries(audio_build ${FFTW_FLOAT_LIB} pthread dl)
 target_link_libraries(audio_search ${FFTW_FLOAT_LIB} pthread dl)
 target_link_libraries(hpptest ${FFTW_FLOAT_LIB})
+endif()

@@ -34,4 +34,6 @@ build/*
 binary/*/
 binary/*
 tmp/
+py/*
+data/*
 *node_modules*

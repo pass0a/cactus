@@ -26,11 +26,11 @@ TEST_CASE( "Factorials are computed", "[factorial]" ) {
     REQUIRE( z.ref( {2} ) == 6 );
 }
 TEST_CASE( "linspace&arange", "[linspace]" ) {
-    auto a = arange<float>( 0, 1.0, 0.1 );
-    auto b = linspace<float>( 0, 1.0, 10, false );
+    auto a = arange<float>( 0.0f, 1.0f, 0.1f );
+    auto b = linspace<float>( 0.0f, 1.0f, 10.0f, false );
 
     Tensor<float> bx( {10} );
-    bx      = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
+    bx      = {0.0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f};
     auto z1 = abs( bx - b ) < 0.0001;
     auto z2 = abs( bx - a ) < 0.0001;
     REQUIRE( min( z1 ) != 0 );
