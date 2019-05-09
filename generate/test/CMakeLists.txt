@@ -35,6 +35,11 @@ ADD_EXECUTABLE(audio_search
 				${PROJECT_SOURCE_DIR}/example/audio_feature.cpp
 				${PROJECT_SOURCE_DIR}/example/sqlite/sqlite3.c
 				)
+ADD_EXECUTABLE(audio_cast
+				${PROJECT_SOURCE_DIR}/example/audio_search.cpp
+				${PROJECT_SOURCE_DIR}/example/audio_feature.cpp
+				${PROJECT_SOURCE_DIR}/example/sqlite/sqlite3.c
+				)
 message("finding : " ${FFTW_FLOAT_LIB})
 target_link_libraries(audio_build ${FFTW_FLOAT_LIB} pthread dl)
 target_link_libraries(audio_search ${FFTW_FLOAT_LIB} pthread dl)

@@ -23,7 +23,7 @@ void wavWrite( const char *filename, const void *buffer, int sampleRate,
     if ( pWav ) {
         drwav_uint64 samplesWritten =
             drwav_write( pWav, totalSampleCount, buffer );
-        drwav_uninit( pWav );
+        drwav_close( pWav );
         if ( samplesWritten != totalSampleCount ) {
             fprintf( stderr, "ERROR\n" );
             exit( 1 );
@@ -111,7 +111,7 @@ tensor<T, Layout> pre_emphasis( tensor<T, Layout> data ) {
         ( data.subView( {{0, data.size() - 1}} ) * 0.97f );
     return tmp;
 }
-std::vector<size_t> genfeature( const char *path ) {
+std::vector<size_t> gen_feature( const char *path ) {
     Tensor<short> samples;
     Tensor<float> out;
     drwav         wav;

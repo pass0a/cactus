@@ -3,6 +3,6 @@
 
 #include <vector>
 
-std::vector<size_t> genfeature( const char *path );
+std::vector<size_t> gen_feature( const char *path );
 
 #endif

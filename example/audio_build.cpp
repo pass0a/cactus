@@ -96,7 +96,7 @@ int main( int argc, char **argv ) {
         if ( !strcmp( ent->d_name + strlen( ent->d_name ) - 4, ".wav" ) ) {
             std::cout << ent->d_name << std::endl;
             auto wavf = path + ent->d_name;
-            auto f1   = genfeature( wavf.c_str() );
+            auto f1   = gen_feature( wavf.c_str() );
             // file = args.get<std::string>( "dst" ) + "/" + ent->d_name +
             // ".data";
             insertSql( dst.generic_string().c_str(), ent->d_name, f1 );

@@ -76,7 +76,7 @@ int main( int argc, char **argv ) {
     if ( !fs::is_regular_file( srcfile ) ) {
         return 0;
     }
-    auto             f1 = genfeature( srcfile.generic_string().c_str() );
+    auto             f1 = gen_feature( srcfile.generic_string().c_str() );
     std::set<size_t> fset;
     for ( auto t : f1 ) {
         fset.insert( t );
