@@ -55,12 +55,15 @@ int queryFeature( const char *dbname, std::set<size_t> fset ) {
     sqlite3_finalize( stmt );
     sqlite3_exec( db, "commit;", 0, 0, 0 );
     sqlite3_close( db );
-    auto x = std::max_element( result.begin(), result.end(),
+    /*auto x = std::max_element( result.begin(), result.end(),
                                []( const std::pair<std::string, int> &p1,
                                    const std::pair<std::string, int> &p2 ) {
                                    return p1.second < p2.second;
-                               } );
-    std::cout << x->first << x->second << std::endl;
+                               } );*/
+    for (auto x:result)
+    {
+        std::cout << x.first << x.second << std::endl;
+    }
     return 0;
 }
 int main( int argc, char **argv ) {

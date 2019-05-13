@@ -20,19 +20,25 @@ void wav_cast( const char *src, const char *dst, uint32_t channels,
     format.sampleRate    = (drwav_uint32) rate;
     format.bitsPerSample = bits;
     drwav *pWav          = drwav_open_file_write( dst, &format );
+    size_t        len;
+    char *        buf;
+    drwav_uint64 samplesWritten,samplesLen;
     if ( pWav ) {
         std::ifstream fin( src, std::ios::binary );
-        size_t        len = fin.tellg();
-        char *        buf = new char[ len ];
-        if ( fin.is_open() ) {
+        if (fin.is_open()) {
+            fin.seekg(0,std::ios::end);
+            len = fin.tellg();
+            fin.seekg(0,std::ios::beg);
+            buf = new char[ len ];
             fin.read( buf, len );
             fin.close();
+            samplesLen = len / (bits / 8);
+            samplesWritten = drwav_write( pWav,samplesLen , buf );
+            drwav_close( pWav );
         }
-        drwav_uint64 samplesWritten = drwav_write( pWav, len, buf );
-        drwav_close( pWav );
-        if ( samplesWritten != channels * rate ) {
-            std::cerr << "drwav cast error!!!" << std::endl;
-        }
+    }
+    if (samplesWritten != samplesLen) {
+        std::cerr << "drwav cast error!!!" << std::endl;
     }
 }
 int main( int argc, char **argv ) {
