@@ -10,11 +10,10 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: echo Hello, world!
+- script: apt-get install libfftw3-dev
   displayName: 'Run a one-line script'
 
 - script: |
-    apt-get install fftw
     git submodule update --init
     cd build
     mkdir linux
