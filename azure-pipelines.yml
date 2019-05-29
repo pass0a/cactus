@@ -9,8 +9,10 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- script: apt-get install libfftw3-dev
+steps: 
+- script: |
+    sudo apt-get update
+    sudo apt-get install libfftw3-dev
   displayName: 'Run a one-line script'
 
 - script: |
