@@ -10,9 +10,16 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- script: exit -1
+  displayName: 'Run a one-line script'
 
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-    exit -1
+    sudo apt-get update
+    sudo apt-get install libfftw3-dev
+    git submodule update --init
+    cd build
+    mkdir linux
+    cd linux
+    cmake ../../generate -DCACTUS_TEST=ON -DCACTUS_MAIN=ON -DCMAKE_INSTALL_PREFIX=../../stage -DCMAKE_EXPORT_COMPILE_COMMANDS=YES
+    cmake --build ./ --config Release
   displayName: 'Run a multi-line script'

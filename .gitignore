@@ -9,7 +9,8 @@
 *.a
 *.so
 *.dll
-.*
+.git
+.ccls-cache
 .#*
 *.ilk
 *.obj
@@ -23,6 +24,8 @@
 *.mp4
 *.ts
 *.h264
+*.gch
+*.out
 \#*
 output/
 build/*
@@ -31,8 +34,6 @@ build/*
 binary/*/
 binary/*
 tmp/
-data/
-!.gitignore
-!.travis.yml
-!*.sh
+py/*
+data/*
 *node_modules*
