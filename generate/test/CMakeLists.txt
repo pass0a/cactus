@@ -39,6 +39,9 @@ ADD_EXECUTABLE(audio_search
 ADD_EXECUTABLE(audio_cast
 				${PROJECT_SOURCE_DIR}/example/audio_cast.cpp
 				)
+ADD_EXECUTABLE(pass_filter
+				${PROJECT_SOURCE_DIR}/example/pass_filter.cpp
+				)
 message("finding : " ${FFTW_FLOAT_LIB})
 if(PASSOA_COMPILER_MSVC)
 target_link_libraries(audio_build ${FFTW_FLOAT_LIB})

@@ -43,13 +43,16 @@ int queryFeature( const char *dbname, std::set<size_t> fset ) {
         rc = sqlite3_reset( stmt );
         rc = sqlite3_bind_int( stmt, 1, f );
         rc = sqlite3_step( stmt );
-        while ( rc == SQLITE_ROW ) {
-            p    = (const char *) sqlite3_column_text( stmt, 0 );
-            nums = sqlite3_column_int( stmt, 1 );
-            //  std::cout << f << ":" << p << nums << std::endl;
-            result[ p ] += nums;
-            rc = sqlite3_step( stmt );
+        if (f) {
+            while (rc == SQLITE_ROW) {
+                p = (const char *)sqlite3_column_text(stmt, 0);
+                nums = sqlite3_column_int(stmt, 1);
+                std::cout << f << ":" << p << "--" << nums << std::endl;
+                result[p] += nums;
+                rc = sqlite3_step(stmt);
+            }
         }
+        
         // onError( rc, sqlite3_errmsg( db ) );
     }
     sqlite3_finalize( stmt );

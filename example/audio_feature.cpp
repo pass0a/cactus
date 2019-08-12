@@ -82,14 +82,14 @@ std::vector<size_t> framing( Tensor<float> data, size_t rate, size_t time,
     size_t len = ( data.size() - framelen ) / ( framelen - framestride );
     // std::cout << data.size() << ":"
     // << framelen + len * ( framelen - framestride ) << std::endl;
-    std::vector<size_t> feature;
+    std::vector<size_t> feature,result;
     for ( size_t i = 0; i < len; i++ ) {
         auto tmp =
             1 * data.subView( {{i * ( framelen - framestride ), framelen}} );
         auto mag_frames = abs( real( fft( tmp * hamming( framelen ) ) ) );
         auto pow_frames = ( ( 1.0f / framelen ) * pow( mag_frames, 2 ) );
         auto pos        = argmax( pow_frames.subView( {{0, 180}} ) );
-        feature.emplace_back( pos[ 0 ] );
+        feature.emplace_back(pos[0]);
         // if ( i == 12 ) {
         //     plot( mag_frames );
         //     plot( pow_frames );
@@ -97,7 +97,12 @@ std::vector<size_t> framing( Tensor<float> data, size_t rate, size_t time,
         //     // plot( mag_frames );
         // }
     }
-    return feature;
+    for (size_t i = 0; i < feature.size()-2; i++)
+    {
+
+        result.emplace_back(feature[i]<<16+feature[i+1]<<8+feature[i+2]);
+    }
+    return result;
 }
 Tensor<float> normalize( Tensor<short> data ) {
     // return ( data + 32768 ) / 65535.0f;
